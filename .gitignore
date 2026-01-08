@@ -192,3 +192,11 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+*.pkl
+embeddings_cache_openai
+
+# Excel 파일(샘플/중간/결과 모두 무시)
+*.xlsx
+
+# config.json은 원격만 사용, 로컬은 git에서 무시
+config.json
