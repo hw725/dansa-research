@@ -195,8 +195,21 @@ cython_debug/
 *.pkl
 embeddings_cache_openai
 
+# History files (VS Code local history extension)
+.history/
+
 # Excel 파일(샘플/중간/결과 모두 무시)
 *.xlsx
 
 # config.json은 원격만 사용, 로컬은 git에서 무시
 config.json
+
+# 데이터 및 결과 폴더
+xlsx_pipeline_results/
+xlsx/
+sources/
+목차정보/
+models/
+
+# 압축 파일
+*.zip
