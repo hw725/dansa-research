@@ -126,15 +126,18 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
         
         # PA 실행 (Docker 컨테이너 사용)
         output_xlsx = run_dir_abs / f"pa_test_output_seed{seed}.xlsx"
-        
+        trace_jsonl = run_dir_abs / f"pa_trace_seed{seed}.jsonl"
+
         # Docker 경로로 변환 (상대 경로 사용)
         project_root = Path.cwd()
         rel_input = input_xlsx.relative_to(project_root)
         rel_output = output_xlsx.relative_to(project_root)
-        
+        rel_trace = trace_jsonl.relative_to(project_root)
+
         docker_input = f"/workspace/{rel_input.as_posix()}"
         docker_output = f"/workspace/{rel_output.as_posix()}"
-        
+        docker_trace = f"/workspace/{rel_trace.as_posix()}"
+
         cmd = [
             "docker-compose", "exec", "-T", "csp",
             "python", "pa/main.py",
@@ -144,6 +147,7 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
             "--use-boundary-model",
             "--boundary-threshold", str(cfg['pa'].get('boundary_threshold', 0.70)),
             "--enable-src-marker-boundary-bonus",
+            "--trace-stages-jsonl", docker_trace,
             "--seed", str(seed),
         ]
         
