@@ -193,7 +193,23 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 *.pkl
-embeddings_cache_openai
+embeddings_cache_openai/
+embeddings_cache_similarity/
+
+# Generated results / reports
+test_results/
+
+# Local cleanup / archives (local-only)
+trash/
+
+# Runtime logs / traces (local-only)
+logs/
+
+# Local analytics artifacts
+cumulative_analysis.db
+
+# Local/generated datasets (do not commit)
+datasets/
 
 # History files (VS Code local history extension)
 .history/
@@ -213,3 +229,38 @@ models/
 
 # 압축 파일
 *.zip
+
+# Local scratch / integration notes
+INTEGRATION_PLAN.md
+
+# Local analysis scratch (do not commit)
+analytics/analyze_sentence_eval.py
+analytics/extract_worst_sentences_report.py
+analytics/peek_xlsx_columns.py
+analytics/row_compare_normalized_report.py
+analytics/run_row_eval_normalized.py
+analytics/batch_statistics.json
+analytics/pa_전체평가결과.csv
+analytics/sa_전체평가결과.csv
+analytics/무결성_리포트.csv
+
+# Local one-off scripts (do not commit)
+evaluate_pa_accuracy.py
+evaluate_pa_integrity.py
+verify_new_datasets.py
+
+# Local experimental module (do not commit unless finalized)
+common/global_integrity_restorer.py
+
+# Grid search results (experimental)
+grid_baseline_*/
+grid_smoke_*/
+grid_*/
+
+# PowerShell and batch scripts (local convenience)
+*.ps1
+*.bat
+
+# Backup files
+*.backup.json
+csp_config.backup.json
