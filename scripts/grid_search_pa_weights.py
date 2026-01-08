@@ -50,19 +50,29 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
         with open(base_config_path, 'r', encoding='utf-8') as f:
             cfg = json.load(f)
         
-        # 실험 설정 반영
-        if 'pa' not in cfg:
-            cfg['pa'] = {}
-        if 'sentence_splitter' not in cfg['pa']:
-            cfg['pa']['sentence_splitter'] = {}
-        
-        cfg['pa']['sentence_splitter']['prior_bonus'] = config.get('prior_bonus', 0.15)
-        cfg['pa']['sentence_splitter']['length_penalty_coef'] = config.get('length_penalty', 0.5)
-        
-        if 'boundary_threshold' in config:
-            cfg['pa']['boundary_threshold'] = config['boundary_threshold']
+        # 실험 설정 반영 - pa_selection_params 경로 사용 (실제로 코드에서 읽히는 설정)
+        if 'pa_selection_params' not in cfg:
+            cfg['pa_selection_params'] = {}
+        if 'candidate_prior_bonus_by_prefix' not in cfg['pa_selection_params']:
+            cfg['pa_selection_params']['candidate_prior_bonus_by_prefix'] = {}
+
+        # prior_bonus -> supar/boundary 개별 보너스로 매핑
+        prior_bonus = config.get('prior_bonus', 0.015)
+        cfg['pa_selection_params']['candidate_prior_bonus_by_prefix']['supar('] = prior_bonus
+        cfg['pa_selection_params']['candidate_prior_bonus_by_prefix']['boundary('] = prior_bonus
+
+        # supar_bonus가 명시된 경우 supar만 덮어쓰기
         if 'supar_bonus' in config:
-            cfg['pa']['sentence_splitter']['supar_bonus'] = config['supar_bonus']
+            cfg['pa_selection_params']['candidate_prior_bonus_by_prefix']['supar('] = config['supar_bonus']
+
+        # length_penalty는 현재 pa_selection_params에 해당 항목이 없음
+        # (whitespace_dp_penalties 내 penalty 값들과는 별개)
+        # 필요시 추가 구현
+
+        if 'boundary_threshold' in config:
+            if 'pa' not in cfg:
+                cfg['pa'] = {}
+            cfg['pa']['boundary_threshold'] = config['boundary_threshold']
         
         # 수정된 설정 저장
         with open(base_config_path, 'w', encoding='utf-8') as f:
