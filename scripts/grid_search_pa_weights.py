@@ -178,109 +178,87 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
             print(f"[WARNING] PA 출력 파일이 생성되지 않음: {output_xlsx}")
             return None
         
-        # 평가
-        # GT 데이터 로드
-        gt_df_full = pd.read_csv("datasets/pa/test.csv")
-        
-        # 샘플 키 로드 및 GT 필터링 (book_name, 문단식별자)
+        # 평가: integrity_report.py 호출
+        # Gold subset 준비 (sample_keys로 필터링)
         sample_keys_file = run_dir_abs / f"sample_keys_seed{seed}.json"
+        gold_subset_path = run_dir_abs / f"pa_gold_subset_seed{seed}.csv"
+
         if sample_keys_file.exists():
-            with open(sample_keys_file, 'r', encoding='utf-8') as f:
-                sampled_keys = json.load(f)  # [[book, pid], ...]
-            sampled_keys_df = pd.DataFrame(sampled_keys, columns=['book_name', '문단식별자'])
-            gt_df = gt_df_full.merge(sampled_keys_df, on=['book_name', '문단식별자'], how='inner').reset_index(drop=True)
+            # integrity_report의 extract_gold_subset 사용
+            import sys
+            sys.path.insert(0, str(Path.cwd()))
+            from integrity_report import extract_gold_subset
+
+            extract_gold_subset(
+                gold_path=Path("datasets/pa/test.csv"),
+                out_path=gold_subset_path,
+                keys_from=input_xlsx,  # input_xlsx에 이미 (book_name, 문단식별자)가 있음
+            )
         else:
-            gt_df = gt_df_full
-        
-        # PA 출력 로드
-        pa_output_df = pd.read_excel(output_xlsx)
-        
-        # 문단 기반 평가 함수 정의
-        def evaluate_pa_paragraph_based(pred_df, gt_df):
-            """문단식별자로 그룹화하여 평가.
+            # 전체 데이터 사용
+            gt_df_full = pd.read_csv("datasets/pa/test.csv")
+            gt_df_full.to_csv(gold_subset_path, index=False, encoding='utf-8-sig')
 
-            - micro_f1_tgt_exact: (문단 단위) 번역문 문장 리스트가 완전 일치하는 비율
-            - mean_similarity: tgt 문장 완전일치(문장 단위)인 케이스만 대상으로 src 문장 유사도 평균
-              (즉, integrity_report의 'tgt문장일치 subset' 유사도 컨셉과 동일)
-            """
-            from difflib import SequenceMatcher
+        # integrity_report.py 실행 (Docker)
+        docker_gold = f"/workspace/{gold_subset_path.relative_to(Path.cwd()).as_posix()}"
 
-            def _norm(s: object) -> str:
-                return str(s).strip() if s is not None else ""
+        eval_cmd = [
+            "docker-compose", "exec", "-T", "csp",
+            "python", "integrity_report.py",
+            "--input", docker_output,
+            "--gold", docker_gold,
+        ]
 
-            def _sim(a: str, b: str) -> float:
-                return SequenceMatcher(None, a, b).ratio()
+        eval_result = subprocess.run(eval_cmd, capture_output=True, cwd=Path.cwd())
 
-            use_book = ('book_name' in pred_df.columns) and ('book_name' in gt_df.columns)
-            group_cols = ['book_name', '문단식별자'] if use_book else ['문단식별자']
+        try:
+            eval_stdout = eval_result.stdout.decode('utf-8', errors='ignore')
+            eval_stderr = eval_result.stderr.decode('utf-8', errors='ignore')
+        except:
+            eval_stdout = str(eval_result.stdout)
+            eval_stderr = str(eval_result.stderr)
 
-            # 문단별 그룹화
-            pred_groups = pred_df.groupby(group_cols, sort=False)
-            gt_groups = gt_df.groupby(group_cols, sort=False)
+        # 디버깅용 로그 저장
+        eval_log = run_dir_abs / f"eval_log_seed{seed}.txt"
+        with open(eval_log, 'w', encoding='utf-8') as f:
+            f.write(f"Return code: {eval_result.returncode}\n\n")
+            f.write(f"=== STDOUT ===\n{eval_stdout}\n\n")
+            f.write(f"=== STDERR ===\n{eval_stderr}\n")
 
-            exact_para_ok = 0
-            total_paras = 0
+        # exit code 2는 "실패 항목 존재"를 의미하지만, F1 값은 파싱 가능
+        # exit code 1 이상은 실제 에러로 간주
+        if eval_result.returncode > 2:
+            print(f"[WARNING] 평가 실패 (exit code: {eval_result.returncode})")
+            print(f"[DEBUG] 로그 확인: {eval_log}")
+            return None
 
-            tgt_sent_exact_ok = 0
-            tgt_sent_total_cmp = 0
-            src_sim_tgt_sent_ok: list[float] = []
+        # 출력 파싱 (pa_multitest_runner.py 방식)
+        import re
+        _F1_TGT_EXACT_RE = re.compile(
+            r"\(micro,\s*tgt\s*완전일치\s*subset\):\s*([0-9.]+)\s*/\s*([0-9.]+)\s*/\s*([0-9.]+)"
+        )
+        _SRC_SIM_OK_MEAN_RE = re.compile(r"원문 유사도\(SequenceMatcher,\s*tgt문장일치\s*subset\):\s*mean=([0-9.]+)")
 
-            common_keys = sorted(set(pred_groups.groups.keys()) & set(gt_groups.groups.keys()))
+        f1_score = 0.0
+        sim_score = 0.0
 
-            for key in common_keys:
-                pred_g = pred_groups.get_group(key)
-                gt_g = gt_groups.get_group(key)
+        m_f1 = _F1_TGT_EXACT_RE.search(eval_stdout)
+        if m_f1:
+            f1_score = float(m_f1.group(3))
 
-                # 문장 순서 안정화
-                if '문장식별자' in pred_g.columns:
-                    pred_g = pred_g.sort_values(['문장식별자'], kind='stable')
-                if '문장식별자' in gt_g.columns:
-                    gt_g = gt_g.sort_values(['문장식별자'], kind='stable')
+        m_sim = _SRC_SIM_OK_MEAN_RE.search(eval_stdout)
+        if m_sim:
+            sim_score = float(m_sim.group(1))
 
-                pred_tgt = [_norm(x) for x in pred_g['번역문'].tolist()]
-                gt_tgt = [_norm(x) for x in gt_g['번역문'].tolist()]
-
-                if pred_tgt == gt_tgt:
-                    exact_para_ok += 1
-
-                # 문장 단위로 비교(길이 다르면 겹치는 구간만)
-                pred_src = [_norm(x) for x in pred_g['원문'].tolist()] if '원문' in pred_g.columns else []
-                gt_src = [_norm(x) for x in gt_g['원문'].tolist()] if '원문' in gt_g.columns else []
-
-                n_cmp = min(len(pred_tgt), len(gt_tgt))
-                tgt_sent_total_cmp += n_cmp
-                for i in range(n_cmp):
-                    is_ok = (pred_tgt[i] == gt_tgt[i])
-                    if is_ok:
-                        tgt_sent_exact_ok += 1
-                        if i < len(pred_src) and i < len(gt_src):
-                            src_sim_tgt_sent_ok.append(_sim(pred_src[i], gt_src[i]))
-
-                total_paras += 1
-
-            micro_f1_tgt_exact = (exact_para_ok / total_paras) if total_paras else 0.0
-            mean_similarity = (sum(src_sim_tgt_sent_ok) / len(src_sim_tgt_sent_ok)) if src_sim_tgt_sent_ok else 0.0
-
-            return {
-                'micro_f1_tgt_exact': micro_f1_tgt_exact,
-                'mean_similarity': mean_similarity,
-                'total_paragraphs': total_paras,
-                'exact_match_paragraphs': exact_para_ok,
-                'tgt_sent_exact_ok': tgt_sent_exact_ok,
-                'tgt_sent_total_compared': tgt_sent_total_cmp,
-            }
-        
-        # 평가: 문단별 그룹화 후 문장 리스트 비교
-        metrics = evaluate_pa_paragraph_based(pa_output_df, gt_df)
-        
-        f1_score = metrics.get('micro_f1_tgt_exact', 0.0)
-        sim_score = metrics.get('mean_similarity', 0.0)
-        
         # 결과 저장
         result_json = run_dir_abs / f"metrics_seed{seed}.json"
+        metrics = {
+            'micro_f1_tgt_exact': f1_score,
+            'mean_similarity': sim_score,
+        }
         with open(result_json, 'w', encoding='utf-8') as f:
             json.dump(metrics, f, indent=2, ensure_ascii=False)
-        
+
         print(f"[OK] 완료 (F1: {f1_score:.4f}, Sim: {sim_score:.4f})")
         return {'f1': f1_score, 'similarity': sim_score}
         

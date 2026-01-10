@@ -155,11 +155,12 @@ def _sha256_file(path: Path) -> str:
 
 def _evaluate_paragraph_based(pred_xlsx: Path, gt_csv: Path, sample_keys_file: Path) -> tuple[float, float]:
     """
-    번역문 분할이 GT와 일치하는 문장만 대상으로, 원문 exact match F1 산출.
-    
+    번역문 exact match한 문장들만 대상으로, 원문 경계의 boundary-based F1(조화평균) 산출.
+    이것은 integrity_report.py의 'tgt 완전일치 subset' F1과 동일한 방식.
+
     Returns:
         (src_f1_on_tgt_exact, mean_src_similarity_on_tgt_exact)
-        - src_f1_on_tgt_exact: 번역문 일치 문장 중 원문도 일치하는 비율
+        - src_f1_on_tgt_exact: 번역문 일치 문장들의 원문 경계 F1 (조화평균)
         - mean_src_similarity_on_tgt_exact: 번역문 일치 문장에서 원문 유사도 평균
     """
     import pandas as pd
@@ -170,6 +171,26 @@ def _evaluate_paragraph_based(pred_xlsx: Path, gt_csv: Path, sample_keys_file: P
 
     def _sim(a: str, b: str) -> float:
         return SequenceMatcher(None, a, b).ratio()
+
+    def _boundary_positions_normed(segments: list[str]) -> set[int]:
+        """정규화 문자열 기준 문장 경계 위치(누적 길이) 집합."""
+        positions: set[int] = set()
+        cursor = 0
+        for i, seg in enumerate(segments):
+            seg_norm = _norm(seg)
+            cursor += len(seg_norm)
+            if i < len(segments) - 1:
+                positions.add(cursor)
+        return positions
+
+    def _prf1(tp: int, fp: int, fn: int) -> tuple[float, float, float]:
+        """Precision, Recall, F1 조화평균 계산."""
+        if tp == 0 and fp == 0 and fn == 0:
+            return 1.0, 1.0, 1.0
+        p = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+        r = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+        f1 = (2 * p * r / (p + r)) if (p + r) > 0 else 0.0
+        return p, r, f1
 
     pred_df = pd.read_excel(pred_xlsx)
     gt_df_full = pd.read_csv(gt_csv)
@@ -189,9 +210,10 @@ def _evaluate_paragraph_based(pred_xlsx: Path, gt_csv: Path, sample_keys_file: P
 
     common_keys = sorted(set(pred_groups.groups.keys()) & set(gt_groups.groups.keys()))
 
-    # 번역문 일치 문장 중 원문도 일치하는 개수
-    src_exact_on_tgt_exact = 0
-    tgt_exact_count = 0
+    # 번역문 일치 문장 subset에서의 원문 경계 TP/FP/FN
+    tp_ok = 0
+    fp_ok = 0
+    fn_ok = 0
     src_sim_on_tgt_exact: List[float] = []
 
     for key in common_keys:
@@ -208,16 +230,30 @@ def _evaluate_paragraph_based(pred_xlsx: Path, gt_csv: Path, sample_keys_file: P
         pred_src = [_norm(x) for x in pred_g.get("원문", [])]
         gt_src = [_norm(x) for x in gt_g.get("원문", [])]
 
-        # 문장 단위로 비교
+        # 번역문 리스트 완전일치 여부
+        tgt_match = (pred_tgt == gt_tgt)
+
+        # 문장 단위 번역문 일치 체크 (유사도 계산용)
         for ps, pt, gs, gt in zip(pred_src, pred_tgt, gt_src, gt_tgt):
             if pt == gt:  # 번역문 문장이 일치하는 경우만
-                tgt_exact_count += 1
                 src_sim_on_tgt_exact.append(_sim(ps, gs))
-                if ps == gs:  # 원문도 일치
-                    src_exact_on_tgt_exact += 1
 
-    # 번역문 일치 문장 중 원문 exact match 비율 (F1)
-    src_f1_on_tgt_exact = (src_exact_on_tgt_exact / tgt_exact_count) if tgt_exact_count else 0.0
+        # 번역문 리스트가 일치하는 경우에만 원문 경계 F1 집계
+        if tgt_match:
+            pred_b = _boundary_positions_normed(pred_src)
+            gold_b = _boundary_positions_normed(gt_src)
+            inter = pred_b & gold_b
+
+            tp_i = len(inter)
+            fp_i = len(pred_b - gold_b)
+            fn_i = len(gold_b - pred_b)
+
+            tp_ok += tp_i
+            fp_ok += fp_i
+            fn_ok += fn_i
+
+    # F1: 번역문 일치 문장들의 원문 경계 F1 (조화평균)
+    _, _, src_f1_on_tgt_exact = _prf1(tp_ok, fp_ok, fn_ok)
     mean_similarity = (sum(src_sim_on_tgt_exact) / len(src_sim_on_tgt_exact)) if src_sim_on_tgt_exact else 0.0
 
     return src_f1_on_tgt_exact, mean_similarity
