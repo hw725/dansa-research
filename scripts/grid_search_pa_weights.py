@@ -150,6 +150,10 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
             "--trace-stages-jsonl", docker_trace,
             "--seed", str(seed),
         ]
+
+        # enable_refine 옵션 추가 (config에서 읽음)
+        if config.get('enable_refine', False):
+            cmd.append("--enable-refine")
         
         result = subprocess.run(cmd, capture_output=True, cwd=Path.cwd())
         
@@ -294,7 +298,9 @@ def parse_args():
                         help='확인 프롬프트 없이 자동 실행')
     parser.add_argument('--sample-size', type=int, default=None,
                         help='테스트 샘플 크기 (기본: 전체, 빠른 검증: 100)')
-    
+    parser.add_argument('--enable-refine', action='store_true',
+                        help='Refinement 로직 활성화 (max_shift=4)')
+
     return parser.parse_args()
 
 def parse_range(value_str: str) -> list:
@@ -335,7 +341,8 @@ def main():
     ):
         config = {
             'prior_bonus': pb,
-            'length_penalty': lp
+            'length_penalty': lp,
+            'enable_refine': args.enable_refine
         }
         if bt is not None:
             config['boundary_threshold'] = bt
