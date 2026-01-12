@@ -102,11 +102,14 @@ def build_cooccurrence(
 
     for _, row in df.iterrows():
         # group 결정
-        p_val = str(row["parent_cluster_id"])
+        c_id_col = "parent_cluster_id" if "parent_cluster_id" in row else "cluster_id"
+        if c_id_col not in row:
+             continue
+        p_val = str(row[c_id_col])
         c_val = str(row.get("child_cluster_id", -1))
         parent_id_str = p_val[1:] if p_val.startswith("p") else p_val # "p1" -> "1"
-        parent_id_int = int(parent_id_str)
-        child_id_int = int(c_val) if c_val != "-1" else -1
+        parent_id_int = int(float(parent_id_str))
+        child_id_int = int(float(c_val)) if c_val != "-1" else -1
         
         if group_level == "parent":
             group = f"p{parent_id_int}"
@@ -701,6 +704,7 @@ def main() -> int:
     p.add_argument("--label-top-markers", type=int, default=40)
     p.add_argument("--exclude-markers", type=str, default="<NULL>")
     p.add_argument("--split-markers", action="store_true", help="마커를 Parent ID별로 분리하여 분석 (다의성 분석용)")
+    p.add_argument("--run-both", action="store_true", default=True, help="Normal 모드와 Split 모드 모두 실행")
     args = p.parse_args()
 
     if not args.csv.exists():
@@ -713,60 +717,72 @@ def main() -> int:
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
-    # ===== 분석 수행 =====
-    mode_str = "Split Mode" if args.split_markers else "Normal Mode"
-    suffix = "split" if args.split_markers else "normal"
-    
-    print(f"\n📊 {mode_str} 분석 중... (Weighting: Tiered [Saseo:5x, Seogyung:3x, others:2x/1x])")
-    C, groups, markers, g_counts, m_counts = build_cooccurrence(
-        df, src_cols, "parent_child", args.min_count, exclude, saseo_weight=args.saseo_weight, split_markers=args.split_markers
-    )
-    
-    # 2D 임베딩
-    print("  - Computing 2D joint embedding...")
-    gxy_2d, mxy_2d = joint_embedding(C, args.method, args.svd_dim, args.seed, dim=2)
-    hulls_2d = compute_convex_hulls(gxy_2d, groups)
-    
-    save_html_2d_clean_parent(
-        args.out_dir / f"joint_embedding_{suffix}_2d.html",
-        groups, gxy_2d, g_counts,
-        markers, mxy_2d, m_counts,
-        hulls_2d, args.label_top_markers,
-        f"Parent-Marker {mode_str} ({args.method.upper()})",
-        args.method,
-    )
+    # 실행할 모드 결정
+    modes = []
+    if args.run_both:
+        modes = [False, True]
+    else:
+        modes = [args.split_markers]
 
-    # 3D 임베딩
-    print("  - Computing 3D joint embedding...")
-    gxy_3d, mxy_3d = joint_embedding(C, args.method, args.svd_dim, args.seed, dim=3)
-    save_html_3d_clean_parent(
-        args.out_dir / f"joint_embedding_{suffix}_3d.html",
-        groups, gxy_3d, g_counts,
-        markers, mxy_3d, m_counts,
-        args.label_top_markers,
-        f"Parent-Marker 3D {mode_str} ({args.method.upper()})",
-    )
-
-    # 통합 CSV 저장
-    out_csv = args.out_dir / "joint_embedding_parent_only.csv"
-    records = []
-    pid_map = defaultdict(list)
-    for i, g in enumerate(groups):
-        pid = int(g.split("_")[0][1:]) if "_" in g else int(g[1:])
-        pid_map[pid].append(gxy_2d[i])
-    
-    # Parent 위치 (2D 기준 centroid) 계산하여 저장
-    for pid in sorted(pid_map.keys()):
-        coords = np.array(pid_map[pid])
-        centroid = coords.mean(axis=0)
-        total_count = sum(g_counts.get(g, 0) for g in groups if (int(g.split("_")[0][1:]) if "_" in g else int(g[1:])) == pid)
-        records.append({"kind": "parent", "name": f"p{pid}", "x": centroid[0], "y": centroid[1], "count": total_count})
+    for is_split in modes:
+        # ===== 분석 수행 =====
+        mode_str = "Split Mode" if is_split else "Normal Mode"
+        suffix = "split_markers" if is_split else "normal_markers"
         
-    for i, m in enumerate(markers):
-        records.append({"kind": "marker", "name": m, "x": mxy_2d[i, 0], "y": mxy_2d[i, 1], "count": m_counts.get(m, 0)})
-    
-    pd.DataFrame(records).to_csv(out_csv, index=False, encoding="utf-8-sig")
-    print(f"✅ Saved CSV: {out_csv}")
+        print(f"\n📊 {mode_str} 분석 중... (Weighting: Tiered [Saseo:5x, Seogyung:3x, others:2x/1x])")
+        C, groups, markers, g_counts, m_counts = build_cooccurrence(
+            df, src_cols, "parent_child", args.min_count, exclude, saseo_weight=args.saseo_weight, split_markers=is_split
+        )
+        
+        if len(markers) == 0:
+            print(f"  ⚠️ {mode_str}: 유효한 마커가 없어 건너뜁니다.")
+            continue
+
+        # 2D 임베딩
+        print("  - Computing 2D joint embedding...")
+        gxy_2d, mxy_2d = joint_embedding(C, args.method, args.svd_dim, args.seed, dim=2)
+        hulls_2d = compute_convex_hulls(gxy_2d, groups)
+        
+        save_html_2d_clean_parent(
+            args.out_dir / f"joint_embedding_{suffix}_2d.html",
+            groups, gxy_2d, g_counts,
+            markers, mxy_2d, m_counts,
+            hulls_2d, args.label_top_markers,
+            f"Parent-Marker {mode_str} ({args.method.upper()})",
+            args.method,
+        )
+
+        # 3D 임베딩
+        print("  - Computing 3D joint embedding...")
+        gxy_3d, mxy_3d = joint_embedding(C, args.method, args.svd_dim, args.seed, dim=3)
+        save_html_3d_clean_parent(
+            args.out_dir / f"joint_embedding_{suffix}_3d.html",
+            groups, gxy_3d, g_counts,
+            markers, mxy_3d, m_counts,
+            args.label_top_markers,
+            f"Parent-Marker 3D {mode_str} ({args.method.upper()})",
+        )
+
+        # 통합 CSV 저장
+        out_csv = args.out_dir / f"joint_embedding_{suffix}_parent_only.csv"
+        records = []
+        pid_map = defaultdict(list)
+        for i, g in enumerate(groups):
+            pid = int(g.split("_")[0][1:]) if "_" in g else int(g[1:])
+            pid_map[pid].append(gxy_2d[i])
+        
+        # Parent 위치 (2D 기준 centroid) 계산하여 저장
+        for pid in sorted(pid_map.keys()):
+            coords = np.array(pid_map[pid])
+            centroid = coords.mean(axis=0)
+            total_count = sum(g_counts.get(g, 0) for g in groups if (int(g.split("_")[0][1:]) if "_" in g else int(g[1:])) == pid)
+            records.append({"kind": "parent", "name": f"p{pid}", "x": centroid[0], "y": centroid[1], "count": total_count})
+            
+        for i, m in enumerate(markers):
+            records.append({"kind": "marker", "name": m, "x": mxy_2d[i, 0], "y": mxy_2d[i, 1], "count": m_counts.get(m, 0)})
+        
+        pd.DataFrame(records).to_csv(out_csv, index=False, encoding="utf-8-sig")
+        print(f"✅ Saved CSV: {out_csv}")
 
     # Config
     cfg = {
@@ -777,6 +793,7 @@ def main() -> int:
         "min_count": args.min_count,
         "seed": args.seed,
         "label_top_markers": args.label_top_markers,
+        "run_both": args.run_both
     }
     (args.out_dir / "config.json").write_text(json.dumps(cfg, ensure_ascii=False, indent=2), encoding="utf-8")
 

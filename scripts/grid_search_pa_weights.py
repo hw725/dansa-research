@@ -18,14 +18,22 @@ import json
 import time
 from datetime import datetime
 
-def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_path: Path, sample_size: int = None):
-    """특정 설정으로 PA 실행 (subprocess로 pa/main.py 호출)"""
+def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_path: Path, sample_size: int = None, exclude_set: set = None):
+    """특정 설정으로 PA 실행 (subprocess로 pa/main.py 호출)
+    
+    Args:
+        exclude_set: 제외할 (book_name, paragraph_id) 튜플의 집합
+    """
     
     config_name = f"pb{config['prior_bonus']:.2f}_lp{config['length_penalty']:.2f}"
     if config.get('boundary_threshold'):
         config_name += f"_bt{config['boundary_threshold']:.2f}"
     if config.get('supar_bonus'):
         config_name += f"_sb{config['supar_bonus']:.2f}"
+    if config.get('bsp_weight_terminal'):
+        config_name += f"_bwt{config['bsp_weight_terminal']:.3f}"
+    if config.get('bsp_weight_continuation'):
+        config_name += f"_bwc{config['bsp_weight_continuation']:.3f}"
     
     # 상대 경로로 run_dir 생성
     run_dir = output_dir / config_name / f"seed{seed}"
@@ -74,6 +82,14 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
                 cfg['pa'] = {}
             cfg['pa']['boundary_threshold'] = config['boundary_threshold']
         
+        # boundary_style_prior 가중치 설정
+        if 'boundary_style_prior' not in cfg['pa_selection_params']:
+            cfg['pa_selection_params']['boundary_style_prior'] = {'enabled': True}
+        if 'bsp_weight_terminal' in config:
+            cfg['pa_selection_params']['boundary_style_prior']['weight_terminal'] = config['bsp_weight_terminal']
+        if 'bsp_weight_continuation' in config:
+            cfg['pa_selection_params']['boundary_style_prior']['weight_continuation'] = config['bsp_weight_continuation']
+        
         # 수정된 설정 저장
         with open(base_config_path, 'w', encoding='utf-8') as f:
             json.dump(cfg, f, indent=2, ensure_ascii=False)
@@ -90,6 +106,13 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
             raise ValueError(f"테스트 데이터에 필수 컬럼이 없습니다: {missing_key_cols}\n사용 가능한 컬럼: {test_df.columns.tolist()}")
 
         key_df = test_df[required_key_cols].drop_duplicates().reset_index(drop=True)
+        
+        # 제외 케이스 적용 (데이터 누수 방지)
+        if exclude_set:
+            before_count = len(key_df)
+            key_df = key_df[~key_df.apply(lambda r: (r['book_name'], r['문단식별자']) in exclude_set, axis=1)].reset_index(drop=True)
+            excluded_count = before_count - len(key_df)
+            print(f"제외된 케이스: {excluded_count}개 (데이터 누수 방지)")
 
         sample_keys_file = run_dir_abs / f"sample_keys_seed{seed}.json"
         if sample_size and sample_size < len(key_df):
@@ -290,6 +313,10 @@ def parse_args():
                         help='콤마 구분 boundary threshold 값들 (선택, 예: 0.65,0.70,0.75)')
     parser.add_argument('--supar-bonus', type=str, default=None,
                         help='콤마 구분 supar bonus 값들 (선택, 예: 0.0,0.05,0.10)')
+    parser.add_argument('--boundary-weight-terminal', type=str, default=None,
+                        help='콤마 구분 boundary_style_prior weight_terminal 값들 (예: 0.006,0.01,0.02)')
+    parser.add_argument('--boundary-weight-continuation', type=str, default=None,
+                        help='콤마 구분 boundary_style_prior weight_continuation 값들 (예: -0.006,-0.01,-0.02)')
     parser.add_argument('--seeds', type=str, required=True,
                         help='콤마 구분 seed 값들 (예: 1,2,3 또는 1-10)')
     parser.add_argument('--output-dir', type=str, required=True,
@@ -298,6 +325,10 @@ def parse_args():
                         help='확인 프롬프트 없이 자동 실행')
     parser.add_argument('--sample-size', type=int, default=None,
                         help='테스트 샘플 크기 (기본: 전체, 빠른 검증: 100)')
+    parser.add_argument('--exclude-file', type=str, default=None,
+                        help='제외할 케이스 CSV 파일 (book_name, paragraph_id 컬럼 필요)')
+    parser.add_argument('--min-sample-ratio', type=float, default=0.5,
+                        help='제외 후 최소 샘플 비율 (기본: 0.5 = 50%%)')
     parser.add_argument('--enable-refine', action='store_true',
                         help='Refinement 로직 활성화 (max_shift=4)')
 
@@ -321,6 +352,8 @@ def main():
     length_penalty_values = parse_range(args.length_penalty)
     boundary_threshold_values = parse_range(args.boundary_threshold) if args.boundary_threshold else [None]
     supar_bonus_values = parse_range(args.supar_bonus) if args.supar_bonus else [None]
+    bsp_terminal_values = parse_range(args.boundary_weight_terminal) if args.boundary_weight_terminal else [None]
+    bsp_continuation_values = parse_range(args.boundary_weight_continuation) if args.boundary_weight_continuation else [None]
     seeds = parse_range(args.seeds)
     
     output_dir = Path(args.output_dir)
@@ -333,11 +366,13 @@ def main():
     
     # 실험 조합 생성
     configs = []
-    for pb, lp, bt, sb in itertools.product(
+    for pb, lp, bt, sb, bwt, bwc in itertools.product(
         prior_bonus_values,
         length_penalty_values,
         boundary_threshold_values,
-        supar_bonus_values
+        supar_bonus_values,
+        bsp_terminal_values,
+        bsp_continuation_values
     ):
         config = {
             'prior_bonus': pb,
@@ -348,6 +383,10 @@ def main():
             config['boundary_threshold'] = bt
         if sb is not None:
             config['supar_bonus'] = sb
+        if bwt is not None:
+            config['bsp_weight_terminal'] = bwt
+        if bwc is not None:
+            config['bsp_weight_continuation'] = bwc
         configs.append(config)
     
     total_experiments = len(configs) * len(seeds)
@@ -361,11 +400,24 @@ def main():
         print(f"Boundary Threshold 값들: {boundary_threshold_values}")
     if args.supar_bonus:
         print(f"Supar Bonus 값들: {supar_bonus_values}")
+    if args.boundary_weight_terminal:
+        print(f"Boundary Style Prior - weight_terminal 값들: {bsp_terminal_values}")
+    if args.boundary_weight_continuation:
+        print(f"Boundary Style Prior - weight_continuation 값들: {bsp_continuation_values}")
     print(f"Seeds: {seeds}")
     print(f"총 설정 조합: {len(configs)}")
     print(f"총 실험 횟수: {total_experiments}")
     if args.sample_size:
         print(f"샘플 크기: {args.sample_size} (빠른 검증 모드)")
+    
+    # 제외 케이스 로드 (데이터 누수 방지)
+    exclude_set = None
+    if args.exclude_file:
+        import pandas as pd
+        exclude_df = pd.read_csv(args.exclude_file)
+        exclude_set = set(zip(exclude_df['book_name'], exclude_df['paragraph_id']))
+        print(f"제외 케이스 파일: {args.exclude_file} ({len(exclude_set)}개)")
+    
     print(f"출력 디렉토리: {output_dir}")
     print(f"{'='*80}\n")
     
@@ -389,7 +441,7 @@ def main():
             experiment_num = (i - 1) * len(seeds) + j
             print(f"\n진행: {experiment_num}/{total_experiments} ({experiment_num/total_experiments*100:.1f}%)")
             
-            result = run_pa_with_config(config, seed, output_dir, base_config_path, args.sample_size)
+            result = run_pa_with_config(config, seed, output_dir, base_config_path, args.sample_size, exclude_set)
             
             if result:
                 seed_result = {
