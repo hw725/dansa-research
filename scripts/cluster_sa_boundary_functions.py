@@ -171,6 +171,10 @@ def main():
     parser.add_argument("--use-src", action="store_true", default=True)
     parser.add_argument("--use-tgt", action="store_true", default=True)
 
+    # 임베딩 캐시 옵션
+    parser.add_argument("--load-embeddings", type=str, default=None, help="임베딩 캐시 로드 경로 (.npy)")
+    parser.add_argument("--save-embeddings", type=str, default=None, help="임베딩 캐시 저장 경로 (.npy)")
+
     args = parser.parse_args()
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -180,9 +184,22 @@ def main():
         print("경계가 없습니다.")
         return
 
-    texts = [inst.to_embed_text(use_src=args.use_src, use_tgt=args.use_tgt) for inst in boundaries]
-    X = compute_embeddings_batched(texts, batch_size=args.batch, device_id=args.device_id)
-    X = _l2_normalize(X)
+    # 임베딩 캐시 로드 또는 계산
+    if args.load_embeddings and Path(args.load_embeddings).exists():
+        print(f"✅ 임베딩 캐시 로드: {args.load_embeddings}")
+        X = np.load(args.load_embeddings)
+        X = _l2_normalize(X)
+    else:
+        texts = [inst.to_embed_text(use_src=args.use_src, use_tgt=args.use_tgt) for inst in boundaries]
+        X = compute_embeddings_batched(texts, batch_size=args.batch, device_id=args.device_id)
+        X = _l2_normalize(X)
+        
+        # 임베딩 캐시 저장
+        if args.save_embeddings:
+            save_path = Path(args.save_embeddings)
+            save_path.parent.mkdir(parents=True, exist_ok=True)
+            np.save(str(save_path), X)
+            print(f"✅ 임베딩 캐시 저장: {save_path}")
 
     labels = cluster_kmeans(X, k=args.k, seed=args.seed)
     save_results(boundaries, labels, out_dir, seed=args.seed)

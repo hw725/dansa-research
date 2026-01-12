@@ -220,6 +220,10 @@ def main() -> None:
     p.add_argument("--k", type=int, default=64, help="클러스터 수(KMeans K)")
     p.add_argument("--top-k", type=int, default=3, help="리포트 예시 개수")
 
+    # 임베딩 캐시 옵션
+    p.add_argument("--load-embeddings", type=str, default=None, help="임베딩 캐시 로드 경로 (.npy)")
+    p.add_argument("--save-embeddings", type=str, default=None, help="임베딩 캐시 저장 경로 (.npy)")
+
     args = p.parse_args()
 
     use_src = bool(args.use_src)
@@ -242,9 +246,28 @@ def main() -> None:
     if not instances:
         raise SystemExit("경계 인스턴스가 0개입니다. 입력/정렬 상태를 확인하세요.")
 
-    texts = [x.to_embed_text(use_src=use_src, use_tgt=use_tgt) for x in instances]
-    X = compute_embeddings_batched(texts, batch_size=int(args.batch), device_id=args.device_id)
-    X = _l2_normalize(X)
+    # 임베딩 캐시 로드 또는 계산
+    if args.load_embeddings and Path(args.load_embeddings).exists():
+        print(f"✅ 임베딩 캐시 로드: {args.load_embeddings}")
+        X = np.load(args.load_embeddings)
+        X = _l2_normalize(X)
+        # 캐시 길이에 인스턴스 수 맞추기
+        if len(X) < len(instances):
+            instances = instances[:len(X)]
+        elif len(X) > len(instances):
+            X = X[:len(instances)]
+        print(f"  -> 인스턴스 {len(instances)}개, 임베딩 {len(X)}개 (동기화됨)")
+    else:
+        texts = [x.to_embed_text(use_src=use_src, use_tgt=use_tgt) for x in instances]
+        X = compute_embeddings_batched(texts, batch_size=int(args.batch), device_id=args.device_id)
+        X = _l2_normalize(X)
+        
+        # 임베딩 캐시 저장
+        if args.save_embeddings:
+            save_path = Path(args.save_embeddings)
+            save_path.parent.mkdir(parents=True, exist_ok=True)
+            np.save(str(save_path), X)
+            print(f"✅ 임베딩 캐시 저장: {save_path}")
 
     k = max(2, min(int(args.k), len(instances)))
     km = MiniBatchKMeans(n_clusters=k, random_state=int(args.seed), batch_size=1024, n_init="auto")

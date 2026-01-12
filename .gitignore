@@ -232,6 +232,14 @@ models/
 
 # Local scratch / integration notes
 INTEGRATION_PLAN.md
+hyeonto/NEXT_STEPS.md
+hyeonto/SCRIPT_CLEANUP.md
+
+# Hyeonto large files and temporary data (do not commit)
+hyeonto/cache/
+hyeonto/datasets/
+hyeonto/trash/
+hyeonto/reports/archive/
 
 # Local analysis scratch (do not commit)
 analytics/analyze_sentence_eval.py
