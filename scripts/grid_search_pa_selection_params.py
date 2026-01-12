@@ -2,7 +2,7 @@
 """PA selection params Grid Search 러너
 
 왜 새 스크립트인가?
-- 기존 scripts/grid_search_pa_weights.py 가 바꾸던 pa.sentence_splitter.{prior_bonus,length_penalty_coef,supar_bonus}는
+- 기존 scripts/grid_search_pa_weights.py 가 바꾸던 pa.sentence_splitter.{prior_bonus,supar_bonus} 등은
   현재 PA 선택/정렬 점수 로직(특히 pa/processor.py의 후보 선택 score)에 직접 연결되어 있지 않습니다.
 - 반면 pa_selection_params는 후보 선택 점수에 직접 들어갑니다:
   - candidate_prior_bonus_by_prefix ("supar(", "boundary(")
@@ -265,6 +265,15 @@ def main() -> None:
     parser.add_argument("--base-config", default="csp_config.json", type=str)
     parser.add_argument("--sample-size", default=1000, type=int)
     parser.add_argument("--seeds", default="1,2,3", type=str)
+    parser.add_argument(
+        "--exclude-file",
+        default="",
+        type=str,
+        help=(
+            "샘플링에서 제외할 케이스 CSV 경로 (book_name, paragraph_id 컬럼 필요). "
+            "규칙 도출에 사용한 실패 케이스를 제외해 데이터 누수를 방지할 때 사용."
+        ),
+    )
 
     # 실제 레버들
     # boundary-threshold: 그리드로 여러 값 시도 가능 (콤마/구간)
@@ -512,9 +521,8 @@ def main() -> None:
             config_entry: Dict[str, Any] = {
                 "config": {
                     "prior_bonus": cfg["prior_boundary"],
-                    "length_penalty": cfg["prior_supar"],
                     "boundary_threshold": float(bt),
-                    "supar_bonus": 0.0,
+                    "supar_bonus": cfg["prior_supar"],
                     **(
                         {"boundary_aware_weight": float(cfg["boundary_aware_weight"])}
                         if cfg.get("boundary_aware_weight") is not None
@@ -689,6 +697,23 @@ def main() -> None:
     import pandas as pd
     test_df = pd.read_csv(gt_csv)
     key_df = test_df[["book_name", "문단식별자"]].drop_duplicates().reset_index(drop=True)
+
+    # 데이터 누수 방지: 규칙 도출에 사용한 케이스 제외
+    if args.exclude_file and args.exclude_file.strip():
+        exclude_path = Path(args.exclude_file)
+        if not exclude_path.exists():
+            raise FileNotFoundError(f"exclude file not found: {exclude_path}")
+        ex_df = pd.read_csv(exclude_path)
+        if "book_name" not in ex_df.columns or "paragraph_id" not in ex_df.columns:
+            raise ValueError(
+                "exclude-file CSV에는 book_name, paragraph_id 컬럼이 필요합니다. "
+                f"현재 컬럼: {ex_df.columns.tolist()}"
+            )
+        exclude_set = set(zip(ex_df["book_name"], ex_df["paragraph_id"]))
+        before = len(key_df)
+        key_df = key_df[~key_df.apply(lambda r: (r["book_name"], r["문단식별자"]) in exclude_set, axis=1)].reset_index(drop=True)
+        removed = before - len(key_df)
+        print(f"[exclude] removed {removed} paragraphs from sampling (remaining={len(key_df)})")
 
     # 프리플라이트: 첫/끝 config를 stage1 크기로 1 seed만 돌려 결과 파일 해시가 같으면 즉시 중단
     if len(configs) >= 2 and stage1_seeds:

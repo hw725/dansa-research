@@ -5,7 +5,6 @@ PA 가중치 Grid Search 러너
 
 실험 매개변수:
 - prior_bonus: 현토 마커 보너스 계수
-- length_penalty: 길이 차이 패널티 계수
 - boundary_threshold: boundary 모델 임계값 (선택)
 - supar_bonus: supar 추가 보너스 (선택)
 """
@@ -17,15 +16,128 @@ from pathlib import Path
 import json
 import time
 from datetime import datetime
+import math
+from threading import Thread
+from queue import Queue, Empty
 
-def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_path: Path, sample_size: int = None, exclude_set: set = None):
+
+def _run_cmd_with_live_progress(cmd: list, *, cwd: Path, label: str):
+    """긴 subprocess를 실행하면서
+    - 출력이 나오면 즉시 터미널로 스트리밍
+    - 출력이 없어도 스피너/경과시간을 주기적으로 갱신
+
+    Returns:
+        (returncode, stdout_text, stderr_text)
+    """
+
+    def reader_thread(stream, q: Queue, is_stderr: bool):
+        try:
+            for line in iter(stream.readline, ''):
+                if not line:
+                    break
+                q.put((is_stderr, line))
+        finally:
+            try:
+                stream.close()
+            except Exception:
+                pass
+
+    proc = subprocess.Popen(
+        cmd,
+        cwd=str(cwd),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        encoding='utf-8',
+        errors='replace',
+        bufsize=1,
+        universal_newlines=True,
+    )
+
+    q: Queue = Queue()
+    t_out = Thread(target=reader_thread, args=(proc.stdout, q, False), daemon=True)
+    t_err = Thread(target=reader_thread, args=(proc.stderr, q, True), daemon=True)
+    t_out.start()
+    t_err.start()
+
+    spinner = ['|', '/', '-', '\\']
+    spin_i = 0
+    start = time.time()
+    last_line = ''
+
+    stdout_chunks = []
+    stderr_chunks = []
+
+    # 출력이 없어도 주기적으로 상태 갱신
+    while proc.poll() is None:
+        # 가능한 만큼 출력 소비
+        drained_any = False
+        try:
+            while True:
+                is_err, line = q.get_nowait()
+                drained_any = True
+                last_line = line.strip() or last_line
+                if is_err:
+                    stderr_chunks.append(line)
+                    # stderr도 로그일 수 있으므로 그대로 출력
+                    print(line, end='')
+                else:
+                    stdout_chunks.append(line)
+                    print(line, end='')
+        except Empty:
+            pass
+
+        # 출력이 없을 때만 한 줄 진행 표시(너무 시끄럽지 않게)
+        if not drained_any:
+            elapsed = int(time.time() - start)
+            mm, ss = divmod(elapsed, 60)
+            hh, mm = divmod(mm, 60)
+            elapsed_str = f"{hh:02d}:{mm:02d}:{ss:02d}"
+            tail = (last_line[:80] + '…') if len(last_line) > 80 else last_line
+            print(f"\r[{label}] 실행 중 {spinner[spin_i % len(spinner)]}  elapsed={elapsed_str}  last=\"{tail}\"", end='', flush=True)
+            spin_i += 1
+
+        time.sleep(0.5)
+
+    # 종료 후 남은 출력 비우기
+    try:
+        while True:
+            is_err, line = q.get_nowait()
+            if is_err:
+                stderr_chunks.append(line)
+                print(line, end='')
+            else:
+                stdout_chunks.append(line)
+                print(line, end='')
+    except Empty:
+        pass
+
+    # 진행 표시가 남아있을 수 있으니 줄바꿈
+    print('')
+
+    # 스레드 종료 대기(짧게)
+    t_out.join(timeout=1)
+    t_err.join(timeout=1)
+
+    return proc.returncode, ''.join(stdout_chunks), ''.join(stderr_chunks)
+
+def run_pa_with_config(
+    config: dict,
+    seed: int,
+    output_dir: Path,
+    base_config_path: Path,
+    sample_size: int = None,
+    exclude_set: set = None,
+    min_sample_ratio: float = 0.0,
+    trace_enabled: bool = False,
+):
     """특정 설정으로 PA 실행 (subprocess로 pa/main.py 호출)
     
     Args:
         exclude_set: 제외할 (book_name, paragraph_id) 튜플의 집합
     """
     
-    config_name = f"pb{config['prior_bonus']:.2f}_lp{config['length_penalty']:.2f}"
+    config_name = f"pb{config['prior_bonus']:.2f}"
     if config.get('boundary_threshold'):
         config_name += f"_bt{config['boundary_threshold']:.2f}"
     if config.get('supar_bonus'):
@@ -38,9 +150,105 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
     # 상대 경로로 run_dir 생성
     run_dir = output_dir / config_name / f"seed{seed}"
     run_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # 절대 경로로 변환
     run_dir_abs = run_dir.resolve()
+
+    # 재실행 방지: 이미 metrics가 있으면 그대로 재사용
+    existing_metrics = run_dir_abs / f"metrics_seed{seed}.json"
+    if existing_metrics.exists():
+        try:
+            with open(existing_metrics, 'r', encoding='utf-8') as f:
+                m = json.load(f)
+            f1_score = float(m.get('micro_f1_tgt_exact', 0.0))
+            sim_score = float(m.get('mean_similarity', 0.0))
+            print(f"[SKIP] 기존 결과 재사용: {existing_metrics} (F1: {f1_score:.4f}, Sim: {sim_score:.4f})")
+            return {'f1': f1_score, 'similarity': sim_score}
+        except Exception as e:
+            print(f"[WARNING] 기존 metrics 파싱 실패로 재실행합니다: {existing_metrics} ({e})")
+
+    # 재개 지원: PA 출력은 있는데 metrics가 없으면, PA를 다시 돌리지 않고 평가만 수행
+    existing_input_xlsx = run_dir_abs / f"pa_test_input_seed{seed}.xlsx"
+    existing_output_xlsx = run_dir_abs / f"pa_test_output_seed{seed}.xlsx"
+    if existing_output_xlsx.exists():
+        try:
+            print(f"[RESUME] 기존 PA 출력 발견 → 평가만 재개: {existing_output_xlsx}")
+
+            import pandas as pd
+
+            gold_subset_path = run_dir_abs / f"pa_gold_subset_seed{seed}.csv"
+            if existing_input_xlsx.exists():
+                sys.path.insert(0, str(Path.cwd()))
+                from integrity_report import extract_gold_subset
+
+                extract_gold_subset(
+                    gold_path=Path("datasets/pa/test.csv"),
+                    out_path=gold_subset_path,
+                    keys_from=existing_input_xlsx,
+                )
+            else:
+                gt_df_full = pd.read_csv("datasets/pa/test.csv")
+                gt_df_full.to_csv(gold_subset_path, index=False, encoding='utf-8-sig')
+
+            project_root = Path.cwd()
+            docker_output = f"/workspace/{existing_output_xlsx.relative_to(project_root).as_posix()}"
+            docker_gold = f"/workspace/{gold_subset_path.relative_to(project_root).as_posix()}"
+
+            eval_cmd = [
+                "docker-compose", "exec", "-T", "csp",
+                "python", "integrity_report.py",
+                "--input", docker_output,
+                "--gold", docker_gold,
+            ]
+
+            eval_result = subprocess.run(eval_cmd, capture_output=True, cwd=Path.cwd())
+
+            try:
+                eval_stdout = eval_result.stdout.decode('utf-8', errors='ignore')
+                eval_stderr = eval_result.stderr.decode('utf-8', errors='ignore')
+            except Exception:
+                eval_stdout = str(eval_result.stdout)
+                eval_stderr = str(eval_result.stderr)
+
+            eval_log = run_dir_abs / f"eval_log_seed{seed}.txt"
+            with open(eval_log, 'w', encoding='utf-8') as f:
+                f.write(f"Return code: {eval_result.returncode}\n\n")
+                f.write(f"=== STDOUT ===\n{eval_stdout}\n\n")
+                f.write(f"=== STDERR ===\n{eval_stderr}\n")
+
+            if eval_result.returncode > 2:
+                print(f"[WARNING] 평가 실패 (exit code: {eval_result.returncode})")
+                print(f"[DEBUG] 로그 확인: {eval_log}")
+                return None
+
+            import re
+            _F1_TGT_EXACT_RE = re.compile(
+                r"\(micro,\s*tgt\s*완전일치\s*subset\):\s*([0-9.]+)\s*/\s*([0-9.]+)\s*/\s*([0-9.]+)"
+            )
+            _SRC_SIM_OK_MEAN_RE = re.compile(r"원문 유사도\(SequenceMatcher,\s*tgt문장일치\s*subset\):\s*mean=([0-9.]+)")
+
+            f1_score = 0.0
+            sim_score = 0.0
+
+            m_f1 = _F1_TGT_EXACT_RE.search(eval_stdout)
+            if m_f1:
+                f1_score = float(m_f1.group(3))
+
+            m_sim = _SRC_SIM_OK_MEAN_RE.search(eval_stdout)
+            if m_sim:
+                sim_score = float(m_sim.group(1))
+
+            metrics = {
+                'micro_f1_tgt_exact': f1_score,
+                'mean_similarity': sim_score,
+            }
+            with open(existing_metrics, 'w', encoding='utf-8') as f:
+                json.dump(metrics, f, indent=2, ensure_ascii=False)
+
+            print(f"[OK] 평가 완료 (F1: {f1_score:.4f}, Sim: {sim_score:.4f})")
+            return {'f1': f1_score, 'similarity': sim_score}
+        except Exception as e:
+            print(f"[WARNING] RESUME 평가 실패로 재실행합니다: {e}")
     
     print(f"\n{'='*80}")
     print(f"실행: {config_name} / seed{seed}")
@@ -72,10 +280,6 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
         # supar_bonus가 명시된 경우 supar만 덮어쓰기
         if 'supar_bonus' in config:
             cfg['pa_selection_params']['candidate_prior_bonus_by_prefix']['supar('] = config['supar_bonus']
-
-        # length_penalty는 현재 pa_selection_params에 해당 항목이 없음
-        # (whitespace_dp_penalties 내 penalty 값들과는 별개)
-        # 필요시 추가 구현
 
         if 'boundary_threshold' in config:
             if 'pa' not in cfg:
@@ -114,11 +318,20 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
             excluded_count = before_count - len(key_df)
             print(f"제외된 케이스: {excluded_count}개 (데이터 누수 방지)")
 
+        # 최소 샘플 비율 적용 (기본: 50%)
+        # - sample_size를 명시한 경우(예: 100문단 빠른 그리드)는 사용자가 의도한 값이므로 강제 확대하지 않음
+        # - sample_size가 None(전체/대규모 실험)인 경우에만 하한으로 적용
+        effective_sample_size = sample_size
+        if effective_sample_size is None and min_sample_ratio and 0 < float(min_sample_ratio) < 1:
+            min_required = int(math.ceil(len(key_df) * float(min_sample_ratio)))
+            effective_sample_size = min_required
+            print(f"샘플 최소 비율 적용: {float(min_sample_ratio):.2f} → {effective_sample_size}개 문단")
+
         sample_keys_file = run_dir_abs / f"sample_keys_seed{seed}.json"
-        if sample_size and sample_size < len(key_df):
+        if effective_sample_size and effective_sample_size < len(key_df):
             import random
             random.seed(seed)
-            sampled_idx = random.sample(range(len(key_df)), min(sample_size, len(key_df)))
+            sampled_idx = random.sample(range(len(key_df)), min(effective_sample_size, len(key_df)))
             sampled_keys_df = key_df.iloc[sampled_idx].reset_index(drop=True)
             sample_msg = f" (샘플링: {len(sampled_keys_df)}개 문단)"
         else:
@@ -155,11 +368,11 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
         project_root = Path.cwd()
         rel_input = input_xlsx.relative_to(project_root)
         rel_output = output_xlsx.relative_to(project_root)
-        rel_trace = trace_jsonl.relative_to(project_root)
-
         docker_input = f"/workspace/{rel_input.as_posix()}"
         docker_output = f"/workspace/{rel_output.as_posix()}"
-        docker_trace = f"/workspace/{rel_trace.as_posix()}"
+        if trace_enabled:
+            rel_trace = trace_jsonl.relative_to(project_root)
+            docker_trace = f"/workspace/{rel_trace.as_posix()}"
 
         cmd = [
             "docker-compose", "exec", "-T", "csp",
@@ -170,23 +383,51 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
             "--use-boundary-model",
             "--boundary-threshold", str(cfg['pa'].get('boundary_threshold', 0.70)),
             "--enable-src-marker-boundary-bonus",
-            "--trace-stages-jsonl", docker_trace,
             "--seed", str(seed),
         ]
+
+        # trace는 Windows 바인드 마운트 I/O 병목을 크게 유발할 수 있어 기본 비활성화
+        if trace_enabled:
+            cmd.extend(["--trace-stages-jsonl", docker_trace])
 
         # enable_refine 옵션 추가 (config에서 읽음)
         if config.get('enable_refine', False):
             cmd.append("--enable-refine")
         
-        result = subprocess.run(cmd, capture_output=True, cwd=Path.cwd())
-        
-        # 결과를 UTF-8로 디코딩
-        try:
-            stdout = result.stdout.decode('utf-8', errors='ignore')
-            stderr = result.stderr.decode('utf-8', errors='ignore')
-        except:
-            stdout = str(result.stdout)
-            stderr = str(result.stderr)
+        # PA 실행 (간헐적으로 docker-compose exec가 SIGTERM(143)로 종료되는 경우가 있어 1회 재시도)
+        returncode = None
+        stdout = ""
+        stderr = ""
+        for attempt in range(2):
+            if attempt > 0:
+                print(f"[RETRY] docker exec가 종료되어 재시도합니다 (attempt {attempt+1}/2)")
+                time.sleep(2)
+
+            returncode, stdout, stderr = _run_cmd_with_live_progress(
+                cmd,
+                cwd=Path.cwd(),
+                label=f"PA seed{seed}",
+            )
+
+            # 실패 로그 저장(원인 추적용)
+            run_log = run_dir_abs / f"pa_run_log_seed{seed}.txt"
+            try:
+                with open(run_log, 'w', encoding='utf-8') as f:
+                    f.write(f"Return code: {returncode}\n")
+                    f.write(f"Command: {' '.join(cmd)}\n\n")
+                    f.write("=== STDOUT ===\n")
+                    f.write(stdout or "")
+                    f.write("\n\n=== STDERR ===\n")
+                    f.write(stderr or "")
+                    f.write("\n")
+            except Exception:
+                pass
+
+            # 143 = 128+15 (SIGTERM). 일시적 종료로 보고 1회만 재시도.
+            if returncode == 143 and attempt == 0:
+                continue
+
+            break
         
         # stderr는 로그 정보일 수 있으므로 출력만 함
         if stderr and '--use-boundary-model' in ' '.join(cmd):
@@ -194,8 +435,8 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
             pass
         
         # returncode로만 성공/실패 판단
-        if result.returncode != 0:
-            print(f"[WARNING] PA 실행 실패 (exit code: {result.returncode}):")
+        if returncode != 0:
+            print(f"[WARNING] PA 실행 실패 (exit code: {returncode}):")
             if stderr:
                 print(stderr)
             return None
@@ -236,26 +477,23 @@ def run_pa_with_config(config: dict, seed: int, output_dir: Path, base_config_pa
             "--gold", docker_gold,
         ]
 
-        eval_result = subprocess.run(eval_cmd, capture_output=True, cwd=Path.cwd())
-
-        try:
-            eval_stdout = eval_result.stdout.decode('utf-8', errors='ignore')
-            eval_stderr = eval_result.stderr.decode('utf-8', errors='ignore')
-        except:
-            eval_stdout = str(eval_result.stdout)
-            eval_stderr = str(eval_result.stderr)
+        eval_returncode, eval_stdout, eval_stderr = _run_cmd_with_live_progress(
+            eval_cmd,
+            cwd=Path.cwd(),
+            label=f"EVAL seed{seed}",
+        )
 
         # 디버깅용 로그 저장
         eval_log = run_dir_abs / f"eval_log_seed{seed}.txt"
         with open(eval_log, 'w', encoding='utf-8') as f:
-            f.write(f"Return code: {eval_result.returncode}\n\n")
+            f.write(f"Return code: {eval_returncode}\n\n")
             f.write(f"=== STDOUT ===\n{eval_stdout}\n\n")
             f.write(f"=== STDERR ===\n{eval_stderr}\n")
 
         # exit code 2는 "실패 항목 존재"를 의미하지만, F1 값은 파싱 가능
         # exit code 1 이상은 실제 에러로 간주
-        if eval_result.returncode > 2:
-            print(f"[WARNING] 평가 실패 (exit code: {eval_result.returncode})")
+        if eval_returncode > 2:
+            print(f"[WARNING] 평가 실패 (exit code: {eval_returncode})")
             print(f"[DEBUG] 로그 확인: {eval_log}")
             return None
 
@@ -307,8 +545,6 @@ def parse_args():
     
     parser.add_argument('--prior-bonus', type=str, required=True,
                         help='콤마 구분 prior bonus 값들 (예: 0.10,0.15,0.20)')
-    parser.add_argument('--length-penalty', type=str, required=True,
-                        help='콤마 구분 length penalty 값들 (예: 0.3,0.5,0.7)')
     parser.add_argument('--boundary-threshold', type=str, default=None,
                         help='콤마 구분 boundary threshold 값들 (선택, 예: 0.65,0.70,0.75)')
     parser.add_argument('--supar-bonus', type=str, default=None,
@@ -332,24 +568,34 @@ def parse_args():
     parser.add_argument('--enable-refine', action='store_true',
                         help='Refinement 로직 활성화 (max_shift=4)')
 
+    parser.add_argument('--trace', action='store_true',
+                        help='PA trace(jsonl) 저장 활성화 (느려질 수 있음)')
+
     return parser.parse_args()
 
 def parse_range(value_str: str) -> list:
     """값 범위 파싱: '1,2,3' 또는 '1-10' 형식 지원"""
-    if '-' in value_str and ',' not in value_str:
-        # 범위 형식: 1-10
-        start, end = map(int, value_str.split('-'))
-        return list(range(start, end + 1))
-    else:
-        # 콤마 구분 형식: 1,2,3
-        return [float(v) if '.' in v else int(v) for v in value_str.split(',')]
+    s = (value_str or "").strip()
+
+    # 범위 형식은 '정수-정수'일 때만 허용한다.
+    # (예: -0.01 같은 음수는 '-'가 있어도 range로 해석하면 안 됨)
+    if ',' not in s:
+        import re
+        m = re.match(r"^\s*(\d+)\s*-\s*(\d+)\s*$", s)
+        if m:
+            start = int(m.group(1))
+            end = int(m.group(2))
+            return list(range(start, end + 1))
+
+    # 콤마 구분 형식: 1,2,3 (단일 값도 허용)
+    parts = [p.strip() for p in s.split(',') if p.strip()]
+    return [float(v) if '.' in v else int(v) for v in parts]
 
 def main():
     args = parse_args()
     
     # 매개변수 파싱
     prior_bonus_values = parse_range(args.prior_bonus)
-    length_penalty_values = parse_range(args.length_penalty)
     boundary_threshold_values = parse_range(args.boundary_threshold) if args.boundary_threshold else [None]
     supar_bonus_values = parse_range(args.supar_bonus) if args.supar_bonus else [None]
     bsp_terminal_values = parse_range(args.boundary_weight_terminal) if args.boundary_weight_terminal else [None]
@@ -366,9 +612,8 @@ def main():
     
     # 실험 조합 생성
     configs = []
-    for pb, lp, bt, sb, bwt, bwc in itertools.product(
+    for pb, bt, sb, bwt, bwc in itertools.product(
         prior_bonus_values,
-        length_penalty_values,
         boundary_threshold_values,
         supar_bonus_values,
         bsp_terminal_values,
@@ -376,7 +621,6 @@ def main():
     ):
         config = {
             'prior_bonus': pb,
-            'length_penalty': lp,
             'enable_refine': args.enable_refine
         }
         if bt is not None:
@@ -395,7 +639,6 @@ def main():
     print(f"Grid Search 설정")
     print(f"{'='*80}")
     print(f"Prior Bonus 값들: {prior_bonus_values}")
-    print(f"Length Penalty 값들: {length_penalty_values}")
     if args.boundary_threshold:
         print(f"Boundary Threshold 값들: {boundary_threshold_values}")
     if args.supar_bonus:
@@ -441,7 +684,16 @@ def main():
             experiment_num = (i - 1) * len(seeds) + j
             print(f"\n진행: {experiment_num}/{total_experiments} ({experiment_num/total_experiments*100:.1f}%)")
             
-            result = run_pa_with_config(config, seed, output_dir, base_config_path, args.sample_size, exclude_set)
+            result = run_pa_with_config(
+                config,
+                seed,
+                output_dir,
+                base_config_path,
+                args.sample_size,
+                exclude_set,
+                args.min_sample_ratio,
+                args.trace,
+            )
             
             if result:
                 seed_result = {

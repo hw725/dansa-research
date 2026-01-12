@@ -5,7 +5,7 @@ F1 0.80 → 0.90 달성을 위한 심층 분석 및 개선 방향 제시
 분석 내용:
 1. 현재 trace의 점수 분포 및 family별 특성
 2. 1등/2등 간 점수 차이가 작은 케이스 추출 (재조정 여지)
-3. Length penalty, marker bonus, similarity 가중치 최적화 방향
+3. marker bonus, threshold 등 가중치/선택 로직 최적화 방향
 4. 구체적 실험 제안
 """
 
@@ -65,15 +65,13 @@ def analyze_score_distribution(trace_records: List[dict]):
                 'family': best.get('family'),
                 'tag': best.get('tag'),
                 'score': best.get('score'),
-                'prior_bonus': best.get('prior_bonus', 0),
-                'length_penalty': best.get('length_penalty', 0)
+                'prior_bonus': best.get('prior_bonus', 0)
             },
             'second': {
                 'family': second.get('family'),
                 'tag': second.get('tag'),
                 'score': second.get('score'),
-                'prior_bonus': second.get('prior_bonus', 0),
-                'length_penalty': second.get('length_penalty', 0)
+                'prior_bonus': second.get('prior_bonus', 0)
             },
             'margin': margin
         }
@@ -164,17 +162,8 @@ def suggest_improvements(analysis: Dict):
     print(f"    - 실험 B: 보너스 계수 0.20 (강화) - 현토 신호 더 신뢰")
     print(f"    - 실험 C: 동적 보너스 - 유사도에 따라 0.10~0.20 가변")
     print(f"  **검증 방법**: seed 1~10 재실험 후 F1 비교")
-    
-    print(f"\n### 📊 실험 2: Length Penalty 세밀 조정")
-    print(f"  **현재 상태**: penalty = (len_diff / desired_len) * 0.5")
-    print(f"  **문제**: 0.5 계수가 너무 강해서 길이가 약간만 달라도 큰 페널티")
-    print(f"  **제안**:")
-    print(f"    - 실험 A: 계수 0.3 (완화) - 길이 유연성 증대")
-    print(f"    - 실험 B: 계수 0.7 (강화) - 길이 정합성 중시")
-    print(f"    - 실험 C: 비선형 페널티 - sqrt(len_diff / desired_len) * 0.5")
-    print(f"  **검증 방법**: 평균 considered 수 유지하면서 F1 개선 확인")
-    
-    print(f"\n### 📊 실험 3: Boundary Model Threshold 조정")
+
+    print(f"\n### 📊 실험 2: Boundary Model Threshold 조정")
     print(f"  **현재 상태**: boundary 선택 55.1% (과다 가능성)")
     print(f"  **문제**: threshold가 낮아서 노이즈가 많은 boundary 후보 생성")
     print(f"  **제안**:")
@@ -182,8 +171,8 @@ def suggest_improvements(analysis: Dict):
     print(f"    - 실험 B: threshold 0.70 → 0.65 (더 공격적)")
     print(f"    - 실험 C: confidence 기반 필터링 (top-k boundary만)")
     print(f"  **검증 방법**: boundary 비율이 40~50%로 조정되고 F1 개선")
-    
-    print(f"\n### 📊 실험 4: Supar Weight 조정")
+
+    print(f"\n### 📊 실험 3: Supar Weight 조정")
     print(f"  **현재 상태**: supar 선택 30.3%, 평균 점수 낮음 (0.47~0.50)")
     print(f"  **문제**: supar가 구조적으로 좋아도 점수가 낮아 선택 안 됨")
     print(f"  **제안**:")
@@ -191,8 +180,8 @@ def suggest_improvements(analysis: Dict):
     print(f"    - 실험 B: supar base score에 +0.10 보정")
     print(f"    - 실험 C: supar의 구조 일치도를 별도 가중치로 반영")
     print(f"  **검증 방법**: supar 선택 비율이 35~40%로 증가하고 F1 개선")
-    
-    print(f"\n### 📊 실험 5: Ensemble Voting (새 접근)")
+
+    print(f"\n### 📊 실험 4: Ensemble Voting (새 접근)")
     print(f"  **현재 상태**: 단순 최고 점수 선택")
     print(f"  **문제**: 근소한 차이 케이스에서 단일 지표에 의존")
     print(f"  **제안**:")
@@ -204,8 +193,7 @@ def suggest_improvements(analysis: Dict):
     print(f"\n## 5. 우선순위 실행 계획")
     print(f"\n### Phase 1: 빠른 실험 (1일)")
     print(f"  1. Prior bonus 0.10 / 0.15 / 0.20 grid search (3회 실험)")
-    print(f"  2. Length penalty 0.3 / 0.5 / 0.7 grid search (3회 실험)")
-    print(f"  → 총 9회 조합 실험, seed 3개만으로 빠른 검증")
+    print(f"  → 총 9회 실험(3개 설정 × seed 3개)으로 빠른 검증")
     
     print(f"\n### Phase 2: 정밀 튜닝 (1일)")
     print(f"  1. Phase 1에서 최선의 조합 선택")
@@ -221,7 +209,6 @@ def suggest_improvements(analysis: Dict):
     print(f"\n## 6. 예상 효과")
     print(f"  - **보수적 추정**: F1 0.80 → 0.85 (+6.25%)")
     print(f"    - Prior bonus 최적화: +2%")
-    print(f"    - Length penalty 최적화: +2%")
     print(f"    - Threshold 조정: +1%")
     print(f"    - Supar weight 조정: +1%")
     print(f"  ")
@@ -234,7 +221,6 @@ def suggest_improvements(analysis: Dict):
     print(f"# Grid search 자동화 스크립트 작성 (scripts/grid_search_pa_weights.py)")
     print(f"python scripts/grid_search_pa_weights.py \\")
     print(f"  --prior-bonus 0.10,0.15,0.20 \\")
-    print(f"  --length-penalty 0.3,0.5,0.7 \\")
     print(f"  --seeds 1,2,3 \\")
     print(f"  --output-dir test_results/grid_search_phase1")
     print(f"")

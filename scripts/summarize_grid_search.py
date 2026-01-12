@@ -44,7 +44,7 @@ def group_by_config(results: List[Dict]) -> Dict:
     
     for result in results:
         config = result.get('config', {})
-        # NOTE: 이전 구현은 (prior_bonus,length_penalty,boundary_threshold,supar_bonus) 4튜플만 키로 써서
+        # NOTE: 이전 구현은 일부 키만으로 그룹 키를 만들어
         # pa_selection_params 등 추가 레버가 반영되지 않고 서로 다른 설정이 한 그룹으로 합쳐지는 문제가 있었다.
         # config 전체를 안정적으로 직렬화해 키로 사용한다.
         config_key = json.dumps(config, sort_keys=True, ensure_ascii=False)
@@ -113,7 +113,7 @@ def print_summary(stats: List[Dict], top_k: int = 10):
     print(f"Top {min(top_k, len(stats))} 설정:")
     print("-" * 80)
     print(
-        f"{'Rank':<5} {'PriorBonus':<12} {'LenPenalty':<12} {'BdryThres':<12} {'SuparBonus':<12} "
+        f"{'Rank':<5} {'PriorBonus':<12} {'BdryThres':<12} {'SuparBonus':<12} "
         f"{'Extra':<28} {'F1 Mean':<10} {'F1 Std':<10} {'Seeds':<6}"
     )
     print("-" * 80)
@@ -121,7 +121,6 @@ def print_summary(stats: List[Dict], top_k: int = 10):
     for i, stat in enumerate(stats[:top_k], 1):
         config = stat['config']
         pb = config.get('prior_bonus', 0.0)
-        lp = config.get('length_penalty', 0.0)
         bt = config.get('boundary_threshold', 0.0)
         sb = config.get('supar_bonus', 0.0)
 
@@ -146,7 +145,7 @@ def print_summary(stats: List[Dict], top_k: int = 10):
         extra = ",".join(extra_parts)[:28]
 
         print(
-            f"{i:<5} {pb:<12.2f} {lp:<12.2f} {bt:<12.2f} {sb:<12.2f} "
+            f"{i:<5} {pb:<12.2f} {bt:<12.2f} {sb:<12.2f} "
             f"{extra:<28} {stat['f1_mean']:<10.4f} {stat['f1_stdev']:<10.4f} {stat['n_seeds']:<6}"
         )
     
@@ -177,44 +176,6 @@ def save_results(stats: List[Dict], output_file: Path):
         json.dump(output_data, f, indent=2, ensure_ascii=False)
     
     print(f"✅ 전체 결과 저장: {output_file}")
-
-def create_heatmap_data(stats: List[Dict], output_file: Path):
-    """히트맵 데이터 생성 (Phase 1용: prior_bonus × length_penalty)"""
-    # Prior bonus와 Length penalty만 추출
-    heatmap_data = {}
-    
-    for stat in stats:
-        config = stat['config']
-        if 'prior_bonus' not in config or 'length_penalty' not in config:
-            continue
-        pb = config['prior_bonus']
-        lp = config['length_penalty']
-        
-        key = (pb, lp)
-        if key not in heatmap_data:
-            heatmap_data[key] = []
-        
-        heatmap_data[key].append(stat['f1_mean'])
-    
-    # 평균 계산
-    pb_vals = sorted(list(set(stat['config'].get('prior_bonus') for stat in stats if 'prior_bonus' in stat['config'])))
-    lp_vals = sorted(list(set(stat['config'].get('length_penalty') for stat in stats if 'length_penalty' in stat['config'])))
-    heatmap_avg = {'prior_bonus_values': pb_vals, 'length_penalty_values': lp_vals, 'f1_matrix': []}
-    
-    for pb in heatmap_avg['prior_bonus_values']:
-        row = []
-        for lp in heatmap_avg['length_penalty_values']:
-            key = (pb, lp)
-            if key in heatmap_data:
-                row.append(statistics.mean(heatmap_data[key]))
-            else:
-                row.append(None)
-        heatmap_avg['f1_matrix'].append(row)
-    
-    with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(heatmap_avg, f, indent=2, ensure_ascii=False)
-    
-    print(f"✅ 히트맵 데이터 저장: {output_file}")
 
 def main():
     parser = argparse.ArgumentParser(description='Grid Search 결과 집계')
@@ -257,11 +218,6 @@ def main():
         output_file = grid_search_dir / "summary_aggregated.json"
     
     save_results(stats, output_file)
-    
-    # 히트맵 데이터 생성 (Phase 1만 해당)
-    if any('prior_bonus' in stat['config'] and 'length_penalty' in stat['config'] for stat in stats):
-        heatmap_file = grid_search_dir / "heatmap_data.json"
-        create_heatmap_data(stats, heatmap_file)
     
     print()
     print("=" * 80)
