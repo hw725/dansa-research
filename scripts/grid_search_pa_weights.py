@@ -363,6 +363,7 @@ def run_pa_with_config(
         # PA 실행 (Docker 컨테이너 사용)
         output_xlsx = run_dir_abs / f"pa_test_output_seed{seed}.xlsx"
         trace_jsonl = run_dir_abs / f"pa_trace_seed{seed}.jsonl"
+        checkpoint_csv = run_dir_abs / f"pa_checkpoint_seed{seed}.csv"
 
         # Docker 경로로 변환 (상대 경로 사용)
         project_root = Path.cwd()
@@ -370,6 +371,8 @@ def run_pa_with_config(
         rel_output = output_xlsx.relative_to(project_root)
         docker_input = f"/workspace/{rel_input.as_posix()}"
         docker_output = f"/workspace/{rel_output.as_posix()}"
+        rel_ckpt = checkpoint_csv.relative_to(project_root)
+        docker_ckpt = f"/workspace/{rel_ckpt.as_posix()}"
         if trace_enabled:
             rel_trace = trace_jsonl.relative_to(project_root)
             docker_trace = f"/workspace/{rel_trace.as_posix()}"
@@ -384,6 +387,9 @@ def run_pa_with_config(
             "--boundary-threshold", str(cfg['pa'].get('boundary_threshold', 0.70)),
             "--enable-src-marker-boundary-bonus",
             "--seed", str(seed),
+            "--checkpoint-path", docker_ckpt,
+            "--resume",
+            "--checkpoint-every", "25",
         ]
 
         # trace는 Windows 바인드 마운트 I/O 병목을 크게 유발할 수 있어 기본 비활성화
@@ -602,7 +608,18 @@ def main():
     bsp_continuation_values = parse_range(args.boundary_weight_continuation) if args.boundary_weight_continuation else [None]
     seeds = parse_range(args.seeds)
     
-    output_dir = Path(args.output_dir)
+    # docker 컨테이너에서 파일 경로는 /workspace(=레포 루트 바인드 마운트) 아래만 안전하게 접근 가능.
+    # output_dir가 레포 밖이면 docker 경로(/workspace/...)로 매핑이 불가능하여 산출물이 컨테이너에만 남거나 깨질 수 있다.
+    project_root = Path.cwd().resolve()
+    raw_output_dir = Path(args.output_dir)
+    output_dir = (raw_output_dir if raw_output_dir.is_absolute() else (project_root / raw_output_dir)).resolve()
+    if not (output_dir == project_root or project_root in output_dir.parents):
+        raise SystemExit(
+            "[ERROR] --output-dir가 레포 폴더 밖입니다. docker 컨테이너(/workspace)로 경로 매핑이 불가하여 산출물이 사라질 수 있습니다.\n"
+            f"        output_dir={output_dir}\n"
+            f"        project_root={project_root}\n"
+            "        해결: test_results/... 같은 레포 내부 경로로 지정하세요."
+        )
     output_dir.mkdir(parents=True, exist_ok=True)
     
     base_config_path = Path("csp_config.json")

@@ -272,3 +272,6 @@ grid_*/
 # Backup files
 *.backup.json
 csp_config.backup.json
+
+# Archive folder (deprecated files)
+archive/
