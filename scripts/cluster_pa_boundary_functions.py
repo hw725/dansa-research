@@ -286,6 +286,37 @@ def main() -> None:
     }
 
     df_out = pd.DataFrame(out_dict)
+    
+    # 마커 추출 (src_left, src_right에서)
+    import regex as re
+    _CJK_MARKER_RE = re.compile(r"(?P<cjk>\p{Han}+)(?P<marker>\p{Hangul}+)?")
+    HYEONTO_REPLACE_MAP = {"은": "는", "이": "가", "을": "를", "과": "와", "ㅣ": "가"}
+    
+    def normalize_marker(m):
+        if not m: return m
+        if m in HYEONTO_REPLACE_MAP: return HYEONTO_REPLACE_MAP[m]
+        if len(m) > 1 and (m.startswith("이") or m.startswith("으")): return m[1:]
+        return m
+    
+    def extract_markers(text):
+        if pd.isna(text): return ""
+        markers = [normalize_marker(m.group("marker")) for m in _CJK_MARKER_RE.finditer(str(text)) if m.group("marker")]
+        return ",".join(markers) if markers else ""
+    
+    df_out["marker_left"] = df_out["src_left"].apply(extract_markers)
+    df_out["marker_right"] = df_out["src_right"].apply(extract_markers)
+    
+    # 대표 마커 (left의 마지막 또는 right의 첫 번째)
+    def get_boundary_marker(row):
+        left_markers = row["marker_left"].split(",") if row["marker_left"] else []
+        right_markers = row["marker_right"].split(",") if row["marker_right"] else []
+        if left_markers and left_markers[-1]:
+            return left_markers[-1]
+        if right_markers and right_markers[0]:
+            return right_markers[0]
+        return ""
+    
+    df_out["marker_normalized"] = df_out.apply(get_boundary_marker, axis=1)
 
     counts = df_out["cluster_id"].value_counts().to_dict()
     df_out["cluster_size"] = df_out["cluster_id"].map(lambda c: int(counts.get(int(c), 0)))

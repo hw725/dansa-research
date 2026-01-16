@@ -128,9 +128,40 @@ def cluster_kmeans(embeddings: np.ndarray, k: int, seed: int) -> np.ndarray:
 
 
 def save_results(instances: List[BoundaryInstance], labels: np.ndarray, out_dir: Path, seed: int):
+    import regex as re
+    
     out_dir.mkdir(parents=True, exist_ok=True)
+    
+    # 마커 추출 함수
+    _CJK_MARKER_RE = re.compile(r"(?P<cjk>\p{Han}+)(?P<marker>\p{Hangul}+)?")
+    HYEONTO_REPLACE_MAP = {"은": "는", "이": "가", "을": "를", "과": "와", "ㅣ": "가"}
+    
+    def normalize_marker(m):
+        if not m: return m
+        if m in HYEONTO_REPLACE_MAP: return HYEONTO_REPLACE_MAP[m]
+        if len(m) > 1 and (m.startswith("이") or m.startswith("으")): return m[1:]
+        return m
+    
+    def extract_markers(text):
+        if pd.isna(text) or not text: return ""
+        markers = [normalize_marker(m.group("marker")) for m in _CJK_MARKER_RE.finditer(str(text)) if m.group("marker")]
+        return ",".join(markers) if markers else ""
+    
     records = []
     for inst, label in zip(instances, labels):
+        marker_left = extract_markers(inst.src_left)
+        marker_right = extract_markers(inst.src_right)
+        
+        # 대표 마커 (left의 마지막 또는 right의 첫 번째)
+        left_markers = marker_left.split(",") if marker_left else []
+        right_markers = marker_right.split(",") if marker_right else []
+        if left_markers and left_markers[-1]:
+            marker_normalized = left_markers[-1]
+        elif right_markers and right_markers[0]:
+            marker_normalized = right_markers[0]
+        else:
+            marker_normalized = ""
+        
         records.append({
             'cluster_id': int(label),
             'book_name': inst.book_name,
@@ -141,6 +172,9 @@ def save_results(instances: List[BoundaryInstance], labels: np.ndarray, out_dir:
             'src_right': inst.src_right,
             'tgt_left': inst.tgt_left,
             'tgt_right': inst.tgt_right,
+            'marker_left': marker_left,
+            'marker_right': marker_right,
+            'marker_normalized': marker_normalized,
         })
     df = pd.DataFrame(records)
     cluster_sizes = df['cluster_id'].value_counts().to_dict()
@@ -156,6 +190,7 @@ def save_results(instances: List[BoundaryInstance], labels: np.ndarray, out_dir:
                 f.write(f"- book={r['book_name']}, sent={r['sentence_id']}\n")
                 f.write(f"  - src_L: {r['src_left']}\n  - src_R: {r['src_right']}\n")
                 f.write(f"  - tgt_L: {r['tgt_left']}\n  - tgt_R: {r['tgt_right']}\n")
+                f.write(f"  - marker: {r['marker_normalized']}\n")
             f.write("\n")
 
 
