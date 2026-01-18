@@ -358,10 +358,59 @@ F1 = 2 × (Precision × Recall) / (Precision + Recall)
 
 ---
 
-## 부록 B: 참고 문헌
+## 부록 C: 경계 모델 해부 (Boundary Model Anatomy)
 
-1. SuPar-Kanbun: Classical Chinese Dependency Parsing
-2. Stanza: A Python Natural Language Processing Toolkit
-3. BGE-M3: Multi-Lingual, Multi-Functionality, Multi-Granularity Embedding Model
-4. Numba: A High Performance Python Compiler
+PA에서 사용하는 경계 모델(`boundary_multitask.pt`)은 텍스트의 형태적/구조적 특징을 학습하여 전역적인 문장 경계를 예측합니다.
+
+### C.1 아키텍처 (Multi-task Architecture)
+
+이 모델은 하나의 **공통 인코더**와 여러 개의 **태스크별 헤드**로 구성된 멀티태스크 구조입니다.
+
+```mermaid
+graph TD
+    In["입력 텍스트 (문자 시퀀스)"] --> Emb["Embedding Layer (64D)"]
+    Emb --> LSTM1["BiLSTM Layer 1 (128D x 2)"]
+    LSTM1 --> LSTM2["BiLSTM Layer 2 (128D x 2)"]
+    
+    LSTM2 --> PA["PA Head (Linear)"]
+    LSTM2 --> SA["SA Head (Linear)"]
+    LSTM2 --> PD["PD Head (Linear)"]
+    
+    PA --> Out1["문장 경계 확률"]
+    SA --> Out2["구 경계 확률"]
+    PD --> Out3["구두점 위치 확률"]
+    
+    style In fill:#f9f,stroke:#333
+    style LSTM2 fill:#bbf,stroke:#333
+    style PA fill:#bfb,stroke:#333
+    style SA fill:#bfb,stroke:#333
+    style PD fill:#bfb,stroke:#333
+```
+
+1.  **Char-level Encoder**:
+    - **Embedding (64D)**: 개별 유니코드 문자를 수치화. (모든 문자를 학습 대상으로 함)
+    - **BiLSTM (128D x 2 layers)**: 문자의 앞뒤 맥락을 256차원 벡터로 요약.
+    - **효과**: "다." 뒤에 구두점이 올 때와 조사 뒤에 구두점이 올 때의 차이를 인지.
+2.  **Multi-task Heads**:
+    - **PA Head**: 문장 경계 예측 (Paragraph to Sentence)
+    - **PD Head**: 마침표 위치 예측 (Punctuation Detection) - 문법적 종결 위치 학습 보조
+    - **SA Head**: 구 경계 예측 (Sentence to Phrase) - 보조 태스크
+
+### C.2 디코딩 로직 (Peak Detection & Constraints)
+
+단순한 확률 임계값 적용뿐만 아니라, 다음과 같은 **해부학적 후처리**가 수행됩니다.
+
+1.  **Logit-to-Post-Processing**:
+    - 활성화 함수(tanh)를 통한 비선형 스코어 변환
+    - 특정 위치에 점수가 집중되도록 유도
+2.  **Local Peak Detection (그룹화)**:
+    - 임계값을 넘는 연속된 위치가 발견되면, 그중 **가장 확률이 높은 지점(Peak)** 하나만 경계로 확정합니다. (중복 분할 방지)
+3.  **Min-length Constraint**:
+    - **PA 기본값**: 20자
+    - **SA 기본값**: 6자
+    - 너무 짧은 세그먼트가 생성되어 정렬 무결성을 해치는 것을 방지합니다.
+
+### C.3 모델의 강점: 구조적 통찰
+
+이 모델은 단순히 구두점을 찾는 것이 아니라, **"종결 어미 + 특수 기호 + 공백"**이라는 복합적인 패턴을 인지합니다. SuPar와 같은 구문 분석기가 놓칠 수 있는 번역문 특유의 종결 패턴을 보완하는 역할을 합니다.
 

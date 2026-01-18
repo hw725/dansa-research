@@ -125,17 +125,34 @@ final_score = (dense_weight * dense_sim) +
 *현재 그리드 서치를 통해 이 가중치들의 최적 조합을 찾고 있습니다.*
 
 ---
-
-## 4. 경계 모델 및 보너스 (Boundary Model & Bonus)
-
-**파일**: `pa/processor.py` (내부 함수 `_boundary_bonus_at`)
-
-### 4.1 Boundary Model (Logit)
-신경망이 각 글자 위치 `i`에 대해 경계일 확률을 `logit[i]`로 내뱉습니다.
-- **가공**: `0.020 * max(0.0, tanh(logit/3.0))`
-- **의미**: 강한 긍정 로짓에 대해서만 지수적으로 보너스를 부여하며, 음수 로짓(경계 아님)은 패널티로 쓰지 않아 모델 오판에 의한 DP 왜곡을 방지합니다.
-
-### 4.2 SuPar Bonus Injection
+ 
+ ## 4. 경계 모델 및 보너스 (Boundary Model & Bonus)
+ 
+ **파일**: `pa/processor.py` (내부 함수 `_boundary_bonus_at`), `common/boundary_model_loader.py`
+ 
+-### 4.1 Boundary Model (Logit)
++### 4.1 경계 모델 코드 해부 (Model Anatomy)
++
++PA는 `MultiHeadBoundary` 클래스를 통해 문맥 정보를 처리합니다.
++
++#### 4.1.1 신경망 내부 (The Neural Engine)
++1.  **CharEncoderForBoundary**:
++    - `nn.Embedding(vocab_size, 64, padding_idx=0)`
++    - `nn.LSTM(64, 128, num_layers=2, bidirectional=True)`
++    - 각 글자는 좌측/우측의 128글자 맥락을 흡수하여 **256차원**의 은닉 상태(Hidden State)를 갖게 됩니다.
++2.  **Task-specific Projection**:
++    - `nn.Linear(256, 1)`: 256차원 문맥 벡터를 단일 스칼라(Logit)로 압축합니다.
++
++#### 4.1.2 로짓 가공 (Logit Engineering)
+ 신경망이 각 글자 위치 `i`에 대해 경계일 확률을 `logit[i]`로 내뱉습니다.
+ - **가공**: `0.020 * max(0.0, tanh(logit/3.0))`
+ - **의미**: 강한 긍정 로짓에 대해서만 지수적으로 보너스를 부여하며, 음수 로짓(경계 아님)은 패널티로 쓰지 않아 모델 오판에 의한 DP 왜곡을 방지합니다.
+ 
++#### 4.1.3 훈련 전략 (Training Strategy)
++- **BCEWithLogitsLoss**: 각 위치 별 이진 분류 수행
++- **Class Weighting**: 경계(Positive)가 매우 희소(Sparse)하므로, 경계에 약 **10~20배의 가중치**를 부여하여 학습 시 경계를 놓치지 않도록 강제합니다.
++
+ ### 4.2 SuPar Bonus Injection
 - **SuPar 오프셋**: `supar_offsets_norm` (공백 제거 후 좌표계)
 - **적용**: `pos`가 SuPar의 예측점과 일치하면 `supar_bonus` (0.20)를 즉시 합산합니다.
 - **전략**: SuPar의 고전 문법 지식을 DP의 비용 함수에 강력한 **가이드라인**으로 주입합니다.
