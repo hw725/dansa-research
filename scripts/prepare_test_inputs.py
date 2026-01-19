@@ -41,7 +41,7 @@ def main():
     pd_output_path = OUTPUT_DIR / "test_pd_input.xlsx"
     pd_input.to_excel(pd_output_path, index=False)
     print(f"   저장: {pd_output_path}")
-    print(f"   사용: python pa/main.py {pd_output_path} output_pa.xlsx --use-boundary-model")
+    print(f"   사용: python p2s/main.py {pd_output_path} output_pa.xlsx --use-boundary-model")
     
     # 2. PA test → SA 입력
     print("\n2️⃣  PA test → SA 입력 변환")
@@ -58,7 +58,7 @@ def main():
     pa_output_path = OUTPUT_DIR / "test_pa_input.xlsx"
     pa_input.to_excel(pa_output_path, index=False)
     print(f"   저장: {pa_output_path}")
-    print(f"   사용: python sa/main.py {pa_output_path} output_sa.xlsx --use-boundary-model")
+    print(f"   사용: python s2p/main.py {pa_output_path} output_sa.xlsx --use-boundary-model")
     
     # 3. 정답 데이터 참고
     print("\n3️⃣  정답 데이터 (비교용)")
@@ -72,11 +72,11 @@ def main():
     print("=" * 60)
     print("\n📝 다음 단계:")
     print("1. PA 파이프라인 실행:")
-    print(f"   python pa/main.py {pd_output_path} output_pa_baseline.xlsx")
-    print(f"   python pa/main.py {pd_output_path} output_pa_boundary.xlsx --use-boundary-model --boundary-threshold 0.4")
+    print(f"   python p2s/main.py {pd_output_path} output_pa_baseline.xlsx")
+    print(f"   python p2s/main.py {pd_output_path} output_pa_boundary.xlsx --use-boundary-model --boundary-threshold 0.4")
     print("\n2. SA 파이프라인 실행:")
-    print(f"   python sa/main.py {pa_output_path} output_sa_baseline.xlsx")
-    print(f"   python sa/main.py {pa_output_path} output_sa_boundary.xlsx --use-boundary-model --boundary-threshold 0.4")
+    print(f"   python s2p/main.py {pa_output_path} output_sa_baseline.xlsx")
+    print(f"   python s2p/main.py {pa_output_path} output_sa_boundary.xlsx --use-boundary-model --boundary-threshold 0.4")
     print("\n3. 결과 비교:")
     print(f"   - 기존 방식: output_pa_baseline.xlsx / output_sa_baseline.xlsx")
     print(f"   - 경계 모델: output_pa_boundary.xlsx / output_sa_boundary.xlsx")

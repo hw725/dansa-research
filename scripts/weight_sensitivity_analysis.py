@@ -7,7 +7,7 @@
 
 Usage:
     python scripts/weight_sensitivity_analysis.py \
-        --input hyeonto/datasets/pa_train_full.csv \
+        --input hyeonto/datasets/sentence_train_full.csv \
         --clusters hyeonto/reports/recluster_k16_child/reclustered.csv \
         --out-dir hyeonto/reports/weight_sensitivity
 """
@@ -143,7 +143,7 @@ def generate_comparison_report(
 
 def main() -> int:
     p = argparse.ArgumentParser(description="가중치 민감도 분석")
-    p.add_argument("--input", type=Path, default=Path("hyeonto/datasets/pa_train_full.csv"))
+    p.add_argument("--input", type=Path, default=Path("hyeonto/datasets/sentence_train_full.csv"))
     p.add_argument("--clusters", type=Path, default=Path("hyeonto/reports/recluster_k16_child/reclustered.csv"))
     p.add_argument("--out-dir", type=Path, default=Path("hyeonto/reports/weight_sensitivity"))
     args = p.parse_args()

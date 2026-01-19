@@ -17,7 +17,7 @@ def extract_hyeonto_markers(text):
     return ''.join(matches) if matches else ''
 
 print("=== PA 데이터 처리 ===")
-pa = pd.read_csv('hyeonto/datasets/pa_merged_v2.csv')
+pa = pd.read_csv('hyeonto/datasets/sentence_merged_v2.csv')
 print(f"PA 행수: {len(pa):,}")
 
 # 현토 마커 추출
@@ -28,7 +28,7 @@ print(f"PA 고유 마커: {pa['marker'].nunique():,}개")
 print(f"PA 빈 마커: {(pa['marker'] == '').sum():,}개")
 
 print("\n=== SA 데이터 처리 ===")
-sa = pd.read_csv('hyeonto/datasets/sa_merged_v2.csv')
+sa = pd.read_csv('hyeonto/datasets/phrase_merged_v2.csv')
 print(f"SA 행수: {len(sa):,}")
 
 # 현토 마커 추출
@@ -76,6 +76,6 @@ print("\nTop 20 마커 (SA만):")
 print(sa['marker'].value_counts().head(20))
 
 # 저장
-output_path = 'hyeonto/datasets/pa_sa_merged_with_markers.csv'
+output_path = 'hyeonto/datasets/sentence_sa_merged_with_markers.csv'
 merged.to_csv(output_path, index=False, encoding='utf-8-sig')
 print(f"\n저장 완료: {output_path}")

@@ -14,7 +14,7 @@ pa_params = config.get('pa_selection_params', {})
 
 from common.boundary_model_loader import BoundaryModelLoader
 from common.boundary_aware_alignment_loader import BoundaryAwareAlignmentMatcher
-from pa.processor import process_paragraph_alignment_with_boundary_model
+from p2s.processor import process_paragraph_alignment_with_boundary_model
 
 boundary_model = BoundaryModelLoader(
     model_path=Path('/workspace/models/boundary_multitask.pt'),

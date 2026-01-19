@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import json
 import pandas as pd
 import re
-from common.sa_boundary_tagger_loader import get_sa_boundary_tagger
+from common.s2p_boundary_tagger_loader import get_sa_boundary_tagger
 
 def _norm(s: str) -> str:
     return re.sub(r'[\s\u3000]', '', str(s))
@@ -26,8 +26,8 @@ def main():
     tagger = get_sa_boundary_tagger()
     
     # 데이터 로드
-    input_df = pd.read_csv("datasets/pa/test.csv")
-    gold_df = pd.read_csv("datasets/sa/test.csv")
+    input_df = pd.read_csv("datasets/p2s/test.csv")
+    gold_df = pd.read_csv("datasets/s2p/test.csv")
     
     results = {
         "input_rows": len(input_df),

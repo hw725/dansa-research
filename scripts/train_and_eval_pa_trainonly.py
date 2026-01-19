@@ -2,7 +2,7 @@
 """End-to-end (TRAIN-ONLY): PA alignment 학습(train.csv만) → PA(strict) 실행 → gold F1 평가.
 
 원칙
-- 학습: datasets/pa/train.csv만 사용 (PD는 학습하지 않음)
+- 학습: datasets/p2s/train.csv만 사용 (PD는 학습하지 않음)
 - negative: 별도 파일 없이 in-batch contrastive로 train에서 자동 생성
 - 평가 입력: PD는 "PA 실행을 위한 입력 문단"으로만 사용
 
@@ -72,7 +72,7 @@ def main() -> int:
     parser.add_argument(
         "--train-csv",
         default=str(WORKSPACE_ROOT / "datasets" / "pa" / "train.csv"),
-        help="PA 학습용 train.csv (기본: datasets/pa/train.csv)",
+        help="PA 학습용 train.csv (기본: datasets/p2s/train.csv)",
     )
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--batch", type=int, default=64)
@@ -107,7 +107,7 @@ def main() -> int:
     parser.add_argument(
         "--pd-input",
         default=str(WORKSPACE_ROOT / "datasets" / "pd" / "test_10.csv"),
-        help="PA 입력(문단병렬). PD는 학습이 아니라 입력용 (기본: datasets/pd/test_10.csv)",
+        help="PA 입력(문단병렬). PD는 학습이 아니라 입력용 (기본: datasets/sentenceragraph/test_10.csv)",
     )
 
     default_gold_100 = WORKSPACE_ROOT / "datasets" / "pa" / "test_100.csv"
@@ -116,7 +116,7 @@ def main() -> int:
     parser.add_argument(
         "--gold",
         default=str(default_gold),
-        help="gold(문장 단위) (기본: datasets/pa/test_100.csv가 있으면 우선 사용, 없으면 test_results/gold_subset_from_pd_test10.csv)",
+        help="gold(문장 단위) (기본: datasets/p2s/test_100.csv가 있으면 우선 사용, 없으면 test_results/gold_subset_from_pd_test10.csv)",
     )
     parser.add_argument(
         "--out-dir",
@@ -185,7 +185,7 @@ def main() -> int:
             from_pd_gold = WORKSPACE_ROOT / "datasets" / "pa" / "test_100_from_pd.csv"
             if from_pd_gold.exists():
                 print(
-                    "\n[warn] 현재 입력은 datasets/pd/test_100.csv인데 gold를 datasets/pa/test_100.csv로 지정했습니다."
+                    "\n[warn] 현재 입력은 datasets/sentenceragraph/test_100.csv인데 gold를 datasets/p2s/test_100.csv로 지정했습니다."
                     "\n       PD→PA 평가 기준 리포트와 점수가 다르게 나올 수 있습니다."
                     f"\n       (참고) 이 입력에 흔히 대응하는 gold: {from_pd_gold}"
                 )

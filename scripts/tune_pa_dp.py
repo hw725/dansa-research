@@ -26,7 +26,7 @@ warnings.filterwarnings("ignore")
 
 # PA 관련 import
 from processor import process_paragraph_file
-from pa_evaluator import _read_tabular, _boundary_positions_normed
+from p2s_evaluator import _read_tabular, _boundary_positions_normed
 
 
 def evaluate_pa_output(pred_path: Path, gold_path: Path) -> float:

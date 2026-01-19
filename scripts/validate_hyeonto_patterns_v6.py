@@ -9,7 +9,7 @@
 
 사용 예:
     python scripts/validate_hyeonto_patterns_v6.py \
-        --csv hyeonto/reports/pa_boundary_v6_full/boundary_clusters.csv \
+        --csv hyeonto/reports/sentence_boundary_v6_full/boundary_clusters.csv \
         --out-dir hyeonto/reports/hyeonto_pattern_validation_v6
 """
 
@@ -162,7 +162,7 @@ def validate_pattern(df, hyeonto_pattern, trans_patterns, n_iterations=100, seed
 
 def main() -> int:
     p = argparse.ArgumentParser(description="현토 패턴별 체계적 가설 검증")
-    p.add_argument("--csv", type=Path, default=Path("hyeonto/reports/pa_boundary_v6_full/boundary_clusters.csv"))
+    p.add_argument("--csv", type=Path, default=Path("hyeonto/reports/sentence_boundary_v6_full/boundary_clusters.csv"))
     p.add_argument("--out-dir", type=Path, default=Path("hyeonto/reports/hyeonto_pattern_validation_v6"))
     p.add_argument("--iterations", type=int, default=100)
     args = p.parse_args()

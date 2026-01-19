@@ -223,7 +223,7 @@ def generate_markdown_report(pa_stats: dict, sa_stats: dict, out_path: Path):
 def main():
     p = argparse.ArgumentParser(description="PA vs SA 클러스터 비교 분석")
     p.add_argument("--pa-csv", type=Path, default=Path("hyeonto/reports/boundary_function_clusters/boundary_clusters.csv"))
-    p.add_argument("--sa-csv", type=Path, default=Path("hyeonto/reports/sa_boundary_clusters/sa_boundary_clusters.csv"))
+    p.add_argument("--sa-csv", type=Path, default=Path("hyeonto/reports/phrase_boundary_clusters/sa_boundary_clusters.csv"))
     p.add_argument("--out-dir", type=Path, default=Path("hyeonto/reports/pa_sa_comparison"))
     p.add_argument("--src-cols", type=str, default="src_left,src_right")
     args = p.parse_args()

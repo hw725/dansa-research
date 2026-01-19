@@ -131,7 +131,7 @@ def run_pa_with_config(
     min_sample_ratio: float = 0.0,
     trace_enabled: bool = False,
 ):
-    """특정 설정으로 PA 실행 (subprocess로 pa/main.py 호출)
+    """특정 설정으로 PA 실행 (subprocess로 p2s/main.py 호출)
     
     Args:
         exclude_set: 제외할 (book_name, paragraph_id) 튜플의 집합
@@ -182,12 +182,12 @@ def run_pa_with_config(
                 from integrity_report import extract_gold_subset
 
                 extract_gold_subset(
-                    gold_path=Path("datasets/pa/test.csv"),
+                    gold_path=Path("datasets/p2s/test.csv"),
                     out_path=gold_subset_path,
                     keys_from=existing_input_xlsx,
                 )
             else:
-                gt_df_full = pd.read_csv("datasets/pa/test.csv")
+                gt_df_full = pd.read_csv("datasets/p2s/test.csv")
                 gt_df_full.to_csv(gold_subset_path, index=False, encoding='utf-8-sig')
 
             project_root = Path.cwd()
@@ -300,7 +300,7 @@ def run_pa_with_config(
         
         # PA 입력 파일 생성
         import pandas as pd
-        test_df = pd.read_csv("datasets/pa/test.csv")
+        test_df = pd.read_csv("datasets/p2s/test.csv")
         
         # 샘플링 (지정된 경우) - (book_name, 문단식별자) 키 기준
         # 주의: pid는 book 간 중복되므로 pid만으로 샘플링하면 문단 수가 폭증/평가가 오염됨
@@ -348,7 +348,7 @@ def run_pa_with_config(
         input_xlsx = run_dir_abs / f"pa_test_input_seed{seed}.xlsx"
         
         # PA는 문단 단위(PD) 입력을 요구: 문단식별자/원문/번역문/book_name
-        pd_test_path = Path("datasets/pd/test.csv")
+        pd_test_path = Path("datasets/sentenceragraph/test.csv")
         if not pd_test_path.exists():
             raise FileNotFoundError(f"PD 테스트 데이터를 찾을 수 없습니다: {pd_test_path}")
         
@@ -379,7 +379,7 @@ def run_pa_with_config(
 
         cmd = [
             "docker-compose", "exec", "-T", "csp",
-            "python", "pa/main.py",
+            "python", "p2s/main.py",
             docker_input,
             docker_output,
             "--embedder", "bge",
@@ -464,13 +464,13 @@ def run_pa_with_config(
             from integrity_report import extract_gold_subset
 
             extract_gold_subset(
-                gold_path=Path("datasets/pa/test.csv"),
+                gold_path=Path("datasets/p2s/test.csv"),
                 out_path=gold_subset_path,
                 keys_from=input_xlsx,  # input_xlsx에 이미 (book_name, 문단식별자)가 있음
             )
         else:
             # 전체 데이터 사용
-            gt_df_full = pd.read_csv("datasets/pa/test.csv")
+            gt_df_full = pd.read_csv("datasets/p2s/test.csv")
             gt_df_full.to_csv(gold_subset_path, index=False, encoding='utf-8-sig')
 
         # integrity_report.py 실행 (Docker)

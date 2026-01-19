@@ -6,7 +6,7 @@
 
 Usage:
     python scripts/analyze_residualized_markers.py \
-        --input hyeonto/datasets/pa_train_full.csv \
+        --input hyeonto/datasets/sentence_train_full.csv \
         --clusters hyeonto/reports/recluster_k16_child/reclustered.csv \
         --genre-level detail \
         --weight-saseo 1.0 \
@@ -369,7 +369,7 @@ def compute_genre_entropy(df: pd.DataFrame, genre_col: str, group_col: str) -> d
 
 def main() -> int:
     p = argparse.ArgumentParser(description="장르 잔차화 기반 현토 분석")
-    p.add_argument("--input", type=Path, default=Path("hyeonto/datasets/pa_train_full.csv"))
+    p.add_argument("--input", type=Path, default=Path("hyeonto/datasets/sentence_train_full.csv"))
     p.add_argument("--clusters", type=Path, default=Path("hyeonto/reports/recluster_k16_child/reclustered.csv"))
     p.add_argument("--genre-level", choices=["detail", "top"], default="detail")
     p.add_argument("--weight-saseo", type=float, default=1.0, help="사서 가중치")

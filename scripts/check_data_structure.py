@@ -4,14 +4,14 @@
 import pandas as pd
 
 print("=== PA/TEST.CSV ===")
-input_df = pd.read_csv('datasets/pa/test.csv')
+input_df = pd.read_csv('datasets/p2s/test.csv')
 print(f"Columns: {list(input_df.columns)}")
 print("First 3 rows:")
 print(input_df[['문장식별자', '원문', '번역문']].head(3))
 print()
 
 print("=== SA/TEST.CSV ===")
-gold_df = pd.read_csv('datasets/sa/test.csv')
+gold_df = pd.read_csv('datasets/s2p/test.csv')
 print(f"Columns: {list(gold_df.columns)}")
 print("First 3 rows:")
 print(gold_df[['문장식별자', '구식별자', '원문', '번역문']].head(3))

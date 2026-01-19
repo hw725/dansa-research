@@ -3,7 +3,7 @@
 """SA 경계(구↔구 사이) '기능'을 비지도적으로 군집화한다.
 
 PA와 달리 SA는 구(phrase) 단위이므로:
-- 입력: hyeonto/datasets/sa_merged_v2.csv (문장식별자, 구식별자, 원문, 번역문, book_name)
+- 입력: hyeonto/datasets/phrase_merged_v2.csv (문장식별자, 구식별자, 원문, 번역문, book_name)
 - 출력: out_dir/sa_boundary_clusters.csv, out_dir/sa_boundary_clusters.md
 - 경계: 같은 문장 내에서 구n ↔ 구n+1 사이
 """

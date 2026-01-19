@@ -26,7 +26,7 @@ def main():
 
     csv_path = args.csv
     if not csv_path:
-        csv_path = Path("hyeonto/reports/sa_boundary_clusters/sa_boundary_clusters.csv")
+        csv_path = Path("hyeonto/reports/phrase_boundary_clusters/sa_boundary_clusters.csv")
         if not csv_path.exists():
             csv_path = Path("hyeonto/reports/boundary_function_clusters/boundary_clusters.csv")
     
@@ -131,7 +131,7 @@ def main():
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         f.write("# 📂 전체 클러스터 상세 프로파일 (Unified Master Profile)\n\n")
-        f.write("- **데이터**: hyeonto/datasets/pa_merged_v2.csv (통합본)\n")
+        f.write("- **데이터**: hyeonto/datasets/sentence_merged_v2.csv (통합본)\n")
         f.write("- **분석 레벨**: 문장 경계(Boundary) 비지도 군집화 (K=16)\n")
         f.write("- **가중치**: 사서(5x), 서경(3x), 시경/주역(2x) 반영\n\n")
         

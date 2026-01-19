@@ -3,9 +3,9 @@
 
 import pandas as pd
 
-train = pd.read_csv('datasets/sa/train.csv')
-val = pd.read_csv('datasets/sa/val.csv')
-test = pd.read_csv('datasets/sa/test.csv')
+train = pd.read_csv('datasets/s2p/train.csv')
+val = pd.read_csv('datasets/s2p/val.csv')
+test = pd.read_csv('datasets/s2p/test.csv')
 
 # Book별 문장 수 및 평균 구 개수
 def analyze_by_book(df, name):

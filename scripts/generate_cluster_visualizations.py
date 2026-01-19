@@ -7,8 +7,8 @@ joint_embedding, marker_distribution, visualization 폴더를 생성합니다.
 
 Usage:
     docker compose exec csp python scripts/generate_cluster_visualizations.py \
-        --input hyeonto/reports/pa_boundary_k4_full/boundary_clusters.csv \
-        --out-dir hyeonto/reports/pa_boundary_k4_full \
+        --input hyeonto/reports/sentence_boundary_k4_full/boundary_clusters.csv \
+        --out-dir hyeonto/reports/sentence_boundary_k4_full \
         --dataset-type pa
 """
 

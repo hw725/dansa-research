@@ -36,10 +36,10 @@ def _prf1(tp: int, fp: int, fn: int):
 
 def evaluate_baseline(sample_size: int = 50):
     """기존 SA 파이프라인 (DP alignment) 평가"""
-    from sa.sa_aligner import process_single_row
+    from s2p.s2p_aligner import process_single_row
     
-    input_df = pd.read_csv("datasets/pa/test.csv")
-    gold_df = pd.read_csv("datasets/sa/test.csv")
+    input_df = pd.read_csv("datasets/p2s/test.csv")
+    gold_df = pd.read_csv("datasets/s2p/test.csv")
     
     sent_ids = list(input_df['문장식별자'].unique()[:sample_size])
     

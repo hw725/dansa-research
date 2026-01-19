@@ -12,7 +12,7 @@ import json
 
 # 1. SA 클러스터 결과 로드
 print("=== SA 클러스터 결과 로드 ===")
-df = pd.read_csv('hyeonto/reports/sa_boundary_clusters/sa_boundary_clusters.csv')
+df = pd.read_csv('hyeonto/reports/phrase_boundary_clusters/sa_boundary_clusters.csv')
 print(f"행수: {len(df):,}")
 print(f"컬럼: {df.columns.tolist()}")
 
@@ -137,7 +137,7 @@ print("\nBook 카테고리 분포:")
 print(df['book_category'].value_counts())
 
 # 5. 저장
-output_path = 'hyeonto/reports/sa_boundary_clusters/sa_clusters_with_features.csv'
+output_path = 'hyeonto/reports/phrase_boundary_clusters/sa_clusters_with_features.csv'
 df.to_csv(output_path, index=False, encoding='utf-8-sig')
 print(f"\n저장 완료: {output_path}")
 

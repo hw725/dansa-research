@@ -3,7 +3,7 @@
 
 왜 새 스크립트인가?
 - 기존 scripts/grid_search_pa_weights.py 가 바꾸던 pa.sentence_splitter.{prior_bonus,supar_bonus} 등은
-  현재 PA 선택/정렬 점수 로직(특히 pa/processor.py의 후보 선택 score)에 직접 연결되어 있지 않습니다.
+  현재 PA 선택/정렬 점수 로직(특히 p2s/processor.py의 후보 선택 score)에 직접 연결되어 있지 않습니다.
 - 반면 pa_selection_params는 후보 선택 점수에 직접 들어갑니다:
   - candidate_prior_bonus_by_prefix ("supar(", "boundary(")
   - boundary_style_prior weights
@@ -102,7 +102,7 @@ def _run_pa(
         "-T",
         "csp",
         "python",
-        "pa/main.py",
+        "p2s/main.py",
         docker_input,
         docker_output,
         "--embedder",
@@ -688,11 +688,11 @@ def main() -> None:
         return grid_results, grid_success, grid_failed
 
     # 공통 데이터 경로
-    gt_csv = Path("datasets/pa/test.csv")
-    pd_csv = Path("datasets/pd/test.csv")
+    gt_csv = Path("datasets/p2s/test.csv")
+    pd_csv = Path("datasets/sentenceragraph/test.csv")
 
     if not gt_csv.exists() or not pd_csv.exists():
-        raise FileNotFoundError("datasets/pa/test.csv 또는 datasets/pd/test.csv 를 찾을 수 없습니다")
+        raise FileNotFoundError("datasets/p2s/test.csv 또는 datasets/sentenceragraph/test.csv 를 찾을 수 없습니다")
 
     import pandas as pd
     test_df = pd.read_csv(gt_csv)

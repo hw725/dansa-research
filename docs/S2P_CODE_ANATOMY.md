@@ -12,7 +12,7 @@ graph TD
     A["main.py::main()"] --> B["io_manager.py::process_files_parallel()"]
     B --> C["io_manager.py::safe_process_sa_row()"]
     
-    C --> D["sa_aligner.py::process_single_row()"]
+    C --> D["s2p_aligner.py::process_single_row()"]
     C --> E["sa_crossattn_boundary_loader.py::get_crossattn_boundary_tagger()"]
     
     D --> F["bge.py::EmbeddingManager"]
@@ -87,7 +87,7 @@ loss = weighted_bce.sum() / mask.sum().clamp(min=1)
 
 ## 3. 정렬 로직 (Alignment Logic)
 
-**파일**: `sa/sa_aligner.py`
+**파일**: `s2p/s2p_aligner.py`
 
 경계 모델이 예측한 확률을 바탕으로 실제 구(Phrase)를 확정하는 과정입니다.
 
@@ -105,7 +105,7 @@ loss = weighted_bce.sum() / mask.sum().clamp(min=1)
 
 ## 3. 입출력 매니저 (IO Manager)
 
-**파일**: `sa/io_manager.py`
+**파일**: `s2p/io_manager.py`
 
 대규모 병렬 처리를 위한 동시성 제어를 담당합니다.
 
@@ -114,7 +114,7 @@ loss = weighted_bce.sum() / mask.sum().clamp(min=1)
 - **Import Caching**: 
   ```python
   if not hasattr(safe_process_sa_row, '_process_func'):
-      from sa.sa_aligner import process_single_row
+      from s2p.s2p_aligner import process_single_row
       safe_process_sa_row._process_func = process_single_row
   ```
   이 기법을 통해 수만 행을 처리할 때 Python의 import 시스템 부하를 획기적으로 줄였습니다.
@@ -126,7 +126,7 @@ loss = weighted_bce.sum() / mask.sum().clamp(min=1)
 
 ## 4. 실행 및 설정 (Execution)
 
-**파일**: `sa/main.py`
+**파일**: `s2p/main.py`
 
 사용자 인터페이스 및 전역 설정을 확정합니다.
 

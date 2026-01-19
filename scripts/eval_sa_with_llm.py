@@ -16,9 +16,9 @@ from typing import List, Set
 import warnings
 warnings.filterwarnings("ignore")
 
-from sa.sa_aligner import process_single_row
-from sa.io_manager import safe_process_sa_row
-from common.sa_crossattn_boundary_loader import get_crossattn_boundary_tagger
+from s2p.s2p_aligner import process_single_row
+from s2p.io_manager import safe_process_sa_row
+from common.s2p_crossattn_boundary_loader import get_crossattn_boundary_tagger
 
 def _norm(s: str) -> str:
     return re.sub(r'[\s\u3000]', '', str(s))
@@ -45,7 +45,7 @@ def main():
     print("✅ 모델 로드 완료")
     print(f"📡 LLM 백엔드: {os.getenv('LLM_BOUNDARY_BACKEND', 'ollama')}")
 
-    gold_df = pd.read_csv("datasets/sa/test.csv")
+    gold_df = pd.read_csv("datasets/s2p/test.csv")
     sent_ids = list(gold_df['문장식별자'].unique()[:100])
     
     clean_sents = []

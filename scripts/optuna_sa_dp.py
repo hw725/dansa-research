@@ -41,7 +41,7 @@ def _prf1(tp: int, fp: int, fn: int):
 
 
 # 데이터 미리 로드
-gold_df = pd.read_csv("datasets/sa/test.csv")
+gold_df = pd.read_csv("datasets/s2p/test.csv")
 sent_ids = list(gold_df['문장식별자'].unique()[:10])  # 속도를 위해 10개만
 
 # 클린 문장만 필터링
@@ -79,12 +79,12 @@ def objective(trial):
     boundary_threshold = trial.suggest_float('boundary_threshold', 0.1, 0.9)
     
     # 파라미터로 평가
-    from sa.sa_aligner import process_single_row
+    from s2p.s2p_aligner import process_single_row
     
-    # 경계 모델 주입 (sa_aligner가 참조할 수 있도록)
-    from sa.io_manager import safe_process_sa_row
+    # 경계 모델 주입 (s2p_aligner가 참조할 수 있도록)
+    from s2p.io_manager import safe_process_sa_row
     if not hasattr(safe_process_sa_row, '_boundary_model'):
-        from common.sa_crossattn_boundary_loader import get_crossattn_boundary_tagger
+        from common.s2p_crossattn_boundary_loader import get_crossattn_boundary_tagger
         safe_process_sa_row._boundary_model = get_crossattn_boundary_tagger()
         print("✅ Optuna: Cross-Attention 경계 모델 주입 완료")
 

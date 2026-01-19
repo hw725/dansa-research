@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 계층적 분할 평가 스크립트
-- pd/test → pa 모델로 문장 분할 → pa/test 정답과 비교 (tgt 기준)
-- pa/test → sa 모델로 구 분할 → sa/test 정답과 비교 (tgt 기준)
+- pd/test → pa 모델로 문장 분할 → p2s/test 정답과 비교 (tgt 기준)
+- p2s/test → sa 모델로 구 분할 → s2p/test 정답과 비교 (tgt 기준)
 - 멀티태스크 경계 모델(boudary_multitask.pt) 사용
 - 결과 저장: test_results/hierarchical/summary.json
 """

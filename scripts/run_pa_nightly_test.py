@@ -10,9 +10,9 @@ import pandas as pd
 # 설정
 SEED = 5
 SAMPLE_SIZE = 1000
-EXCLUDE_FILE = "/workspace/datasets/pa_exclude_250.json"
+EXCLUDE_FILE = "/workspace/datasets/sentence_exclude_250.json"
 OUTPUT_FILE = "/workspace/test_results/nightly_test_1000_sb0.05.csv"
-INPUT_DATASET = "/workspace/datasets/pd/test.csv"
+INPUT_DATASET = "/workspace/datasets/sentenceragraph/test.csv"
 
 # 인자 설정
 # prior_bonus=0.4, supar_bonus=0.05, bsp_wt=0.006, bsp_wc=-0.01
@@ -50,9 +50,9 @@ def main():
     print(f"샘플링 완료: {len(sample_df)}개 -> {sample_input_path}")
     
     # 4. PA 실행
-    # python pa/main.py input output --args...
+    # python p2s/main.py input output --args...
     cmd = [
-        "python", "pa/main.py",
+        "python", "p2s/main.py",
         sample_input_path,
         OUTPUT_FILE,
         "--use-boundary-model",
@@ -65,8 +65,8 @@ def main():
         "--seed", str(SEED),
     ]
     
-    # 환경변수로 bonus 파라미터 주입 (pa/main.py가 argparse로 안 받을 경우 대비)
-    # 하지만 pa/main.py가 bonus 인자를 직접 안 받는다면 코드 수정 없이 config/env로 해야 함.
+    # 환경변수로 bonus 파라미터 주입 (p2s/main.py가 argparse로 안 받을 경우 대비)
+    # 하지만 p2s/main.py가 bonus 인자를 직접 안 받는다면 코드 수정 없이 config/env로 해야 함.
     # CSP_ALIGNMENT_PARAMS 환경변수를 통해 JSON 형태로 주입하는 것이 가장 확실함.
     
     alignment_params = {

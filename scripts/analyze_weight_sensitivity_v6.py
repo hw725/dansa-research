@@ -7,7 +7,7 @@ V6 클러스터링 결과에 대해 여러 가중치 시나리오의 효과 분�
 
 Usage:
     docker compose exec csp python scripts/analyze_weight_sensitivity_v6.py \
-        --pa-csv hyeonto/reports/pa_boundary_v6_full/boundary_clusters.csv \
+        --pa-csv hyeonto/reports/sentence_boundary_v6_full/boundary_clusters.csv \
         --out-dir hyeonto/reports/weight_sensitivity_v6
 """
 

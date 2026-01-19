@@ -6,7 +6,7 @@
 - negative 라벨이 따로 없어도 in-batch negatives(contrastive loss)로 자동 생성
 
 기본 입력:
-- datasets/pa/train.csv (columns: 원문, 번역문, book_name, ...)
+- datasets/p2s/train.csv (columns: 원문, 번역문, book_name, ...)
 
 출력:
 - models/dual_encoder_alignment_pa.pt (pa.processor strict 모드에서 사용)
@@ -169,7 +169,7 @@ def main() -> int:
     parser.add_argument(
         "--train-csv",
         default=str(WORKSPACE_ROOT / "datasets" / "pa" / "train.csv"),
-        help="학습용 train.csv 경로 (기본: datasets/pa/train.csv)",
+        help="학습용 train.csv 경로 (기본: datasets/p2s/train.csv)",
     )
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--batch", type=int, default=64)

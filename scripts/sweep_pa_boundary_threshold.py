@@ -9,8 +9,8 @@
 
 예)
   docker-compose run --rm csp python scripts/sweep_pa_boundary_threshold.py \
-    --pd-input datasets/pd/test_100.csv \
-    --gold datasets/pa/test_100.csv \
+    --pd-input datasets/sentenceragraph/test_100.csv \
+    --gold datasets/p2s/test_100.csv \
     --thresholds 0.3 0.4 0.5 0.6 0.7 \
     --device cuda
 
@@ -221,12 +221,12 @@ def main() -> int:
     p.add_argument(
         "--pd-input",
         default=str(WORKSPACE_ROOT / "datasets" / "pd" / "test_100.csv"),
-        help="PA 입력(문단병렬). 기본: datasets/pd/test_100.csv",
+        help="PA 입력(문단병렬). 기본: datasets/sentenceragraph/test_100.csv",
     )
     p.add_argument(
         "--gold",
         default=str(WORKSPACE_ROOT / "datasets" / "pa" / "test_100.csv"),
-        help="gold(문장 단위). 기본: datasets/pa/test_100.csv",
+        help="gold(문장 단위). 기본: datasets/p2s/test_100.csv",
     )
     p.add_argument(
         "--thresholds",
@@ -254,33 +254,33 @@ def main() -> int:
         "--max-length",
         type=int,
         default=None,
-        help="PA max-length (pa/main.py로 전달). 예: 기존 strict 재현용으로 10을 사용",
+        help="PA max-length (p2s/main.py로 전달). 예: 기존 strict 재현용으로 10을 사용",
     )
     p.add_argument(
         "--max-workers",
         type=int,
         default=None,
-        help="PA max-workers (pa/main.py로 전달)",
+        help="PA max-workers (p2s/main.py로 전달)",
     )
     p.add_argument(
         "--batch-size",
         type=int,
         default=None,
-        help="PA batch-size (pa/main.py로 전달)",
+        help="PA batch-size (p2s/main.py로 전달)",
     )
     p.add_argument("--device", default="cuda", choices=["cuda", "cpu"])
     p.add_argument("--out-dir", default=str(WORKSPACE_ROOT / "test_results"))
-    p.add_argument("--seed", type=int, default=None, help="PA 추론 재현성 seed (pa/main.py로 전달)")
+    p.add_argument("--seed", type=int, default=None, help="PA 추론 재현성 seed (p2s/main.py로 전달)")
     p.add_argument(
         "--boundary-min-len",
         type=int,
         default=None,
-        help="boundary 모델 디코딩 min_len 오버라이드(task=pa, 기본 20). pa/main.py로 전달",
+        help="boundary 모델 디코딩 min_len 오버라이드(task=pa, 기본 20). p2s/main.py로 전달",
     )
     p.add_argument(
         "--deterministic",
         action="store_true",
-        help="PA 추론 deterministic 모드 사용 (pa/main.py로 전달, 속도 저하 가능)",
+        help="PA 추론 deterministic 모드 사용 (p2s/main.py로 전달, 속도 저하 가능)",
     )
 
     default_ref = WORKSPACE_ROOT / "test_results" / "pa_strict_thr0p72_ml10_seed1_adjref_adaptive.csv"

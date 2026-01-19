@@ -54,4 +54,4 @@ def analyze_boundary_patterns(train_jsonl: str, top_n: int = 30):
     return terminal_bigrams, terminal_trigrams
 
 if __name__ == '__main__':
-    bigrams, trigrams = analyze_boundary_patterns('datasets/pa_boundary/train.jsonl')
+    bigrams, trigrams = analyze_boundary_patterns('datasets/sentence_boundary/train.jsonl')

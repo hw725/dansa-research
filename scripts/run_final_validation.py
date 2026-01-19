@@ -61,9 +61,9 @@ if __name__ == "__main__":
     # 1. Full Test (Original pd/test.csv)
     # Note: pd/test.csv has '문단식별자', '원문', '번역문' so it can serve as gold.
     run_validation(
-        input_file='/workspace/datasets/pd/test.csv',
+        input_file='/workspace/datasets/sentenceragraph/test.csv',
         output_file='/workspace/test_results/pa_output_full_optimized.xlsx',
-        gold_file='/workspace/datasets/pd/test.csv', 
+        gold_file='/workspace/datasets/sentenceragraph/test.csv', 
         desc="FULL TEST (All Paragraphs)"
     )
     

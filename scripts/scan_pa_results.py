@@ -6,7 +6,7 @@ PowerShell heredoc/quoting issues.
 
 Defaults are tuned for this repo:
 - pred glob: test_results/pa_strict*.csv
-- gold:      datasets/pa/test_100.csv
+- gold:      datasets/p2s/test_100.csv
 
 This script intentionally re-implements the metric logic from
 integrity_report.run_pa_output_vs_gold_report(), but returns machine-readable
@@ -179,7 +179,7 @@ def main() -> int:
     ap.add_argument(
         "--gold",
         type=str,
-        default="datasets/pa/test_100.csv",
+        default="datasets/p2s/test_100.csv",
         help="Gold CSV relative to root",
     )
     ap.add_argument(

@@ -9,7 +9,7 @@
   docker compose exec -T csp bash -lc "python -u scripts/summarize_pa_drift.py \
     --reference-output test_results/pa_strict_thr0p72_ml10_seed1_adjref_adaptive.csv \
     --inputs-glob 'test_results/sweep_threshold_runs/pa_strict_thr*.csv' \
-    --gold datasets/pa/test_100_from_pd.csv"
+    --gold datasets/p2s/test_100_from_pd.csv"
 """
 
 from __future__ import annotations

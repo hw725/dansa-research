@@ -77,8 +77,8 @@ def run_single_experiment(
     seed: int = 1,
 ) -> Dict:
     """단일 실험 실행"""
-    from sa.sa_aligner_v2 import split_tgt_meaning_units_v2
-    from sa.sa_tracer import get_sa_tracer
+    from s2p.s2p_aligner_v2 import split_tgt_meaning_units_v2
+    from s2p.sa_tracer import get_sa_tracer
     
     random.seed(seed)
     

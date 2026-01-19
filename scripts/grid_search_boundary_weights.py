@@ -68,15 +68,15 @@ def update_config_weights(config_path: str, weight_terminal: float, weight_conti
 
 def run_pa_evaluation(paragraphs: list, enable_refine: bool = True) -> dict:
     """Run PA evaluation on selected paragraphs and return metrics."""
-    from pa.processor import PAProcessor
-    from pa.evaluate import evaluate_pa_results
+    from p2s.processor import PAProcessor
+    from p2s.evaluate import evaluate_pa_results
     
     # Load config
     with open('csp_config.json', 'r', encoding='utf-8') as f:
         config = json.load(f)
     
     # Load test data
-    test_df = pd.read_csv('datasets/pa/test.csv')
+    test_df = pd.read_csv('datasets/p2s/test.csv')
     
     # Filter to selected paragraphs
     selected_set = set(paragraphs)
@@ -143,7 +143,7 @@ def main():
     
     # Setup paths
     failure_analysis_path = 'test_results/failure_analysis/analysis_cases_detail.csv'
-    test_csv_path = 'datasets/pa/test.csv'
+    test_csv_path = 'datasets/p2s/test.csv'
     config_path = 'csp_config.json'
     
     # Load exclusion set

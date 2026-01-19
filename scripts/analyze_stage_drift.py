@@ -3,7 +3,7 @@
 입력:
 - GT: 문단식별자 단위로 정답 alignments가 나열된 엑셀(예: ...grouped_by_paragraphid.xlsx)
     컬럼: 문단식별자, 원문, 번역문, (선택) book_name
-- Trace(JSONL): pa/processor.py에서 기록한 단계별 src/tgt segments
+- Trace(JSONL): p2s/processor.py에서 기록한 단계별 src/tgt segments
 
 출력:
 - stage별 원문 경계 Precision/Recall/F1 (micro)
@@ -131,7 +131,7 @@ def load_gt(gt_path: str) -> Dict[Tuple[str, int], Dict[str, List[str]]]:
 
     지원 포맷:
     - grouped_by_paragraphid.xlsx: (문단식별자, book_name, 원문, 번역문) 행이 문장 단위로 이미 나열
-    - datasets/pa/test_100_from_pd.csv: (문단식별자, 문장식별자, book_name, 원문, 번역문)
+    - datasets/p2s/test_100_from_pd.csv: (문단식별자, 문장식별자, book_name, 원문, 번역문)
 
     핵심은 '문단 내 문장 순서'를 안정적으로 복원하는 것.
     """
@@ -183,7 +183,7 @@ def main():
         required=True,
         help=(
             "GT 경로(.xlsx 또는 .csv). "
-            "grouped_by_paragraphid.xlsx 또는 datasets/pa/test_100_from_pd.csv 같은 문장단위 gold를 지원합니다."
+            "grouped_by_paragraphid.xlsx 또는 datasets/p2s/test_100_from_pd.csv 같은 문장단위 gold를 지원합니다."
         ),
     )
     ap.add_argument("--trace-jsonl", required=True, help="PA 단계 트레이스 JSONL 경로")

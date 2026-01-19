@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """SA 경계 태거 모델 평가
 
-입력(pa/test.csv) → 태거로 분할 → Gold(sa/test.csv)와 비교
+입력(p2s/test.csv) → 태거로 분할 → Gold(s2p/test.csv)와 비교
 """
 
 import sys
@@ -56,12 +56,12 @@ def main():
     args = parser.parse_args()
     
     # SA 경계 태거 로드
-    from common.sa_boundary_tagger_loader import get_sa_boundary_tagger
+    from common.s2p_boundary_tagger_loader import get_sa_boundary_tagger
     tagger = get_sa_boundary_tagger()
     
     # 데이터 로드
-    input_df = pd.read_csv("datasets/pa/test.csv")
-    gold_df = pd.read_csv("datasets/sa/test.csv")
+    input_df = pd.read_csv("datasets/p2s/test.csv")
+    gold_df = pd.read_csv("datasets/s2p/test.csv")
     
     sent_ids = list(input_df['문장식별자'].unique()[:args.sample_size])
     

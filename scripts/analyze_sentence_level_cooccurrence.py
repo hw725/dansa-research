@@ -7,7 +7,7 @@
 2. 문장 끝 현토 탐지: 종결 vs 접속/중간 자동 구분
 3. 의문사-의문종결 관계 자연스럽게 포착
 
-입력: datasets/pa/train.csv (원문 컬럼)
+입력: datasets/p2s/train.csv (원문 컬럼)
 출력:
   - 현토별 선행 한자 클러스터 분석
   - 종결/접속 기능별 분리
@@ -15,7 +15,7 @@
 
 사용 예:
     python scripts/analyze_sentence_level_cooccurrence.py \
-        --csv datasets/pa/train.csv \
+        --csv datasets/p2s/train.csv \
         --out-dir hyeonto/reports/sentence_level_analysis
 """
 

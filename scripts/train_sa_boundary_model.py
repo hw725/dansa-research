@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """SA 전용 번역문 경계 모델 학습
 
-datasets/sa_boundary/의 JSONL 데이터로 sequence tagging 모델 학습
+datasets/phrase_boundary/의 JSONL 데이터로 sequence tagging 모델 학습
 - text: 번역문 (한국어)
 - labels: B(경계)/O(비경계) 태그
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """SA 구 경계 모델 학습 (올바른 버전)
 
-datasets/sa/train.csv (구 단위 Gold)에서 번역문 경계 학습
+datasets/s2p/train.csv (구 단위 Gold)에서 번역문 경계 학습
 - 같은 문장식별자 내의 여러 구를 연결하여 경계 생성
 - 각 구의 시작점 = 경계(B)
 

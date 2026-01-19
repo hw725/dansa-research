@@ -3,8 +3,8 @@
 
 import pandas as pd
 
-gold_df = pd.read_csv('datasets/sa/test.csv')
-input_df = pd.read_csv('datasets/pa/test.csv')
+gold_df = pd.read_csv('datasets/s2p/test.csv')
+input_df = pd.read_csv('datasets/p2s/test.csv')
 
 sent_id = 76
 input_row = input_df[input_df['문장식별자'] == sent_id]

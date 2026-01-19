@@ -9,7 +9,7 @@
 동작:
 1) PD pool에서 (book_name, 문단식별자) 기준으로 N개 샘플링하여 pd_subset.csv 생성
 2) PA gold(pool)에서 동일 키만 추출하여 gold_subset.csv 생성 (integrity_report.extract_gold_subset 사용)
-3) docker compose로 pa/main.py 실행하여 PA output 생성
+3) docker compose로 p2s/main.py 실행하여 PA output 생성
 4) integrity_report로 평가하고 (micro, tgt 완전일치 subset) F1을 파싱해 요약 CSV 저장
 
 중요)
@@ -192,8 +192,8 @@ def _run_stream(
 
 @dataclass
 class RunnerConfig:
-    pd_pool: str = "datasets/pd/test.csv"
-    pa_gold_pool: str = "datasets/pa/test.csv"
+    pd_pool: str = "datasets/sentenceragraph/test.csv"
+    pa_gold_pool: str = "datasets/p2s/test.csv"
     n: int = 100
     seeds: list[int] = None  # type: ignore[assignment]
     out_dir: str = "test_results/multitest"
@@ -415,14 +415,14 @@ def main() -> int:
     p.add_argument(
         "--enable-refine",
         action="store_true",
-        help="pa/main.py의 --enable-refine를 켭니다(현재는 DP/인접 refine 이동폭 확장).",
+        help="p2s/main.py의 --enable-refine를 켭니다(현재는 DP/인접 refine 이동폭 확장).",
     )
 
     p.add_argument(
         "--enable-src-marker-bonus",
         action="store_true",
         help=(
-            "pa/main.py의 --enable-src-marker-boundary-bonus를 켭니다. "
+            "p2s/main.py의 --enable-src-marker-boundary-bonus를 켭니다. "
             "원문 내 현토(한글 marker) 패턴을 경계 선택 tie-break에 약하게 반영합니다."
         ),
     )
@@ -431,7 +431,7 @@ def main() -> int:
         "--enable-src-marker-whitespace-dp-bonus",
         action="store_true",
         help=(
-            "pa/main.py의 --enable-src-marker-whitespace-dp-bonus를 켭니다. "
+            "p2s/main.py의 --enable-src-marker-whitespace-dp-bonus를 켭니다. "
             "whitespace_dp(어절 DP 분할)에서 현토(한글 marker) 패턴을 후보 컷/DP 점수에 약하게 반영합니다."
         ),
     )
@@ -590,7 +590,7 @@ def main() -> int:
                 if _is_running_in_docker():
                     pa_cmd = [
                         "python",
-                        "pa/main.py",
+                        "p2s/main.py",
                         _to_run_path(pd_subset_path),
                         _to_run_path(pa_output_path),
                         "--embedder",
@@ -613,7 +613,7 @@ def main() -> int:
                         "--rm",
                         "csp",
                         "python",
-                        "pa/main.py",
+                        "p2s/main.py",
                         _to_run_path(pd_subset_path),
                         _to_run_path(pa_output_path),
                         "--embedder",

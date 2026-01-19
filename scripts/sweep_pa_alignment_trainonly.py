@@ -2,7 +2,7 @@
 """Sweep alignment hyperparameters (TRAIN-ONLY) while keeping boundary fixed.
 
 What it does per trial:
-1) Train alignment model (datasets/pa/train.csv only)
+1) Train alignment model (datasets/p2s/train.csv only)
 2) Run PA(strict) on PD input paragraphs
 3) Evaluate vs gold using integrity_report
 

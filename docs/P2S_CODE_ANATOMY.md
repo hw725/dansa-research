@@ -74,7 +74,7 @@ flowchart LR
 
 ## 1. 하이브리드 토크나이저 (Hybrid Tokenizer)
 
-**파일**: `pa/sentence_splitter.py`, `pa/processor.py`
+**파일**: `p2s/sentence_splitter.py`, `p2s/processor.py`
 
 PA는 고전 한문의 특수성과 한국어 정밀 분석을 위해 **Hybrid** 접근법을 사용합니다.
 
@@ -128,7 +128,7 @@ final_score = (dense_weight * dense_sim) +
  
  ## 4. 경계 모델 및 보너스 (Boundary Model & Bonus)
  
- **파일**: `pa/processor.py` (내부 함수 `_boundary_bonus_at`), `common/boundary_model_loader.py`
+ **파일**: `p2s/processor.py` (내부 함수 `_boundary_bonus_at`), `common/boundary_model_loader.py`
  
 -### 4.1 Boundary Model (Logit)
 +### 4.1 경계 모델 코드 해부 (Model Anatomy)
@@ -161,7 +161,7 @@ final_score = (dense_weight * dense_sim) +
 
 ## 5. DP 정렬 알고리즘 (Numba Dynamic Programming)
 
-**파일**: `pa/processor.py` (함수 `_global_dp_refine`)
+**파일**: `p2s/processor.py` (함수 `_global_dp_refine`)
 
 ### 5.1 점수 행렬 (Score Matrix) 계산
 번역문 문장 `j`와 모든 가능한 원문 세그먼트 `(i_start, i_end)` 조합에 대해 유사도를 계산합니다.
@@ -176,7 +176,7 @@ Numba JIT로 가속된 루프에서 원문의 최적 분할 지점을 결정합�
 
 ## 6. 무결성 검증 (Integrity Validation)
 
-**파일**: `pa/processor.py` (리파인 종료 시점)
+**파일**: `p2s/processor.py` (리파인 종료 시점)
 
 정렬이 완료된 후, 시스템은 다음과 같은 엄격한 검증을 수행합니다.
 

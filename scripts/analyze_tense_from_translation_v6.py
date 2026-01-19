@@ -12,7 +12,7 @@
 
 사용 예:
     python scripts/analyze_tense_from_translation_v6.py \
-        --csv hyeonto/reports/pa_boundary_v6_full/boundary_clusters.csv \
+        --csv hyeonto/reports/sentence_boundary_v6_full/boundary_clusters.csv \
         --out-dir hyeonto/reports/tense_analysis_v6
 """
 
@@ -79,7 +79,7 @@ def extract_ending(text: str, n_chars: int = 6) -> str:
 
 def main() -> int:
     p = argparse.ArgumentParser(description="번역문 시제 패턴 분석 (v6)")
-    p.add_argument("--csv", type=Path, default=Path("hyeonto/reports/pa_boundary_v6_full/boundary_clusters.csv"))
+    p.add_argument("--csv", type=Path, default=Path("hyeonto/reports/sentence_boundary_v6_full/boundary_clusters.csv"))
     p.add_argument("--out-dir", type=Path, default=Path("hyeonto/reports/tense_analysis_v6"))
     args = p.parse_args()
 

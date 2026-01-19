@@ -125,7 +125,7 @@ class DualEncoder(nn.Module):
 
 def main():
     parser = argparse.ArgumentParser(description="Train SA Dual-Encoder Alignment")
-    parser.add_argument("--train-csv", type=str, default="datasets/sa/train.csv",
+    parser.add_argument("--train-csv", type=str, default="datasets/s2p/train.csv",
                         help="학습용 SA CSV 경로")
     parser.add_argument("--epochs", type=int, default=10, help="에포크 수")
     parser.add_argument("--batch", type=int, default=128, help="배치 크기")

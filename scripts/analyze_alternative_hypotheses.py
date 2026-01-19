@@ -9,7 +9,7 @@
 
 사용 예:
     python scripts/analyze_alternative_hypotheses.py \
-        --csv hyeonto/datasets/pa_train_full.csv \
+        --csv hyeonto/datasets/sentence_train_full.csv \
         --cluster-csv hyeonto/reports/recluster_k16_child/reclustered.csv \
         --out-dir hyeonto/reports/bias_validation/alternative_hypotheses \
         --expected-contexts configs/expected_contexts.json

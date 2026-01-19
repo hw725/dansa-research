@@ -8,8 +8,8 @@ Goal
   - tp/fp/fn counts and per-paragraph F1
 
 Inputs
-- --gt-xlsx: gold in .xlsx or .csv (supports datasets/pa/test_100_from_pd.csv)
-- --trace-jsonl: pa stage trace JSONL produced by pa/processor.py
+- --gt-xlsx: gold in .xlsx or .csv (supports datasets/p2s/test_100_from_pd.csv)
+- --trace-jsonl: pa stage trace JSONL produced by p2s/processor.py
 
 Outputs
 - CSV (one row per paragraph)

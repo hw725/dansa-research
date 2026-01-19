@@ -3,7 +3,7 @@
 import pandas as pd
 
 # PA 데이터 로드
-pa = pd.read_csv('hyeonto/datasets/pa_train_merged.csv')
+pa = pd.read_csv('hyeonto/datasets/sentence_train_merged.csv')
 print(f"PA 총 행수: {len(pa):,}")
 print(f"PA 총 서종: {pa['book_name'].nunique()}개\n")
 

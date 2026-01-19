@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
 원본 4개 파일을 올바르게 병합:
-1. hyeonto/datasets/pa/train.csv
-2. hyeonto/datasets/sa/train.csv
-3. datasets/pa/train.csv
-4. datasets/sa/train.csv
+1. hyeonto/datasets/p2s/train.csv
+2. hyeonto/datasets/s2p/train.csv
+3. datasets/p2s/train.csv
+4. datasets/s2p/train.csv
 """
 import pandas as pd
 import re
@@ -12,10 +12,10 @@ import re
 print("=== Step 1: 원본 파일 구조 확인 ===\n")
 
 files = {
-    'hyeonto_pa': 'hyeonto/datasets/pa/train.csv',
-    'hyeonto_sa': 'hyeonto/datasets/sa/train.csv',
-    'root_pa': 'datasets/pa/train.csv',
-    'root_sa': 'datasets/sa/train.csv',
+    'hyeonto_pa': 'hyeonto/datasets/p2s/train.csv',
+    'hyeonto_sa': 'hyeonto/datasets/s2p/train.csv',
+    'root_pa': 'datasets/p2s/train.csv',
+    'root_sa': 'datasets/s2p/train.csv',
 }
 
 dfs = {}
@@ -110,12 +110,12 @@ if common:
     print(f"SA 필터링: {len(sa_merged):,} -> {len(sa_filtered):,}행")
 
     # 저장
-    pa_filtered.to_csv('hyeonto/datasets/pa_merged_v2.csv', index=False, encoding='utf-8-sig')
-    sa_filtered.to_csv('hyeonto/datasets/sa_merged_v2.csv', index=False, encoding='utf-8-sig')
+    pa_filtered.to_csv('hyeonto/datasets/sentence_merged_v2.csv', index=False, encoding='utf-8-sig')
+    sa_filtered.to_csv('hyeonto/datasets/phrase_merged_v2.csv', index=False, encoding='utf-8-sig')
 
     print("\n저장 완료:")
-    print("  hyeonto/datasets/pa_merged_v2.csv")
-    print("  hyeonto/datasets/sa_merged_v2.csv")
+    print("  hyeonto/datasets/sentence_merged_v2.csv")
+    print("  hyeonto/datasets/phrase_merged_v2.csv")
 else:
     print("[ERROR] 공통 문장을 찾을 수 없어서 저장하지 못했습니다.")
 

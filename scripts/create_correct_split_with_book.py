@@ -160,23 +160,23 @@ def main():
     # 6. 저장
     print("\n[Step 6] 데이터셋 저장...")
     
-    os.makedirs("datasets/pd", exist_ok=True)
-    os.makedirs("datasets/pa", exist_ok=True)
-    os.makedirs("datasets/sa", exist_ok=True)
+    os.makedirs("datasets/sentenceragraph", exist_ok=True)
+    os.makedirs("datasets/sentence", exist_ok=True)
+    os.makedirs("datasets/phrase", exist_ok=True)
     
-    pd_train.to_csv("datasets/pd/train.csv", index=False, encoding='utf-8')
-    pd_val.to_csv("datasets/pd/val.csv", index=False, encoding='utf-8')
-    pd_test.to_csv("datasets/pd/test.csv", index=False, encoding='utf-8')
+    pd_train.to_csv("datasets/sentenceragraph/train.csv", index=False, encoding='utf-8')
+    pd_val.to_csv("datasets/sentenceragraph/val.csv", index=False, encoding='utf-8')
+    pd_test.to_csv("datasets/sentenceragraph/test.csv", index=False, encoding='utf-8')
     print("  ✓ PD 저장 완료")
     
-    pa_train.to_csv("datasets/pa/train.csv", index=False, encoding='utf-8')
-    pa_val.to_csv("datasets/pa/val.csv", index=False, encoding='utf-8')
-    pa_test.to_csv("datasets/pa/test.csv", index=False, encoding='utf-8')
+    pa_train.to_csv("datasets/p2s/train.csv", index=False, encoding='utf-8')
+    pa_val.to_csv("datasets/p2s/val.csv", index=False, encoding='utf-8')
+    pa_test.to_csv("datasets/p2s/test.csv", index=False, encoding='utf-8')
     print("  ✓ PA 저장 완료")
     
-    sa_train.to_csv("datasets/sa/train.csv", index=False, encoding='utf-8')
-    sa_val.to_csv("datasets/sa/val.csv", index=False, encoding='utf-8')
-    sa_test.to_csv("datasets/sa/test.csv", index=False, encoding='utf-8')
+    sa_train.to_csv("datasets/s2p/train.csv", index=False, encoding='utf-8')
+    sa_val.to_csv("datasets/s2p/val.csv", index=False, encoding='utf-8')
+    sa_test.to_csv("datasets/s2p/test.csv", index=False, encoding='utf-8')
     print("  ✓ SA 저장 완료")
     
     # 7. 검증
@@ -211,9 +211,9 @@ def main():
     print("✓ 올바른 7:2:1 분할 완료!")
     print("=" * 80)
     print("\n생성된 파일:")
-    print("  datasets/pd/: train.csv, val.csv, test.csv")
-    print("  datasets/pa/: train.csv, val.csv, test.csv")
-    print("  datasets/sa/: train.csv, val.csv, test.csv")
+    print("  datasets/sentenceragraph/: train.csv, val.csv, test.csv")
+    print("  datasets/p2s/: train.csv, val.csv, test.csv")
+    print("  datasets/s2p/: train.csv, val.csv, test.csv")
     print("\n설명:")
     print("  1. 44책을 합칠 때 book_name 컬럼 추가")
     print("  2. (book_name, 문단식별자) 조합을 기준으로 7:2:1 분할")

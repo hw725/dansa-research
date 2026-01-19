@@ -3,8 +3,8 @@
 import pandas as pd
 
 print("PA와 SA 데이터 로딩...")
-pa = pd.read_csv('hyeonto/datasets/pa_train_merged.csv')
-sa = pd.read_csv('hyeonto/datasets/sa_train_merged.csv')
+pa = pd.read_csv('hyeonto/datasets/sentence_train_merged.csv')
+sa = pd.read_csv('hyeonto/datasets/phrase_train_merged.csv')
 
 print(f"\nPA 행수: {len(pa):,}")
 print(f"SA 행수: {len(sa):,}")

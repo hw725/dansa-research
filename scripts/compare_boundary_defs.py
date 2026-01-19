@@ -81,7 +81,7 @@ def load_gold_boundary_labels(csv_path: Path, text_col: str = "번역문"):
 
 def main():
     # Gold 데이터 로드
-    gold_df = pd.read_csv("datasets/sa/test.csv")
+    gold_df = pd.read_csv("datasets/s2p/test.csv")
     
     # 첫 몇 개 문장의 경계 비교
     sent_ids = list(gold_df['문장식별자'].unique()[:5])
@@ -104,7 +104,7 @@ def main():
         })
     
     # 학습 데이터 방식 확인
-    results["train_labels"] = load_gold_boundary_labels(Path("datasets/sa/test.csv"))
+    results["train_labels"] = load_gold_boundary_labels(Path("datasets/s2p/test.csv"))
     
     with open("boundary_comparison.json", "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2, ensure_ascii=False)

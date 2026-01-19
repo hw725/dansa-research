@@ -9,8 +9,8 @@ import pandas as pd
 import re
 
 print("PA와 SA 데이터 로딩...")
-pa = pd.read_csv('hyeonto/datasets/pa_train_merged.csv')
-sa = pd.read_csv('hyeonto/datasets/sa_train_merged.csv')
+pa = pd.read_csv('hyeonto/datasets/sentence_train_merged.csv')
+sa = pd.read_csv('hyeonto/datasets/phrase_train_merged.csv')
 
 print(f"PA 원본: {len(pa):,}행")
 print(f"SA 원본: {len(sa):,}행")
@@ -90,7 +90,7 @@ print("\nTop 10 마커:")
 print(merged['marker'].value_counts().head(10))
 
 # 저장
-output_path = 'hyeonto/datasets/pa_sa_merged.csv'
+output_path = 'hyeonto/datasets/sentence_sa_merged.csv'
 merged.to_csv(output_path, index=False, encoding='utf-8-sig')
 print(f"\n저장 완료: {output_path}")
 
@@ -106,7 +106,7 @@ stats = {
     'empty_markers': (merged['marker'] == '').sum(),
 }
 
-stats_path = 'hyeonto/datasets/pa_sa_merged_stats.txt'
+stats_path = 'hyeonto/datasets/sentence_sa_merged_stats.txt'
 with open(stats_path, 'w', encoding='utf-8') as f:
     f.write("PA + SA 병합 통계\n")
     f.write("="*50 + "\n\n")

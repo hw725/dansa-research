@@ -3,9 +3,9 @@
 
 - 입력: hyeonto/xlsx/{book_name}/{book_name}_{문단|문장|구}병렬.xlsx
 - 출력:
-  - hyeonto/datasets/pd/{train,val,test}.csv
-  - hyeonto/datasets/pa/{train,val,test}.csv
-  - hyeonto/datasets/sa/{train,val,test}.csv
+  - hyeonto/datasets/sentenceragraph/{train,val,test}.csv
+  - hyeonto/datasets/p2s/{train,val,test}.csv
+  - hyeonto/datasets/s2p/{train,val,test}.csv
 
 분할 규칙:
 - PD의 고유 (book_name, 문단식별자) 조합을 기준으로 7:2:1 분할

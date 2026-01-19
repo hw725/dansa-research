@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """PA 경계(문장↔문장 사이) '기능'을 비지도적으로 군집화한다.
 
-- 입력: datasets/pa/train.csv (문단식별자, 문장식별자, 원문, 번역문, book_name)
+- 입력: datasets/p2s/train.csv (문단식별자, 문장식별자, 원문, 번역문, book_name)
 - 출력: out_dir/boundary_clusters.csv, out_dir/boundary_clusters.md
 
 이 파일은 trash 백업에 있던 스크립트를 workspace scripts/로 옮겨온 것입니다.
@@ -200,7 +200,7 @@ def main() -> None:
         "--input",
         type=str,
         default=str(WORKSPACE_ROOT / "datasets" / "pa" / "train.csv"),
-        help="입력 CSV (기본: datasets/pa/train.csv)",
+        help="입력 CSV (기본: datasets/p2s/train.csv)",
     )
     p.add_argument(
         "--out-dir",

@@ -10,9 +10,9 @@ import pandas as pd
 # 설정 (검증용으로 5개만)
 SEED = 5
 SAMPLE_SIZE = 5 
-EXCLUDE_FILE = "/workspace/datasets/pa_exclude_250.json"
+EXCLUDE_FILE = "/workspace/datasets/sentence_exclude_250.json"
 OUTPUT_FILE = "/workspace/test_results/sanity_check_output.csv"
-INPUT_DATASET = "/workspace/datasets/pd/test.csv"
+INPUT_DATASET = "/workspace/datasets/sentenceragraph/test.csv"
 
 def main():
     print(f"[{os.getcwd()}] Sanity Check 시작")
@@ -41,7 +41,7 @@ def main():
     print(f"샘플링 완료(5개): {sample_input_path}")
     
     cmd = [
-        "python", "pa/main.py",
+        "python", "p2s/main.py",
         sample_input_path,
         OUTPUT_FILE,
         "--use-boundary-model",

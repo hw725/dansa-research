@@ -15,8 +15,8 @@ def _boundary_positions(segments):
             positions.add(cursor)
     return positions
 
-input_df = pd.read_csv("datasets/pa/test.csv")
-gold_df = pd.read_csv("datasets/sa/test.csv")
+input_df = pd.read_csv("datasets/p2s/test.csv")
+gold_df = pd.read_csv("datasets/s2p/test.csv")
 
 sent_ids = list(input_df['문장식별자'].unique()[:5])
 

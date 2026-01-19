@@ -47,7 +47,7 @@ def _split_tgt_sentences(tgt_paragraph: str, *, allow_fallback: bool) -> List[st
 
     # 번역문 문장 분할은 PA 정책상 불변(=동일 splitter를 강제)이어야 한다.
     try:
-        from pa.sentence_splitter import split_target_sentences_advanced
+        from p2s.sentence_splitter import split_target_sentences_advanced
 
         sents = split_target_sentences_advanced(text)
         sents = [str(s).strip() for s in sents if str(s).strip()]
@@ -194,7 +194,7 @@ def main() -> int:
     p = argparse.ArgumentParser(description="Run PA using only learned models (no embedder/parsers)")
     p.add_argument("input_pd", type=str, help="PD 형식 입력 CSV/XLSX (문단 단위)")
     p.add_argument("out_csv", type=str, help="PA output CSV (문장 병렬)")
-    p.add_argument("--gold", type=str, default="datasets/pa/test_100_from_pd.csv", help="gold sentences CSV/XLSX")
+    p.add_argument("--gold", type=str, default="datasets/p2s/test_100_from_pd.csv", help="gold sentences CSV/XLSX")
     p.add_argument("--alignment", type=str, default=str(MODELS_ROOT / "dual_encoder_boundary_aware_pa.pt"))
     p.add_argument("--device", type=str, default="cuda")
     p.add_argument("--boundary-weight", type=float, default=0.3)
