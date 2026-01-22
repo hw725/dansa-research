@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Diff two PA output CSVs by (book_name, 문단식별자).
+"""Diff two P2S output CSVs by (book_name, 문단식별자).
 
 Goal: pinpoint which pids differ between two outputs (e.g., v5new vs rerun)
 without any hardcoded exceptions.
@@ -10,7 +10,7 @@ Outputs:
 - "first" mismatches in pid order
 
 Optionally accepts --gold to also compute per-pid boundary F1 vs gold (same as
-integrity_report.run_pa_output_vs_gold_report logic).
+p2s_evaluator.run_p2s_output_vs_gold_report logic).
 """
 
 from __future__ import annotations
@@ -28,7 +28,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from integrity_report import _boundary_positions_normed, _norm, _prf1
+from accuracy.p2s_evaluator import _boundary_positions_normed, _norm, _prf1
 
 
 def _read_csv(path: Path) -> pd.DataFrame:
@@ -101,8 +101,8 @@ def _f1_vs_gold(pred_src: list[str], gold_src: list[str]) -> float:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("a", type=Path, help="PA output A (csv)")
-    ap.add_argument("b", type=Path, help="PA output B (csv)")
+    ap.add_argument("a", type=Path, help="P2S output A (csv)")
+    ap.add_argument("b", type=Path, help="P2S output B (csv)")
     ap.add_argument("--gold", type=Path, default=None, help="Optional gold sentence CSV")
     ap.add_argument("--top", type=int, default=30, help="How many differing pids to print")
     args = ap.parse_args()

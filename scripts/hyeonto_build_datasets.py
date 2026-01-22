@@ -9,8 +9,8 @@
 
 분할 규칙:
 - PD의 고유 (book_name, 문단식별자) 조합을 기준으로 7:2:1 분할
-- PA는 동일 (book_name, 문단식별자)에 속하는 행을 그대로 포함
-- SA는 PA에 포함된 (book_name, 문장식별자) 기준으로 포함
+- P2S는 동일 (book_name, 문단식별자)에 속하는 행을 그대로 포함
+- S2P는 P2S에 포함된 (book_name, 문장식별자) 기준으로 포함
 
 실행 예:
   python scripts/hyeonto_build_datasets.py
@@ -90,8 +90,8 @@ def main() -> int:
         raise SystemExit(f"입력 폴더가 없습니다: {XLSX_DIR} (먼저 hyeonto_build_xlsx.py 실행)")
 
     df_pd = _load_parallel("_문단병렬")
-    df_pa = _load_parallel("_문장병렬")
-    df_sa = _load_parallel("_구병렬")
+    df_p2s = _load_parallel("_문장병렬")
+    df_s2p = _load_parallel("_구병렬")
 
     # 키 생성
     df_pd["para_key"] = df_pd["book_name"].astype(str) + "_Para" + df_pd["문단식별자"].astype(str)
@@ -126,48 +126,48 @@ def main() -> int:
     pd_val = df_pd[df_pd["para_key"].isin(val_keys)].drop(columns=["para_key"])
     pd_test = df_pd[df_pd["para_key"].isin(test_keys)].drop(columns=["para_key"])
 
-    # PA: PD split key 기준
-    df_pa["para_key"] = df_pa["book_name"].astype(str) + "_Para" + df_pa["문단식별자"].astype(str)
-    pa_train = df_pa[df_pa["para_key"].isin(train_keys)].drop(columns=["para_key"])
-    pa_val = df_pa[df_pa["para_key"].isin(val_keys)].drop(columns=["para_key"])
-    pa_test = df_pa[df_pa["para_key"].isin(test_keys)].drop(columns=["para_key"])
+    # P2S: PD split key 기준
+    df_p2s["para_key"] = df_p2s["book_name"].astype(str) + "_Para" + df_p2s["문단식별자"].astype(str)
+    p2s_train = df_p2s[df_p2s["para_key"].isin(train_keys)].drop(columns=["para_key"])
+    p2s_val = df_p2s[df_p2s["para_key"].isin(val_keys)].drop(columns=["para_key"])
+    p2s_test = df_p2s[df_p2s["para_key"].isin(test_keys)].drop(columns=["para_key"])
 
-    # SA: PA split의 (book_name, 문장식별자) 기준
-    df_sa["sent_key"] = df_sa["book_name"].astype(str) + "_Sent" + df_sa["문장식별자"].astype(str)
+    # S2P: P2S split의 (book_name, 문장식별자) 기준
+    df_s2p["sent_key"] = df_s2p["book_name"].astype(str) + "_Sent" + df_s2p["문장식별자"].astype(str)
 
-    train_sent_keys = set(pa_train.apply(lambda r: str(r["book_name"]) + "_Sent" + str(r["문장식별자"]), axis=1))
-    val_sent_keys = set(pa_val.apply(lambda r: str(r["book_name"]) + "_Sent" + str(r["문장식별자"]), axis=1))
-    test_sent_keys = set(pa_test.apply(lambda r: str(r["book_name"]) + "_Sent" + str(r["문장식별자"]), axis=1))
+    train_sent_keys = set(p2s_train.apply(lambda r: str(r["book_name"]) + "_Sent" + str(r["문장식별자"]), axis=1))
+    val_sent_keys = set(p2s_val.apply(lambda r: str(r["book_name"]) + "_Sent" + str(r["문장식별자"]), axis=1))
+    test_sent_keys = set(p2s_test.apply(lambda r: str(r["book_name"]) + "_Sent" + str(r["문장식별자"]), axis=1))
 
-    sa_train = df_sa[df_sa["sent_key"].isin(train_sent_keys)].drop(columns=["sent_key"])
-    sa_val = df_sa[df_sa["sent_key"].isin(val_sent_keys)].drop(columns=["sent_key"])
-    sa_test = df_sa[df_sa["sent_key"].isin(test_sent_keys)].drop(columns=["sent_key"])
+    s2p_train = df_s2p[df_s2p["sent_key"].isin(train_sent_keys)].drop(columns=["sent_key"])
+    s2p_val = df_s2p[df_s2p["sent_key"].isin(val_sent_keys)].drop(columns=["sent_key"])
+    s2p_test = df_s2p[df_s2p["sent_key"].isin(test_sent_keys)].drop(columns=["sent_key"])
 
     # 저장
     (OUT_DATASETS_DIR / "pd").mkdir(parents=True, exist_ok=True)
-    (OUT_DATASETS_DIR / "pa").mkdir(parents=True, exist_ok=True)
-    (OUT_DATASETS_DIR / "sa").mkdir(parents=True, exist_ok=True)
+    (OUT_DATASETS_DIR / "p2s").mkdir(parents=True, exist_ok=True)
+    (OUT_DATASETS_DIR / "s2p").mkdir(parents=True, exist_ok=True)
 
     pd_cols = [c for c in df_pd.columns if c != "para_key"]
-    pa_cols = [c for c in df_pa.columns if c != "para_key"]
-    sa_cols = [c for c in df_sa.columns if c != "sent_key"]
+    p2s_cols = [c for c in df_p2s.columns if c != "para_key"]
+    s2p_cols = [c for c in df_s2p.columns if c != "sent_key"]
 
     _write_csv(OUT_DATASETS_DIR / "pd" / "train.csv", pd_train, pd_cols)
     _write_csv(OUT_DATASETS_DIR / "pd" / "val.csv", pd_val, pd_cols)
     _write_csv(OUT_DATASETS_DIR / "pd" / "test.csv", pd_test, pd_cols)
 
-    _write_csv(OUT_DATASETS_DIR / "pa" / "train.csv", pa_train, pa_cols)
-    _write_csv(OUT_DATASETS_DIR / "pa" / "val.csv", pa_val, pa_cols)
-    _write_csv(OUT_DATASETS_DIR / "pa" / "test.csv", pa_test, pa_cols)
+    _write_csv(OUT_DATASETS_DIR / "p2s" / "train.csv", p2s_train, p2s_cols)
+    _write_csv(OUT_DATASETS_DIR / "p2s" / "val.csv", p2s_val, p2s_cols)
+    _write_csv(OUT_DATASETS_DIR / "p2s" / "test.csv", p2s_test, p2s_cols)
 
-    _write_csv(OUT_DATASETS_DIR / "sa" / "train.csv", sa_train, sa_cols)
-    _write_csv(OUT_DATASETS_DIR / "sa" / "val.csv", sa_val, sa_cols)
-    _write_csv(OUT_DATASETS_DIR / "sa" / "test.csv", sa_test, sa_cols)
+    _write_csv(OUT_DATASETS_DIR / "s2p" / "train.csv", s2p_train, s2p_cols)
+    _write_csv(OUT_DATASETS_DIR / "s2p" / "val.csv", s2p_val, s2p_cols)
+    _write_csv(OUT_DATASETS_DIR / "s2p" / "test.csv", s2p_test, s2p_cols)
 
     print("✅ wrote:")
     print(f"- {OUT_DATASETS_DIR / 'pd'}")
-    print(f"- {OUT_DATASETS_DIR / 'pa'}")
-    print(f"- {OUT_DATASETS_DIR / 'sa'}")
+    print(f"- {OUT_DATASETS_DIR / 'p2s'}")
+    print(f"- {OUT_DATASETS_DIR / 's2p'}")
     print(f"- split: {args.split}")
 
     return 0

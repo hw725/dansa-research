@@ -7,7 +7,7 @@
 
 Usage:
     docker compose exec csp python scripts/optimize_weight_ratio.py \
-        --pa-csv hyeonto/reports/sentence_boundary_v6_full/boundary_clusters.csv \
+        --pa-csv hyeonto/reports/pa_boundary_v6_full/boundary_clusters.csv \
         --out-dir hyeonto/reports/weight_sensitivity_v6
 """
 

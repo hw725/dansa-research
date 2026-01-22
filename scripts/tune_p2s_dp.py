@@ -1,19 +1,21 @@
-"""PA DP 파라미터 베이지안 최적화 (Optuna) - 직접 호출 버전
+"""P2S DP 파라미터 베이지안 최적화 (Optuna) - 직접 호출 버전
 
 Usage:
     docker exec -e CSP_BGE_CACHE_DIR=/workspace/test_results/_cache/bge_embeddings \
-        csp-workspace python /workspace/scripts/tune_pa_dp.py \
+        csp-workspace python /workspace/scripts/tune_p2s_dp.py \
         --n-trials 20 \
-        --input /workspace/test_results/pa_test_input_30.xlsx \
-        --gold /workspace/test_results/pa_gold_sample_30.csv \
+        --input /workspace/test_results/p2s_test_input_30.xlsx \
+        --gold /workspace/test_results/p2s_gold_sample_30.csv \
         --output-dir /workspace/test_results/optuna_runs
 """
 
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-sys.path.insert(0, str(Path(__file__).parent.parent / "pa"))
-sys.path.insert(0, str(Path(__file__).parent.parent / "accuracy"))
+
+# P2S 관련 import
+from p2s.processor import process_paragraph_file
+from accuracy.p2s_evaluator import _read_tabular, _boundary_positions_normed
 
 import argparse
 import json
@@ -24,13 +26,9 @@ from datetime import datetime
 import warnings
 warnings.filterwarnings("ignore")
 
-# PA 관련 import
-from processor import process_paragraph_file
-from p2s_evaluator import _read_tabular, _boundary_positions_normed
 
-
-def evaluate_pa_output(pred_path: Path, gold_path: Path) -> float:
-    """PA 출력과 gold를 비교하여 tgt일치 subset의 원문 경계 F1 반환"""
+def evaluate_p2s_output(pred_path: Path, gold_path: Path) -> float:
+    """P2S 출력과 gold를 비교하여 tgt일치 subset의 원문 경계 F1 반환"""
     pred_df = _read_tabular(pred_path)
     gold_df = _read_tabular(gold_path)
     
@@ -120,7 +118,7 @@ def objective(trial: optuna.Trial, input_path: str, gold_path: str, output_dir: 
     if not output_path.exists():
         return 0.0
     
-    f1 = evaluate_pa_output(output_path, Path(gold_path))
+    f1 = evaluate_p2s_output(output_path, Path(gold_path))
     
     print(f"[Trial {trial.number}] bt={boundary_threshold:.3f} bf={boundary_bonus_factor:.2f} sp={shift_penalty_factor:.5f} → F1={f1:.4f}")
     
@@ -128,7 +126,7 @@ def objective(trial: optuna.Trial, input_path: str, gold_path: str, output_dir: 
 
 
 def main():
-    parser = argparse.ArgumentParser(description="PA DP 파라미터 베이지안 최적화")
+    parser = argparse.ArgumentParser(description="P2S DP 파라미터 베이지안 최적화")
     parser.add_argument("--n-trials", type=int, default=20, help="시행 횟수")
     parser.add_argument("--input", required=True, help="입력 파일")
     parser.add_argument("--gold", required=True, help="정답 파일")
@@ -143,7 +141,7 @@ def main():
     study = optuna.create_study(
         direction="maximize",
         sampler=optuna.samplers.TPESampler(seed=42),
-        study_name="pa_dp_tuning",
+        study_name="p2s_dp_tuning",
     )
     
     print(f"🚀 Optuna 최적화 시작 (n_trials={args.n_trials})")
@@ -176,3 +174,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

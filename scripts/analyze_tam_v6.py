@@ -10,7 +10,7 @@
 
 사용 예:
     python scripts/analyze_tam_v6.py \
-        --csv hyeonto/reports/sentence_boundary_v6_full/boundary_clusters.csv \
+        --csv hyeonto/reports/pa_boundary_v6_full/boundary_clusters.csv \
         --out-dir hyeonto/reports/tam_analysis_v6
 """
 
@@ -125,7 +125,7 @@ def detect_translation_tam(text: str) -> list[str]:
 
 def main() -> int:
     p = argparse.ArgumentParser(description="현토 TAM(시제-상-서법) 분석 (v6)")
-    p.add_argument("--csv", type=Path, default=Path("hyeonto/reports/sentence_boundary_v6_full/boundary_clusters.csv"))
+    p.add_argument("--csv", type=Path, default=Path("hyeonto/reports/pa_boundary_v6_full/boundary_clusters.csv"))
     p.add_argument("--out-dir", type=Path, default=Path("hyeonto/reports/tam_analysis_v6"))
     args = p.parse_args()
 

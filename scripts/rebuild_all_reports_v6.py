@@ -17,14 +17,14 @@ def run_cmd(cmd: list[str]):
 
 def main():
     # 1. 경로 설정 (V6 결과물 위치)
-    PA_V6 = "hyeonto/reports/sentence_boundary_v6_full/boundary_clusters.csv"
-    SA_V6 = "hyeonto/reports/phrase_boundary_v6_full/sa_boundary_clusters.csv"
+    PA_V6 = "hyeonto/reports/pa_boundary_v6_full/boundary_clusters.csv"
+    SA_V6 = "hyeonto/reports/sa_boundary_v6_full/sa_boundary_clusters.csv"
     
     # 출력 경로 설정
-    PA_LABEL_MD = "hyeonto/reports/sentence_boundary_v6_full/boundary_clusters_labeled.md"
-    SA_PROFILE_MD = "hyeonto/reports/phrase_boundary_v6_full/phrase_cluster_profile.md"
-    PA_PROFILE_MD = "hyeonto/reports/sentence_boundary_v6_full/sentence_cluster_profile.md"
-    SA_OUT_DIR = "hyeonto/reports/phrase_boundary_v6_full"
+    PA_LABEL_MD = "hyeonto/reports/pa_boundary_v6_full/boundary_clusters_labeled.md"
+    SA_PROFILE_MD = "hyeonto/reports/sa_boundary_v6_full/sa_cluster_profile.md"
+    PA_PROFILE_MD = "hyeonto/reports/pa_boundary_v6_full/pa_cluster_profile.md"
+    SA_OUT_DIR = "hyeonto/reports/sa_boundary_v6_full"
     
     # 2. 휴리스틱 라벨링 (Describe)
     print("\n--- 1. Heuristic Labeling (PA) ---")

@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""여러 test_100을 만들고(또는 사용하고) PA(strict) 평가를 반복 실행.
+"""여러 test_100을 만들고(또는 사용하고) P2S(strict) 평가를 반복 실행.
 
 핵심 목표(B):
 - test_100 한 번의 점수에 의존하지 않고, seed별로 여러 번 돌려 평균/분산을 본다.
 
 동작:
 1) PD pool에서 (book_name, 문단식별자) 기준으로 N개 샘플링하여 pd_subset.csv 생성
-2) PA gold(pool)에서 동일 키만 추출하여 gold_subset.csv 생성 (integrity_report.extract_gold_subset 사용)
-3) docker compose로 p2s/main.py 실행하여 PA output 생성
-4) integrity_report로 평가하고 (micro, tgt 완전일치 subset) F1을 파싱해 요약 CSV 저장
+2) P2S gold(pool)에서 동일 키만 추출하여 gold_subset.csv 생성 (p2s_evaluator.extract_gold_subset 사용)
+3) docker compose로 p2s/main.py 실행하여 P2S output 생성
+4) p2s_evaluator로 평가하고 (micro, tgt 완전일치 subset) F1을 파싱해 요약 CSV 저장
 
 중요)
 - 이 스크립트는 내부에서 `docker compose ...`를 호출하므로, 컨테이너 안에서 실행하면 안 됩니다.
-    (즉, `docker compose run csp python scripts/pa_multitest_runner.py` 형태로 실행하지 마세요.)
+    (즉, `docker compose run csp python scripts/p2s_multitest_runner.py` 형태로 실행하지 마세요.)
 
 사용 예)
-    python scripts/pa_multitest_runner.py --seeds 1 2 3 4 5
+    python scripts/p2s_multitest_runner.py --seeds 1 2 3 4 5
 
   # 공식 재현 파라미터를 기본값으로 포함 (thr=0.70, min-len=20 등)
 """
@@ -384,7 +384,7 @@ def _sample_pd_subset(pd_pool: Path, *, n: int, seed: int) -> pd.DataFrame:
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Run PA strict on multiple random test splits")
+    p = argparse.ArgumentParser(description="Run P2S strict on multiple random test splits")
     p.add_argument(
         "--config",
         type=str,
@@ -396,18 +396,18 @@ def main() -> int:
         "--run-dir",
         type=str,
         default=None,
-        help="기존 실행 디렉토리(예: test_results/.../YYYYmmdd_HHMMSS). --eval-only와 함께 쓰면 PA 재실행 없이 평가만 재계산합니다.",
+        help="기존 실행 디렉토리(예: test_results/.../YYYYmmdd_HHMMSS). --eval-only와 함께 쓰면 P2S 재실행 없이 평가만 재계산합니다.",
     )
 
     p.add_argument(
         "--eval-only",
         action="store_true",
-        help="PA 실행/샘플링 없이, 지정된 run-dir의 기존 pa_output/gold_subset으로 평가만 다시 계산합니다.",
+        help="P2S 실행/샘플링 없이, 지정된 run-dir의 기존 p2s_output/gold_subset으로 평가만 다시 계산합니다.",
     )
 
     # 아래 인자들은 config override 용도로 남겨둔다.
     p.add_argument("--pd-pool", default=None)
-    p.add_argument("--pa-gold-pool", default=None)
+    p.add_argument("--p2s-gold-pool", default=None)
     p.add_argument("--n", type=int, default=None)
     p.add_argument("--seeds", nargs="+", type=int, default=None)
     p.add_argument("--out-dir", default=None)
@@ -442,7 +442,7 @@ def main() -> int:
         help="PA 실행 로그를 실시간으로 출력합니다(긴 실행에서 '멈춘 것처럼' 보이는 문제 방지).",
     )
 
-    # PA run params (official-ish defaults)
+    # P2S run params (official-ish defaults)
     p.add_argument("--device", default=None)
     p.add_argument("--max-length", type=int, default=None)
     p.add_argument("--boundary-threshold", type=float, default=None)
@@ -452,7 +452,7 @@ def main() -> int:
     p.add_argument(
         "--no-trace",
         action="store_true",
-        help="PA 실행 시 trace 파일 저장(--trace-stages-jsonl)을 비활성화합니다.",
+        help="P2S 실행 시 trace 파일 저장(--trace-stages-jsonl)을 비활성화합니다.",
     )
     p.add_argument(
         "--analyze-mismatch",
@@ -534,7 +534,7 @@ def main() -> int:
 
     # import here so the runner can be used both on host and in container
     if not cfg.eval_only:
-        from integrity_report import extract_gold_subset
+        from accuracy.p2s_evaluator import extract_gold_subset
 
     summary_name = "summary_recalc.csv" if cfg.eval_only else "summary.csv"
     summary_path = run_dir / summary_name
@@ -741,7 +741,7 @@ def main() -> int:
             if _is_running_in_docker():
                 eval_cmd = [
                     "python",
-                    "integrity_report.py",
+                    "accuracy/p2s_evaluator.py",
                     "--input",
                     _to_run_path(pa_output_path),
                     "--gold",
@@ -755,7 +755,7 @@ def main() -> int:
                     "--rm",
                     "csp",
                     "python",
-                    "integrity_report.py",
+                    "accuracy/p2s_evaluator.py",
                     "--input",
                     _to_run_path(pa_output_path),
                     "--gold",

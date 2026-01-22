@@ -15,7 +15,7 @@
 
 사용 예:
     python scripts/validate_tam_bidirectional_v6.py \
-        --csv hyeonto/reports/sentence_boundary_v6_full/boundary_clusters.csv \
+        --csv hyeonto/reports/pa_boundary_v6_full/boundary_clusters.csv \
         --out-dir hyeonto/reports/tam_bidirectional_v6
 """
 
@@ -124,7 +124,7 @@ def detect_hyeonto_tam(hyeonto: str) -> list[str]:
 
 def main() -> int:
     p = argparse.ArgumentParser(description="역방향 TAM 검증: 번역문 → 현토 대응 분석")
-    p.add_argument("--csv", type=Path, default=Path("hyeonto/reports/sentence_boundary_v6_full/boundary_clusters.csv"))
+    p.add_argument("--csv", type=Path, default=Path("hyeonto/reports/pa_boundary_v6_full/boundary_clusters.csv"))
     p.add_argument("--out-dir", type=Path, default=Path("hyeonto/reports/tam_bidirectional_v6"))
     args = p.parse_args()
 

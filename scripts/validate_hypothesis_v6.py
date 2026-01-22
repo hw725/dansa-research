@@ -9,7 +9,7 @@
 
 사용 예:
     python scripts/validate_hypothesis_v6.py \
-        --csv hyeonto/reports/sentence_boundary_v6_full/boundary_clusters.csv \
+        --csv hyeonto/reports/pa_boundary_v6_full/boundary_clusters.csv \
         --out-dir hyeonto/reports/bias_validation_v6 \
         --iterations 100 \
         --seed 42
@@ -243,7 +243,7 @@ def test_alternative_centrality(df: pd.DataFrame, target_cluster: str) -> dict:
 
 def main() -> int:
     p = argparse.ArgumentParser(description="V6 가설 검증")
-    p.add_argument("--csv", type=Path, default=Path("hyeonto/reports/sentence_boundary_v6_full/boundary_clusters.csv"))
+    p.add_argument("--csv", type=Path, default=Path("hyeonto/reports/pa_boundary_v6_full/boundary_clusters.csv"))
     p.add_argument("--out-dir", type=Path, default=Path("hyeonto/reports/bias_validation_v6"))
     p.add_argument("--iterations", type=int, default=100, help="랜덤 섞기 반복 횟수")
     p.add_argument("--seed", type=int, default=42)

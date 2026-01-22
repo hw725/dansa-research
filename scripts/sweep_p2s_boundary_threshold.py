@@ -95,7 +95,7 @@ def _parse_integrity_report(text: str, *, returncode: int | None = None) -> Pars
 
 
 @dataclass(frozen=True)
-class PaOutputGroup:
+class P2sOutputGroup:
     src_sentences: list[str]
     tgt_sentences: list[str]
 
@@ -105,8 +105,8 @@ def _norm(s: str) -> str:
     return str(s).replace(" ", "").replace("\n", "").replace("\t", "").strip()
 
 
-def _load_pa_output_groups(path: Path) -> dict[tuple[str, int], PaOutputGroup]:
-    """PA 출력 CSV를 (book_name, pid) -> (src_sentence_list, tgt_sentence_list)로 로드."""
+def _load_p2s_output_groups(path: Path) -> dict[tuple[str, int], P2sOutputGroup]:
+    """P2S 출력 CSV를 (book_name, pid) -> (src_sentence_list, tgt_sentence_list)로 로드."""
 
     groups: dict[tuple[str, int], list[tuple[int, str, str]]] = {}
     with path.open("r", encoding="utf-8") as f:
@@ -114,7 +114,7 @@ def _load_pa_output_groups(path: Path) -> dict[tuple[str, int], PaOutputGroup]:
         required = {"문단식별자", "book_name", "문장식별자", "원문", "번역문"}
         missing = required - set(reader.fieldnames or [])
         if missing:
-            raise ValueError(f"PA 출력 CSV 스키마가 예상과 다릅니다. missing={sorted(missing)} path={path}")
+            raise ValueError(f"P2S 출력 CSV 스키마가 예상과 다릅니다. missing={sorted(missing)} path={path}")
 
         for row in reader:
             book = str(row["book_name"])
@@ -152,16 +152,16 @@ def _boundary_set_from_src_sentences(src_sentences: list[str]) -> set[int]:
 
 def _compute_drift_vs_reference(
     *,
-    pa_output: Path,
-    ref_groups: dict[tuple[str, int], PaOutputGroup],
+    p2s_output: Path,
+    ref_groups: dict[tuple[str, int], P2sOutputGroup],
     cache: dict[Path, dict[str, float | int | str | None]],
 ) -> dict[str, float | int | str | None]:
-    """pa_output를 reference와 비교해 boundary-only drift 통계를 계산."""
+    """p2s_output를 reference와 비교해 boundary-only drift 통계를 계산."""
 
-    if pa_output in cache:
-        return cache[pa_output]
+    if p2s_output in cache:
+        return cache[p2s_output]
 
-    groups = _load_pa_output_groups(pa_output)
+    groups = _load_p2s_output_groups(p2s_output)
 
     common_keys = set(groups.keys()) & set(ref_groups.keys())
     tgt_equal = 0
@@ -200,7 +200,7 @@ def _compute_drift_vs_reference(
     )
 
     stats: dict[str, float | int | str | None] = {
-        "drift_ref": str(pa_output),  # placeholder, overwritten by caller
+        "drift_ref": str(p2s_output),  # placeholder, overwritten by caller
         "drift_common_pids": len(common_keys),
         "drift_tgt_equal_pids": tgt_equal,
         "drift_src_concat_equal_pids": src_concat_equal,
@@ -211,21 +211,21 @@ def _compute_drift_vs_reference(
         "drift_missing_in_ref": len(set(groups.keys()) - set(ref_groups.keys())),
         "drift_missing_in_output": len(set(ref_groups.keys()) - set(groups.keys())),
     }
-    cache[pa_output] = stats
+    cache[p2s_output] = stats
     return stats
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Sweep PA boundary threshold (no training)")
+    p = argparse.ArgumentParser(description="Sweep P2S boundary threshold (no training)")
 
     p.add_argument(
         "--pd-input",
         default=str(WORKSPACE_ROOT / "datasets" / "pd" / "test_100.csv"),
-        help="PA 입력(문단병렬). 기본: datasets/sentenceragraph/test_100.csv",
+        help="P2S 입력(문단병렬). 기본: datasets/sentenceragraph/test_100.csv",
     )
     p.add_argument(
         "--gold",
-        default=str(WORKSPACE_ROOT / "datasets" / "pa" / "test_100.csv"),
+        default=str(WORKSPACE_ROOT / "datasets" / "p2s" / "test_100.csv"),
         help="gold(문장 단위). 기본: datasets/p2s/test_100.csv",
     )
     p.add_argument(
@@ -254,41 +254,41 @@ def main() -> int:
         "--max-length",
         type=int,
         default=None,
-        help="PA max-length (p2s/main.py로 전달). 예: 기존 strict 재현용으로 10을 사용",
+        help="P2S max-length (p2s/main.py로 전달). 예: 기존 strict 재현용으로 10을 사용",
     )
     p.add_argument(
         "--max-workers",
         type=int,
         default=None,
-        help="PA max-workers (p2s/main.py로 전달)",
+        help="P2S max-workers (p2s/main.py로 전달)",
     )
     p.add_argument(
         "--batch-size",
         type=int,
         default=None,
-        help="PA batch-size (p2s/main.py로 전달)",
+        help="P2S batch-size (p2s/main.py로 전달)",
     )
     p.add_argument("--device", default="cuda", choices=["cuda", "cpu"])
     p.add_argument("--out-dir", default=str(WORKSPACE_ROOT / "test_results"))
-    p.add_argument("--seed", type=int, default=None, help="PA 추론 재현성 seed (p2s/main.py로 전달)")
+    p.add_argument("--seed", type=int, default=None, help="P2S 추론 재현성 seed (p2s/main.py로 전달)")
     p.add_argument(
         "--boundary-min-len",
         type=int,
         default=None,
-        help="boundary 모델 디코딩 min_len 오버라이드(task=pa, 기본 20). p2s/main.py로 전달",
+        help="boundary 모델 디코딩 min_len 오버라이드(task=p2s, 기본 20). p2s/main.py로 전달",
     )
     p.add_argument(
         "--deterministic",
         action="store_true",
-        help="PA 추론 deterministic 모드 사용 (p2s/main.py로 전달, 속도 저하 가능)",
+        help="P2S 추론 deterministic 모드 사용 (p2s/main.py로 전달, 속도 저하 가능)",
     )
 
-    default_ref = WORKSPACE_ROOT / "test_results" / "pa_strict_thr0p72_ml10_seed1_adjref_adaptive.csv"
+    default_ref = WORKSPACE_ROOT / "test_results" / "p2s_strict_thr0p72_ml10_seed1_adjref_adaptive.csv"
     p.add_argument(
         "--reference-output",
         default=str(default_ref) if default_ref.exists() else None,
         help=(
-            "boundary drift 비교용 reference PA 출력 CSV. "
+            "boundary drift 비교용 reference P2S 출력 CSV. "
             "지정 시 sweep CSV에 drift_* 컬럼이 추가됨"
         ),
     )
@@ -304,7 +304,7 @@ def main() -> int:
     runs_dir.mkdir(parents=True, exist_ok=True)
 
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_csv = out_dir / f"sweep_pa_boundary_threshold_{ts}.csv"
+    out_csv = out_dir / f"sweep_p2s_boundary_threshold_{ts}.csv"
 
     env = dict(os.environ)
     env.setdefault("PYTHONUNBUFFERED", "1")
@@ -312,7 +312,7 @@ def main() -> int:
         # subprocess로 실행되는 Python의 해시 랜덤화를 고정 (set/dict 순서 비결정성 완화)
         env.setdefault("PYTHONHASHSEED", str(args.seed))
 
-    ref_groups: dict[tuple[str, int], PaOutputGroup] | None = None
+    ref_groups: dict[tuple[str, int], P2sOutputGroup] | None = None
     drift_cache: dict[Path, dict[str, float | int | str | None]] = {}
     ref_path: Path | None = None
     if args.reference_output:
@@ -321,7 +321,7 @@ def main() -> int:
             ref_path = WORKSPACE_ROOT / ref_path
         if ref_path.exists():
             print(f"[drift] reference_output={ref_path}")
-            ref_groups = _load_pa_output_groups(ref_path)
+            ref_groups = _load_p2s_output_groups(ref_path)
         else:
             print(f"[drift] reference_output not found: {ref_path} (skip drift metrics)")
             ref_path = None
@@ -335,7 +335,7 @@ def main() -> int:
             "micro_f1_all",
             "micro_f1_tgt_exact",
             "eval_returncode",
-            "pa_output",
+            "p2s_output",
         ]
         if ref_groups is not None and ref_path is not None:
             fieldnames.extend(
@@ -380,12 +380,12 @@ def main() -> int:
             best_single: tuple[float, dict] | None = None
 
             for repeat_idx in range(1, int(args.repeats) + 1):
-                out_pa = runs_dir / f"pa_strict_thr{thr}_{ts}_r{repeat_idx}.csv"
-                pa_cmd = [
+                out_p2s = runs_dir / f"p2s_strict_thr{thr}_{ts}_r{repeat_idx}.csv"
+                p2s_cmd = [
                     sys.executable,
-                    str(WORKSPACE_ROOT / "pa" / "main.py"),
+                    str(WORKSPACE_ROOT / "p2s" / "main.py"),
                     str(args.pd_input),
-                    str(out_pa),
+                    str(out_p2s),
                     "--embedder",
                     "bge",
                     "--use-boundary-model",
@@ -395,24 +395,24 @@ def main() -> int:
                     str(args.device),
                 ]
                 if args.max_length is not None:
-                    pa_cmd.extend(["--max-length", str(int(args.max_length))])
+                    p2s_cmd.extend(["--max-length", str(int(args.max_length))])
                 if args.max_workers is not None:
-                    pa_cmd.extend(["--max-workers", str(int(args.max_workers))])
+                    p2s_cmd.extend(["--max-workers", str(int(args.max_workers))])
                 if args.batch_size is not None:
-                    pa_cmd.extend(["--batch-size", str(int(args.batch_size))])
+                    p2s_cmd.extend(["--batch-size", str(int(args.batch_size))])
                 if args.seed is not None:
-                    pa_cmd.extend(["--seed", str(args.seed)])
+                    p2s_cmd.extend(["--seed", str(args.seed)])
                 if args.boundary_min_len is not None:
-                    pa_cmd.extend(["--boundary-min-len", str(args.boundary_min_len)])
+                    p2s_cmd.extend(["--boundary-min-len", str(args.boundary_min_len)])
                 if args.deterministic:
-                    pa_cmd.append("--deterministic")
-                _run(pa_cmd, cwd=WORKSPACE_ROOT, env=env)
+                    p2s_cmd.append("--deterministic")
+                _run(p2s_cmd, cwd=WORKSPACE_ROOT, env=env)
 
                 eval_cmd = [
                     sys.executable,
-                    str(WORKSPACE_ROOT / "integrity_report.py"),
+                    str(WORKSPACE_ROOT / "accuracy" / "p2s_evaluator.py"),
                     "--input",
-                    str(out_pa),
+                    str(out_p2s),
                     "--gold",
                     str(args.gold),
                 ]
@@ -427,12 +427,12 @@ def main() -> int:
                     "micro_f1_all": parsed.micro_f1_all,
                     "micro_f1_tgt_exact": parsed.micro_f1_tgt_exact,
                     "eval_returncode": parsed.returncode,
-                    "pa_output": str(out_pa),
+                    "p2s_output": str(out_p2s),
                 }
 
                 if ref_groups is not None and ref_path is not None:
                     drift = _compute_drift_vs_reference(
-                        pa_output=out_pa,
+                        p2s_output=out_p2s,
                         ref_groups=ref_groups,
                         cache=drift_cache,
                     )
