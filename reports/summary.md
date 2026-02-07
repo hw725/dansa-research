@@ -1,24 +1,369 @@
-# 임규직 『구두해법』 현토 체계의 계량적 고찰 -한한병렬말뭉치 데이터셋을 중심으로-
+# 任圭直 『句讀解法』 懸吐 體系의 計量的 考察
 
-<h1><strong>1. 서론</strong></h1><h2><strong>1) 현토 논의의 역사적 전개</strong></h2><h3><strong>(1) 유용성 논쟁</strong></h3><ul><li><p>16세기: 尹根壽·崔立, 韓愈 글 현토 방법 논쟁</p></li></ul><ul><li><p>17세기: 趙翼, 과거 현토 중시 풍조 우려 및 『近思錄』 현토 작업</p></li></ul><ul><li><p>19세기: 金正默, 『論語』 현토 재검토로 토 하나의 문의 변화 지적</p></li></ul><ul><li><p>李圭景: 句讀 차이가 문의를 변화시키므로 先賢 定論 계승 강조</p></li></ul><h3><strong>(2) 현토 선행연구에서 지적된 한계</strong></h3><ul><li><p>구두·현토·구결 체제에 대한 체계적 이해 미흡</p></li></ul><ul><li><p>"유용성" 차원의 소모적 논쟁에 국한</p></li></ul><ul><li><p>교과서 오류 발견: '하고'·'하며' 혼용, 의문문 종결형 등의 혼동 → 본연의 기능을 다하지 못하게 함</p></li></ul><ul><li><p>개별적 연구 및 선학들의 통찰에 관하여 계량적 차원의 실증적인 검토도 필요한 시점</p></li></ul><h2><strong>2) 현토의 본질적 가치</strong></h2><h3><strong>(1) 정의와 특성</strong></h3><ul><li><p>한문 원문에 우리말 조사·어미를 표시하는 한국 고유 독법 체계</p></li></ul><ul><li><p>표점보다 1500년 선행한 텍스트 정리 방법</p></li></ul><ul><li><p>무수한 문법 정보를 내장한 일종의 번역(申相厚)</p></li></ul><h3><strong>(2) 필연성</strong></h3><ul><li><p>李圭景: 중국과 달리 우리나라에 필수, 없으면 의미 이해 어려움</p></li></ul><ul><li><p>한문의 특징: 띄어쓰기·마침표 부재, 통사론적 고립어이므로 구두가 품사 결정</p></li></ul><ul><li><p>白文 독해는 중국인에게도 어려우나 우리에게 더욱 절박(교착어와의 충돌, 일본에도 훈점 있음)</p></li></ul><h3><strong>(3) 언어학적 가치</strong></h3><ul><li><p>소멸 어미 보존: '-느니라', '-(으)리라', '-니라'</p></li></ul><ul><li><p>현대 한국어 이전의 문법 범주 보존으로 국어사적 의의</p></li></ul><h2><strong>3) 전근대 문헌의 현토 원칙 기술</strong></h2><h3><strong>(1) 주요 전근대 문헌</strong></h3><ul><li><p>李森煥 『句讀指南』: 한자와 종결어미 연관 규정, 조사의 용법과 현토와의 관계를 거론</p></li></ul><ul><li><p>任圭直 『句讀解法』: 상세한 설명 및 분류 체계, 존칭 구별</p></li></ul><ul><li><p>朴文鎬 『俚讀解』: 특정 현토가 나타나는 조건을 간결히 기술</p></li></ul><h3><strong>(2) 현토 분류 체계</strong></h3><ul><li><p>문의 중시: 문세·어맥 고려</p></li></ul><ul><li><p>문법 요소: 주체·시제·태·구조·허자·조사·존칭</p></li></ul><ul><li><p>申相厚 4기준: 문법·의리·사증·운율</p></li></ul><ul><li><p>학파별 전통 반영 및 토론·수정·재검토를 통한 일관 규칙 적용</p></li></ul><hr><h1><strong>2. 任圭直의 斷辭 구분과 방법론 설계</strong></h1><h3><strong>(1) 斷辭 6가지 분류 체계</strong></h3><table class="border-collapse table-auto w-full" style="min-width: 100px;"><colgroup><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"></colgroup><tbody><tr><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>연번</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>범주</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>의미</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>대표 마커</strong></p></th></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>1</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>游辭以斷</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>가벼운 말로 단정하는 용례, 감탄하는 말*</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>'로다'</p></td></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>2</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>夬絶之斷</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>결정하여 끊는 말</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>'니라'</p></td></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>3</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>微絶之斷</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>대략 끊는 말</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>'라'</p></td></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>4</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>記史之斷</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>政令, 詔除 같은 기록의 斷辭</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>'하다'</p></td></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>5</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>敍述之斷</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>言論, 行事 같은 서술의 斷辭</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>'하더라', '러라'</p></td></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>6</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>汎論以斷</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>두루 진술하여 단정하는 말</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>'하나니라'</p></td></tr></tbody></table><blockquote><p>'가벼운 말로 단정하는 용례'라는 묘사가 다소 추상적이어서 박문호 이두해의 정의를 병기. 구두해법에도 果, 果然 아래에 붙는다고 서술되어 있어 영탄의 뉘앙스가 있다고 보고 있다.</p></blockquote><h3><strong>(2) 본 연구 검증 대상</strong></h3><p>대조군 '라'와의 비교를 통해 세 가지 斷辭 검증</p><ul><li><p>記史之斷: 역사 기록 문체 '하다'</p></li></ul><ul><li><p>游辭以斷: 감탄과 여운 '로다'</p></li></ul><ul><li><p>夬絶·微絶: 확신의 강도 '니라'</p></li></ul><h2><strong>2) 데이터 구성</strong></h2><h3><strong>(1) 말뭉치 배경과 신뢰성</strong></h3><ul><li><p>교육부 고전문헌 국역지원사업 및 한국고전번역원 특수고전번역협동사업(2001~): 국고지원사업뿐만 아니라 자체적으로도 동양고전 현토와 번역에 오랜시간 안정적으로 매진해 온 기관으로서 신뢰할만한 고품질의 데이터를 일정한 규모로 확보 및 축적</p></li></ul><ul><li><p>동양고전정보화사업(2010~): 동양고전번역서 69종 187책, 조선왕조실록 21대, 한국고문서 1,039건 등. 漢韓병렬말뭉치 누적 약 9천만 어절</p></li></ul><ul><li><p>교정청 언해 기준으로 문리 학습, 장기간 안정된 품질 관리, 전문 번역자의 일관된 원칙 적용</p></li></ul><ul><li><p>현토 원문 + 번역 병렬말뭉치는 세계적 희귀 자료</p></li></ul><ul><li><p>의의: 선학 전통의 보존과 현대적 계승</p></li></ul><h3><strong>(2) 본 연구 데이터</strong></h3><ul><li><p>규모: 183,322 문장, 50여 책</p></li></ul><ul><li><p>교정청 언해 기반 사서·삼경 텍스트 및 의미기반 한한병렬말뭉치 2025년도 구축분</p></li></ul><blockquote><p>현토완역 사서삼경, 당송팔대가문초24책, 예기집설대전1~2, 춘추좌씨전1~8, 사정전훈의 자치통감강목1~7, 당시삼백수1~3.</p><p>데이터 처리 도구를 만들면서 여러 가지 통계를 수행해 본 결과, 교정청 언해·율곡 현토를 전재한 사서삼경 완역본을 기준으로 2025년도 구축분 데이터를 벡터화했을 때 전통적 사부분류의 구분이 뚜렷이 나타남. 별도의 논문으로 작성 예정. 또한 본 논문의 통계 결과로 보면 전문 번역자는 교정청 언해·율곡 현토에 대한 학습이 깊어 스스로 새로운 문헌에 현토하는 경우에도 의미적 기능적 왜곡이 나타나지 않는 것으로 보임. 역자나 서종별로 차이는 있을 수 있으나, 대체로 자의적이지 않고 신뢰할 만한 현토라고 볼 수 있음.</p></blockquote><h2><strong>3) 연구 환경</strong></h2><h3><strong>(1) 하드웨어 및 소프트웨어</strong></h3><ul><li><p>하드웨어: GPU NVIDIA RTX3070, RAM 16GB</p></li></ul><ul><li><p>운영체제: 마이크로소프트 윈도우 11 도커 컨테이너(우분투 20.04)</p></li></ul><ul><li><p>언어: 파이썬 3.10.11</p></li></ul><ul><li><p>모형: gpt-5-nano(의미 분석), BGE-M3(다국어 임베딩)</p></li></ul><h3><strong>(2) 재현성</strong></h3><ul><li><p>소스코드 공개 저장소: 분할·추출·통계·전처리 도구 포함 <a target="_blank" rel="noopener noreferrer nofollow" class="text-blue-600 underline cursor-pointer hover:text-blue-800" href="https://github.com/hw725/CSP/tree/dansa-research">https://github.com/hw725/CSP/tree/dansa-research</a></p></li></ul><ul><li><p>익명화 데이터 제공: 분석 1(5,698건), 분석 2(27,330건) - 자의적 표본이 아니라 해당하는 표본 수에 따름</p></li></ul><ul><li><p>원본 코퍼스: 한국고전번역원 동양고전연구소 데이터베이스 구축 지원사업으로 추후 공개 예정</p></li></ul><h2><strong>4) 분석 방법론</strong></h2><h3><strong>(1) 통계적 검증: 카이제곱 검정</strong></h3><ul><li><p>가설 검정: 귀무가설(두 그룹 차이 없음) 대 대립가설(차이 있음)</p></li></ul><ul><li><p>카이제곱 계산: χ² = Σ [(관찰빈도 - 기대빈도)² / 기대빈도]</p></li></ul><ul><li><p>유의수준: p &lt; 0.05 영가설 기각</p></li></ul><h3><strong>(2) 메타데이터 장르 분석</strong></h3><ul><li><p>목적: 현토가 속한 텍스트의 문헌 정보로 그 분포를 통계적으로 검증</p></li></ul><ul><li><p>분류: 역사서 대 비역사서(춘추좌씨전은 경부이나 내용상 사서로 분류)</p></li></ul><ul><li><p>절차: 장르별 총 구 수 및 '하다' 출현 빈도 집계 후 비율 산출 및 카이제곱 검정</p></li></ul><ul><li><p>장점: 메타데이터로 객관성 확보, 재현성 높음</p></li></ul><h3><strong>(3) 거대언어모델(LLM) 의미 분석</strong></h3><ul><li><p>목적: 번역문 문장의 의미와 문맥을 자동 탐지</p></li></ul><ul><li><p>모형: gpt-5-nano</p></li></ul><ul><li><p>프롬프트 설계: 문헌에서 언급된 개념적 정의만 제시, 편견이 개입될 수 있는 구체 예시 배제, 이진 판정(O/X), LLM의 결과 산출은 비결정적이나 통계적으로 거의 동일한 결과 재현 가능</p></li></ul><ul><li><p>적용: 游辭以斷(감정적 고양·시적 여운 판정), 夬絶·微絶(확정적 단언·강한 확신 판정)</p></li></ul><ul><li><p>한계: 번역문 뉘앙스의 단순 판단 가능성, 단 일관된 프롬프트이므로 실험군·대조군 차이 검증하는 최소한의 기능은 할 수 있음</p></li></ul><hr><h1><strong>3. 記史之斷, 游辭以斷, 夬絶·微絶의 검토</strong></h1><h2><strong>1) 分析 1: 記史之斷 '하다'의 장르별 분포</strong></h2><h3><strong>(1) 가설</strong></h3><ul><li><p>귀무가설: "하다" 마커의 장르별 출현율(역사서 대 비역사서)에 차이가 없다</p></li></ul><ul><li><p>대립가설: "하다" 마커의 장르별 출현율은 역사서와 비역사서 간에 차이가 있다</p></li></ul><h3><strong>(2) 결과</strong></h3><ul><li><p>총 "하다" 출현: 22,828건</p></li></ul><table class="border-collapse table-auto w-full" style="min-width: 75px;"><colgroup><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"></colgroup><tbody><tr><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>장르</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>출현율</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>출현 건수</strong></p></th></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>역사서</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>27.02%</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>19,679 / 72,839</p></td></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>문집</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>5.93%</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>3,093 / 52,139</p></td></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>경전</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>0.23%</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>46 / 20,275</p></td></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>시</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>0.03%</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>6 / 18,009</p></td></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>기타</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>0.02%</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>4 / 20,060</p></td></tr></tbody></table><h3><strong>(3) 통계 검정</strong></h3><ul><li><p>카이제곱 검정(역사서 대 비역사서): χ² = 23,515.19, p ≈ 0 → 귀무가설 기각</p></li></ul><h3><strong>(4) 결론</strong></h3><ul><li><p>記史之斷 '하다'는 역사서에 압도적으로 편중(경전 대비 119배)되어 나타남. 任圭直의 記史之斷 개념을 정량적으로 지지.</p></li></ul><h2><strong>2) 分析 2: 游辭以斷 '로다'의 감탄·여운 뉘앙스</strong></h2><h3><strong>(1) 가설</strong></h3><ul><li><p>귀무가설: "~로다"와 "~라" 어미 간 "감탄·여운" 뉘앙스 출현율에 차이가 없다</p></li></ul><ul><li><p>대립가설: "~로다" 어미가 "~라"보다 "감탄·여운" 뉘앙스를 더 많이 담고 있다</p></li></ul><h3><strong>(2) LLM 프롬프트</strong></h3><pre class="bg-slate-900 text-slate-100 rounded-lg p-4 font-mono text-sm overflow-x-auto"><code>다음 번역문들이 “감탄이나 여운을 남기는” 뉘앙스를 담고 있는지 판단해주세요.
+## -漢韓병렬말뭉치 데이터셋을 중심으로-
 
+# **1. 서론**
+
+## **1) 현토 논의의 역사적 전개**
+
+### **(1) 유용성 논쟁**
+
+- 16세기: 尹根壽·崔立, 韓愈 글 현토 방법 논쟁
+
+- 17세기: 趙翼, 과거 현토 중시 풍조 우려 및 『近思錄』 현토 작업
+
+- 19세기: 金正默, 『論語』 현토 재검토로 토 하나의 문의 변화 지적
+
+- 李圭景: 句讀 차이가 문의를 변화시키므로 先賢 定論 계승 강조
+
+### **(2) 현토 선행연구에서 지적된 한계**
+
+- 구두·현토·구결 체제에 대한 체계적 이해 미흡
+
+- “유용성” 차원의 소모적 논쟁에 국한
+
+- 교과서 오류 발견: ‘하고’·‘하며’ 혼용, 의문문 종결형 등의 혼동 → 본연의 기능을 다하지 못하게 함
+
+- 개별적 연구 및 선학들의 통찰에 관하여 계량적 차원의 실증적인 검토도 필요한 시점
+
+## **2) 현토의 본질적 가치**
+
+### **(1) 정의와 특성**
+
+- 한문 원문에 우리말 조사·어미를 표시하는 한국 고유 독법 체계
+
+- 표점보다 1500년 선행한 텍스트 정리 방법
+
+- 무수한 문법 정보를 내장한 일종의 번역(申相厚)
+
+### **(2) 필연성**
+
+- 李圭景: 중국과 달리 우리나라에 필수, 없으면 의미 이해 어려움
+
+- 한문의 특징: 띄어쓰기·마침표 부재, 통사론적 고립어이므로 구두가 품사 결정
+
+- 白文 독해는 중국인에게도 어려우나 우리에게 더욱 절박(교착어와의 충돌, 일본에도 훈점 있음)
+
+### **(3) 언어학적 가치**
+
+- 소멸 어미 보존: ‘-느니라’, ‘-(으)리라’, ‘-니라’
+
+- 현대 한국어 이전의 문법 범주 보존으로 국어사적 의의
+
+## **3) 전근대 문헌의 현토 원칙 기술**
+
+### **(1) 주요 전근대 문헌**
+
+- 李森煥 『句讀指南』: 한자와 종결어미 연관 규정, 조사의 용법과 현토와의 관계를 거론
+
+- 任圭直 『句讀解法』: 상세한 설명 및 분류 체계, 존칭 구별
+
+- 朴文鎬 『俚讀解』: 특정 현토가 나타나는 조건을 간결히 기술
+
+### **(2) 현토 분류 체계**
+
+- 문의 중시: 문세·어맥 고려
+
+- 문법 요소: 주체·시제·태·구조·허자·조사·존칭
+
+- 申相厚 4기준: 문법·의리·사증·운율
+
+- 학파별 전통 반영 및 토론·수정·재검토를 통한 일관 규칙 적용
+
+---
+
+# **2. 任圭直의 斷辭 구분과 방법론 설계**
+
+### **(1) 斷辭 6가지 분류 체계**
+
+| 연번 | 범주 | 의미 | 대표 마커 |
+| --- | --- | --- | --- |
+| 1 | 游辭以斷 | 가벼운 말로 단정하는 용례, 감탄하는 말* | ‘로다’ |
+| 2 | 夬絶之斷 | 결정하여 끊는 말 | ‘니라’ |
+| 3 | 微絶之斷 | 대략 끊는 말 | ‘라’ |
+| 4 | 記史之斷 | 政令, 詔除 같은 기록의 斷辭 | ‘하다’ |
+| 5 | 敍述之斷 | 言論, 行事 같은 서술의 斷辭 | ‘하더라’, ‘러라’ |
+| 6 | 汎論以斷 | 두루 진술하여 단정하는 말 | ‘하나니라’ |
+
+> ‘가벼운 말로 단정하는 용례’라는 묘사가 다소 추상적이어서 박문호 이두해의 정의를 병기. 구두해법에도 果, 果然 아래에 붙는다고 서술되어 있어 영탄의 뉘앙스가 있다고 보고 있다.
+
+### **(2) 본 연구 검증 대상**
+
+대조군 ‘라’와의 비교를 통해 세 가지 斷辭 검증
+
+- 記史之斷: 역사 기록 문체 ‘하다’
+
+- 游辭以斷: 감탄과 여운 ‘로다’
+
+- 夬絶·微絶: 확신의 강도 ‘니라’
+
+## **2) 데이터 구성**
+
+### **(1) 말뭉치 배경과 신뢰성**
+
+- 교육부 고전문헌 국역지원사업 및 한국고전번역원 특수고전번역협동사업(2001~): 국고지원사업뿐만 아니라 자체적으로도 동양고전 현토와 번역에 오랜시간 안정적으로 매진해 온 기관으로서 신뢰할만한 고품질의 데이터를 일정한 규모로 확보 및 축적
+
+- 동양고전정보화사업(2010~): 동양고전번역서 69종 187책, 조선왕조실록 21대, 한국고문서 1,039건 등. 漢韓병렬말뭉치 누적 약 9천만 어절
+
+- 교정청 언해 기준으로 문리 학습, 장기간 안정된 품질 관리, 전문 번역자의 일관된 원칙 적용
+
+- 현토 원문 + 번역 병렬말뭉치는 세계적 희귀 자료
+
+- 의의: 선학 전통의 보존과 현대적 계승
+
+### **(2) 본 연구 데이터**
+
+- 규모: 183,322 문장, 50여 책
+- "은/는"과 같은 현토를 하나로 묶는 정규화 작업 시행- 범주 분류나 분포 분석에 활용
+- 빈도가 극히 낮은 현토는 포함되지 않았을 가능성 있음
+- 저장소에 코드 및 자료 공개, 빈도 낮은 현토에 대한 정밀한 작업 추가 필요
+
+- 교정청 언해 기반 사서·삼경 텍스트 및 의미기반 한한병렬말뭉치 2025년도 구축분
+
+> 현토완역 사서삼경, 당송팔대가문초24책, 예기집설대전1~2, 춘추좌씨전1~8, 사정전훈의 자치통감강목1~7, 당시삼백수1~3.데이터 처리 도구를 만들면서 여러 가지 통계를 수행해 본 결과, 교정청 언해·율곡 현토를 전재한 사서삼경 완역본을 기준으로 2025년도 구축분 데이터를 벡터화했을 때 전통적 사부분류의 구분이 뚜렷이 나타남. 별도의 논문으로 작성 예정. 또한 본 논문의 통계 결과로 보면 전문 번역자는 교정청 언해·율곡 현토에 대한 학습이 깊어 스스로 새로운 문헌에 현토하는 경우에도 의미적 기능적 왜곡이 나타나지 않는 것으로 보임. 역자나 서종별로 차이는 있을 수 있으나, 대체로 자의적이지 않고 신뢰할 만한 현토라고 볼 수 있음.
+
+### **3) 연구 환경**
+
+### **(1) 하드웨어 및 소프트웨어**
+
+- 하드웨어: GPU NVIDIA RTX3070, RAM 16GB
+
+- 운영체제: 마이크로소프트 윈도우 11 도커 컨테이너(우분투 20.04)
+
+- 언어: 파이썬 3.10.11
+
+- 모형: gpt-5-nano(의미 분석), BGE-M3(다국어 임베딩)
+
+### **(2) 재현성**
+
+- 소스코드 공개 저장소: 분할·추출·통계·전처리 도구 포함 [https://github.com/hw725/CSP/tree/dansa-research](https://github.com/hw725/CSP/tree/dansa-research)
+
+- 익명화 데이터 제공: 분석 1(5,698건), 분석 2(27,330건) - 자의적 수량이 아니라 해당하는 표본 수에 따름
+
+- 원본 코퍼스: 한국고전번역원 동양고전연구소 데이터베이스 구축 지원사업으로 추후 공개 예정
+
+## **4) 분석 방법론**
+
+### **(1) 통계적 검증: 카이제곱 검정**
+
+- 가설 검정: 귀무가설(두 그룹 차이 없음) 대 대립가설(차이 있음)
+
+- 카이제곱 계산: χ² = Σ [(관찰빈도 - 기대빈도)² / 기대빈도]
+
+- 유의수준: p < 0.05 영가설 기각
+
+### **(2) 메타데이터 장르 분석**
+
+- 목적: 현토가 속한 텍스트의 문헌 정보로 그 분포를 통계적으로 검증
+
+- 분류: 역사서 대 비역사서(춘추좌씨전은 경부이나 내용상 사서로 분류)
+
+- 절차: 장르별 총 구 수 및 ‘하다’ 출현 빈도 집계 후 비율 산출 및 카이제곱 검정
+
+- 장점: 메타데이터로 객관성 확보, 재현성 높음
+
+### **(3) 거대언어모델(LLM) 의미 분석**
+
+- 목적: 번역문 문장의 의미와 문맥을 자동 탐지
+
+- 모형: gpt-5-nano
+
+- 프롬프트 설계: 문헌에서 언급된 개념적 정의만 제시, 편견이 개입될 수 있는 구체 예시 배제, 이진 판정(O/X), LLM의 결과 산출은 비결정적이나 통계적으로 거의 동일한 결과 재현 가능
+
+- 적용: 游辭以斷(감정적 고양·시적 여운 판정), 夬絶·微絶(확정적 단언·강한 확신 판정)
+
+- 한계: 번역문 뉘앙스의 단순 판단 가능성, 단 일관된 프롬프트이므로 실험군·대조군 차이 검증하는 최소한의 기능은 할 수 있음
+
+---
+
+# **3. 記史之斷, 游辭以斷, 夬絶·微絶의 검토**
+
+## **1) 記史之斷: 역사 서술의 ‘하다’**
+
+### **(1) 가설**
+
+- 귀무가설: “하다” 마커의 장르별 출현율(역사서 대 비역사서)에 차이가 없다
+
+- 대립가설: “하다” 마커의 장르별 출현율은 역사서와 비역사서 간에 차이가 있다
+
+### **(2) 결과**
+
+- 총 “하다” 출현: 22,828건
+
+| 장르 | 출현율 | 출현 건수 |
+| --- | --- | --- |
+| 역사서 | 27.02% | 19,679 / 72,839 |
+| 문집 | 5.93% | 3,093 / 52,139 |
+| 경전 | 0.23% | 46 / 20,275 |
+| 시 | 0.03% | 6 / 18,009 |
+| 기타 | 0.02% | 4 / 20,060 |
+
+### **(3) 통계 검정**
+
+- 카이제곱 검정(역사서 대 비역사서): χ² = 23,515.19, p ≈ 0 → 귀무가설 기각
+
+### **(4) 결론**
+
+- 記史之斷 ‘하다’는 역사서에 압도적으로 편중(경전 대비 119배)되어 나타남
+- 任圭直의 記史之斷 개념을 정량적으로 지지.
+
+## **2) 游辭以斷: 영탄의 ‘로다’**
+
+### **(1) 가설**
+
+- 귀무가설: “~로다”와 “~라” 어미 간 “감탄·여운” 뉘앙스 출현율에 차이가 없다
+
+- 대립가설: “~로다” 어미가 “~라”보다 “감탄·여운” 뉘앙스를 더 많이 담고 있다
+
+### **(2) LLM 프롬프트**
+
+```
+다음 번역문들이 “감탄이나 여운을 남기는” 뉘앙스를 담고 있는지 판단해주세요.
 “감탄이나 여운”이란:
 - 감정적 고양 (탄복, 감탄, 찬탄, 탄식)
 - 시적 여운, 열린 마무리
 - 정서적 반응을 유발하는 표현
-
 해당되면 O, 아니면 X로 답해주세요.
 {texts}
-각 문장에 대해 번호와 O/X만 답해주세요. 예: “1. O”</code></pre><h3><strong>(3) 결과</strong></h3><table class="border-collapse table-auto w-full" style="min-width: 100px;"><colgroup><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"></colgroup><tbody><tr><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>그룹</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>N</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>긍정 판정</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>긍정 비율</strong></p></th></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>~로다(실험군)</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>2,849</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>1,689</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>59.3%</p></td></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>~라(대조군)</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>2,849</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>630</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>22.1%</p></td></tr></tbody></table><h3><strong>(4) 통계 검정</strong></h3><p>χ² = 813.96, 자유도 1, p = 4.97 × 10⁻¹⁷⁹, 효과 크기 37.2%</p><h3><strong>(5) 결론</strong></h3><p>귀무가설 기각(p &lt; 0.05). "~로다"는 "~라"보다 "감탄·여운" 뉘앙스를 유의미하게 더 많이 담음. 임규직과 朴文鎬의 직관적 통찰을 통계적으로 지지.</p><h2><strong>3) 分析 3: 夬絶·微絶 '니라' 대 '라'의 단호한 종결 여부</strong></h2><h3><strong>(1) 가설</strong></h3><ul><li><p>귀무가설: "~니라"와 "~라" 어미 간 "단호한 종결" 뉘앙스 출현율에 차이가 없다</p></li></ul><ul><li><p>대립가설: "~니라" 어미가 "~라"보다 "단호한 종결" 뉘앙스를 더 많이 담고 있다</p></li></ul><h3><strong>(2) LLM 프롬프트</strong></h3><pre class="bg-slate-900 text-slate-100 rounded-lg p-4 font-mono text-sm overflow-x-auto"><code>다음 번역문들이 “단호하게 결론짓는” 뉘앙스를 가지는지 판단해주세요.
+각 문장에 대해 번호와 O/X만 답해주세요. 예: “1. O”
+```
+
+### **(3) 결과**
+
+| 그룹 | N | 긍정 판정 | 긍정 비율 |
+| --- | --- | --- | --- |
+| ~로다(실험군) | 2,849 | 1,689 | 59.3% |
+| ~라(대조군) | 2,849 | 630 | 22.1% |
+
+### **(4) 통계 검정**
+
+- χ² = 813.96, 자유도 1, p = 4.97 × 10⁻¹⁷⁹, 효과 크기 37.2%
+
+### **(5) 결론**
+
+- 귀무가설 기각(p < 0.05)
+- “~로다”는 “~라”보다 “감탄·여운” 뉘앙스를 유의미하게 더 많이 담음
+- 임규직과 朴文鎬의 직관적 통찰을 통계적으로 지지.
+
+## **3) 夬絶·微絶: 단호한 종결 ‘니라’**
+
+### **(1) 가설**
+
+- 귀무가설: “~니라”와 “~라” 어미 간 “단호한 종결” 뉘앙스 출현율에 차이가 없다
+
+- 대립가설: “~니라” 어미가 “~라”보다 “단호한 종결” 뉘앙스를 더 많이 담고 있다
+
+### **(2) LLM 프롬프트**
+
+```
+다음 번역문들이 “단호하게 결론짓는” 뉘앙스를 가지는지 판단해주세요.
 “단호한 종결”이란:
 - 확정적 단언, 최종 결론
 - 더 이상 논의가 필요 없는 완결된 진술
 - 강한 확신을 담은 결정적 서술
-
 “약한 종결”이란:
 - 확신이 약한 추측, 추정
 - 단순 사실 나열, 경과 보고
+“단호한 종결”에 해당하면 O, “약한 종결”에 해당하면 X로 답해주세요.``{texts}``각 문장에 대해 번호와 O/X만 답해주세요. 예: “1. O”
+```
 
-“단호한 종결”에 해당하면 O, “약한 종결”에 해당하면 X로 답해주세요.
-{texts}
-각 문장에 대해 번호와 O/X만 답해주세요. 예: “1. O”</code></pre><h3><strong>(3) 결과</strong></h3><table class="border-collapse table-auto w-full" style="min-width: 100px;"><colgroup><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"></colgroup><tbody><tr><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>그룹</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>N</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>긍정 판정</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>긍정 비율</strong></p></th></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>~니라(실험군)</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>13,665</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>9,864</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>72.2%</p></td></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>~라(대조군)</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>13,665</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>9,592</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>70.2%</p></td></tr></tbody></table><h3><strong>(4) 통계 검정</strong></h3><p>χ² = 13.10, 자유도 1, p = 2.95 × 10⁻⁴, 효과 크기 2.0%</p><h3><strong>(5) 결론</strong></h3><p>귀무가설 기각(p &lt; 0.05). "~니라"는 "~라"보다 "단호한 종결" 뉘앙스를 통계적으로 유의미하게 더 많이 담음(%차이는 크지 않지만 표본이 충분함). 단, 효과 크기 2.0%는 분석 2의 37.2%에 비해 작아 任圭直의 夬絶 대 微絶 구분이 미묘한 차이임을 시사. 혹은 현대인이 이 부분에 관한 언어적 감각을 습득하기 어려웠을 가능성.</p><hr><h1><strong>4. 결론</strong></h1><h2><strong>1) 종합 결과</strong></h2><table class="border-collapse table-auto w-full" style="min-width: 150px;"><colgroup><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"><col style="min-width: 25px;"></colgroup><tbody><tr><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>분석</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>실험군</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>대조군</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>χ²</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>p값</strong></p></th><th class="border border-slate-300 p-2 bg-slate-100 font-semibold" colspan="1" rowspan="1"><p><strong>결론</strong></p></th></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>분석 1: 記史之斷</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>역사서 27.02%</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>비역사서 2.85%</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>23,515.19</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>~0</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>강한 지지</p></td></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>분석 2: 游辭以斷</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>로다 59.3%</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>라 22.1%</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>813.96</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>4.97e-179</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>강한 지지</p></td></tr><tr><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>분석 3: 夬絶·微絶</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>니라 72.2%</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>라 70.2%</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>13.10</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>2.95e-4</p></td><td class="border border-slate-300 p-2" colspan="1" rowspan="1"><p>약한 지지</p></td></tr></tbody></table><h2><strong>2) 학술적 함의</strong></h2><ul><li><p>조선시대 현토 종결어미는 단순한 문법 표지가 아니라 의미적으로 다양한 정보를 전달하는 기능 수행</p></li><li><p>游辭以斷 '로다'는 명확한 영탄 표현의 기능 보유</p></li><li><p>夬絶 대 微絶 '니라' 대 '라'의 구분은 존재하나 효과 크기가 작음</p></li><li><p>記史之斷 '하다'는 역사서에 압도적으로 편중되어 나타남</p></li></ul><h2><strong>3) 연구 한계</strong></h2><ul><li><p>본회 번역서 200책 중 일부인 50여 책만 활용</p></li><li><p>子部 완전 부재로 제자백가 논변 문체 미반영</p></li></ul><ul><li><p>거대언어모형 판정의 정합성 검증 필요(비결정적 특성)</p></li></ul><ul><li><p>단일 모델(gpt-5-nano) 의존: 비용과 시간의 문제.</p></li></ul><ul><li><p>모델이 번역문의 맥락을 단편적으로만 판단했을 가능성(문맥 길이 제한에 따른 정보 손실, 모델 자체의 성능)</p></li><li><p>임베딩의 '유사도'가 항상 '관련성'을 보장하지 않는다는 근본적 한계</p></li><li><p>영향 평가: 記史之斷은 91배 압도적 우세, 游辭以斷 및 夬絶·微絶은 극도 유의미한 통계로 주요 발견 무효화 가능성 낮음</p></li></ul><h2><strong>4) 향후 과제</strong></h2><ul><li><p>다중 거대언어모델(LLM) 앙상블 분석</p></li></ul><ul><li><p>인간 평가자 교차검증</p></li></ul><ul><li><p>시대별·장르별 세부 분석 확대</p></li></ul><ul><li><p>子部 추가 확보 및 분석</p></li></ul><ul><li><p>연구자 주관을 지나치게 개입하지 않으면서도 구체적이고 정교한 프롬프트 개발</p></li><li><p>Pageindex와 같이 벡터라이징하지 않고 맥락과 논리를 따라가는 추론 모델이 더 활성화되면 보다 정밀한 연구 수행 가능</p></li><li><p>본 논문에 서술된 통계적 함의를 볼 때 규모를 키우고 더 좋은 모델로 연구할 가치가 충분하다고 판단됨</p></li></ul><h2><strong>5) 활용 가능성</strong></h2><ul><li><p>규모 있는 데이터에서 교정청 현토 규칙이 일관되게 적용되고 있음을 통계적으로 제시: 향후 번역 및 교육 활용 기반 마련</p></li><li><p>체계적이고 일관성 있는 역자 현토를 학습시켜 평가 기준 활용, 초벌 현토 가능</p></li><li><p>번역문과 현토 병렬 학습으로 번역 의도에 맞는 현토 자동 삽입 가능</p></li></ul><p></p><hr><p>¹⁾ 신영주, 「『한문토석』에 나타난 윤근수와 최립의 懸吐 담론에 관하여」, 『한문학보』 20집, 우리한문학회, 2009.</p><p>²⁾ 姜玫求, 「조선 시대의 懸吐에 대한 인식」, 『동방한문학』 85집, 동방한문학회, 2020, 41면.</p><p>³⁾ 金正默, 『過齋遺稿』 권2, 『經書辨答補遺』, 〈論語〉.</p><p>⁴⁾ 李圭景, 『五洲衍文長箋散稿』, 〈經史篇 ○經傳類, 經傳雜說〉, 「經史句讀辨證說」.</p><p>⁵⁾ 이규필, 「중등학교 한문교과서 懸吐 고찰」, 『한문교육논집』 61호, 한국한문교육학회, 2023, 300면.</p><p>⁶⁾ 최식, 「한문독법(漢文讀法)의 한국적(韓國的) 특수성(特殊性) -구두(句讀), 懸吐, 구결(口訣)-」, 『한자한문교육』 제27집, 한국한자한문교육학회, 2011, 372면.</p><p>⁷⁾ 이규필, 위의 논문, 300면.</p><p>⁸⁾ 李圭景, 『五洲衍文長箋散稿』, 〈經史篇 ○經傳類, 經傳雜說〉, 「經書口訣, 本國正韻辨證說」.</p><p>⁹⁾ 이규필, 앞의 논문, 305면.</p><p>¹⁰⁾ 이규필, 앞의 논문, 309면.</p><p>¹¹⁾ 이규필, 앞의 논문, 309면.</p><p>¹²⁾ 申相厚, 「사서(四書)의 경문(經文) 및 주문(註文) 해석에서 懸吐 논란 사례에 관한 고찰」, 『한문고전연구』 제30집, 한국한문고전학회, 2015, 40면.</p><p>¹³⁾ 최식, 앞의 논문, 372면. ¹⁴⁾ 申相厚, 앞의 논문, 41면.</p><p>¹⁵⁾ 이규필, 「중등학교 한문교과서 懸吐 고찰」, 313면.</p><p>¹⁶⁾ 황국정, 「개화전환기 선어말어미의 문법화에 대하여」, 『인문사회21』 제12권 6호, 2021, 3159면.</p><p>¹⁷⁾ 최식, 앞의 논문, 371면.</p>
+### **(3) 결과**
+
+| 그룹 | N | 긍정 판정 | 긍정 비율 |
+| --- | --- | --- | --- |
+| ~니라(실험군) | 13,665 | 9,864 | 72.2% |
+| ~라(대조군) | 13,665 | 9,592 | 70.2% |
+
+### **(4) 통계 검정**
+
+- χ² = 13.10, 자유도 1, p = 2.95 × 10⁻⁴, 효과 크기 2.0%
+
+### **(5) 결론**
+
+- 귀무가설 기각(p < 0.05)
+
+- “~니라”는 “~라”보다 “단호한 종결” 뉘앙스를 통계적으로 유의미하게 더 많이 담음(%차이는 크지 않지만 표본이 충분함)
+
+- 단, 효과 크기 2.0%는 분석 2의 37.2%에 비해 작아 任圭直의 夬絶 대 微絶 구분이 미묘한 차이임을 시사
+
+- 19세기부터 “~니라”의 사용이 소멸되기 시작한 것을 감안하면 현대 학습자가 정확한 어감을 인식하기 어려울 가능성
+
+---
+
+# **4. 결론**
+
+## **1) 종합 결과**
+
+| 분석 | 실험군 | 대조군 | χ² | p값 | 결론 |
+| --- | --- | --- | --- | --- | --- |
+| 분석 1: 記史之斷 | 역사서 27.02% | 비역사서 2.85% | 23,515.19 | ~0 | 강한 지지 |
+| 분석 2: 游辭以斷 | 로다 59.3% | 라 22.1% | 813.96 | 4.97e-179 | 강한 지지 |
+| 분석 3: 夬絶·微絶 | 니라 72.2% | 라 70.2% | 13.10 | 2.95e-4 | 약한 지지 |
+
+## **2) 학술적 함의**
+
+- 조선시대 현토 종결어미는 단순한 문법 표지가 아니라 의미적으로 다양한 정보를 전달하는 기능 수행
+
+- 游辭以斷 ‘로다’는 명확한 영탄 표현의 기능 보유
+
+- 夬絶 대 微絶 ‘니라’ 대 ‘라’의 구분은 존재하나 효과 크기가 작음
+
+- 記史之斷 ‘하다’는 역사서에 압도적으로 편중되어 나타남
+
+## **3) 연구 한계**
+
+- 본회 번역서 200책 중 일부인 50여 책만 활용
+
+- 子部 완전 부재로 제자백가 논변 문체 미반영
+
+- 거대언어모형 판정의 정합성 검증 필요(비결정적 특성)
+
+- 단일 모델(gpt-5-nano) 의존: 비용과 시간의 문제.
+
+- 모델이 번역문의 맥락을 단편적으로만 판단했을 가능성(문맥 길이 제한에 따른 정보 손실, 모델 자체의 성능)
+
+- 임베딩의 ‘유사도’가 항상 ‘관련성’을 보장하지 않는다는 근본적 한계
+
+- 영향 평가: 記史之斷은 91배 압도적 우세, 游辭以斷 및 夬絶·微絶은 극도 유의미한 통계로 주요 발견 무효화 가능성 낮음
+
+## **4) 향후 과제**
+
+- 다중 거대언어모델(LLM) 앙상블 분석
+
+- 인간 평가자 교차검증
+
+- 시대별·장르별 세부 분석 확대
+
+- 子部 추가 확보 및 분석
+
+- 연구자 주관을 지나치게 개입하지 않으면서도 구체적이고 정교한 프롬프트 개발
+
+- Pageindex와 같이 벡터라이징하지 않고 맥락과 논리를 따라가는 추론 모델이 더 활성화되면 보다 정밀한 연구 수행 가능
+
+- 본 논문에 서술된 통계적 함의를 볼 때 규모를 키우고 더 좋은 모델로 연구할 가치가 충분하다고 판단됨
+
+## **5) 활용 가능성**
+
+- 규모 있는 데이터에서 교정청 현토 규칙이 일관되게 적용되고 있음을 통계적으로 제시: 향후 번역 및 교육 활용 기반 마련
+
+- 체계적이고 일관성 있는 역자 현토를 학습시켜 평가 기준 활용, 초벌 현토 가능
+
+- 번역문과 현토 병렬 학습으로 번역 의도에 맞는 현토 자동 삽입 가능
+
+---
+
+**참고문헌**
+
+姜玫求(2020), 「朝鮮 時代의 懸吐에 대한 인식」, 『東方漢文學』 85집, 東方漢文學會.
+
+申相厚(2015), 「四書의 經文 및 註文 해석에서 懸吐 논란 사례에 관한 고찰」, 『漢文古典硏究』 제30집, 韓國漢文古典學會.
+
+申榮周(2009), 「『韓文吐釋』에 나타난 尹根壽와 崔岦의 懸吐 담론에 관하여」, 『漢文學報』 20집, 우리한문학회.
+
+尹容善(2009), 「朝鮮後期의 口訣 사용에 대한 고찰-『句讀解法』의 분석을 중심으로」, 『震檀學報』 107집, 震檀學會.
+
+李圭弼(2023), 「中等學校 漢文敎科書 懸吐 고찰」, 『漢文敎育論集』 61호, 韓國漢文敎育學會.
+
+崔植(2011), 「漢文讀法의 韓國的 特殊性 -句讀, 懸吐, 口訣-」, 『漢字漢文敎育』 제27집, 韓國漢字漢文敎育學會.
+
+黃菊貞(2021), 「開化轉換期 先語末語尾의 文法化에 대하여」, 『人文社會21』 제12권 6호.
