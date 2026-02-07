@@ -2,7 +2,7 @@
 """
 Phrase 데이터 정규화 및 준비
 
-phrase_full.csv → data/phrase_normalized_anonymized.csv
+phrase_full.csv → data/phrase_normalized.csv
 """
 
 import sys
@@ -13,9 +13,10 @@ import hashlib
 import regex
 
 # 경로 설정
+PROJECT_ROOT = Path(__file__).parent.parent
 HYEONTO_DIR = Path(__file__).parent
-DATASETS_DIR = HYEONTO_DIR / "datasets"
-DATA_DIR = HYEONTO_DIR / "data"
+DATASETS_DIR = PROJECT_ROOT / "datasets"
+DATA_DIR = PROJECT_ROOT / "data"
 
 # hyeonto_normalizer import
 sys.path.insert(0, str(HYEONTO_DIR))
@@ -26,48 +27,44 @@ DATA_DIR.mkdir(exist_ok=True)
 def extract_markers_from_text(text: str) -> str:
     """
     원문에서 현토 마커 추출
-    - 각 어절(단어) 끝의 \p{Hangul}+ 만 추출
+    - 문장/구 내부가 아니라 "끝부분" 한글만 추출
     - 가운뎃점(ㆍ)과 소괄호 내용 제외
-    
-    예: "간장을 먹고" → "을,고"
     """
     if pd.isna(text):
         return ''
-    
+
     text = str(text).strip()
-    
-    # 소괄호 제거: (음가) 형태 제외
-    text = regex.sub(r'\([^)]*\)', '', text)
-    
+
+    # 소괄호 제거: (음가) 형태 제외 (경계 보존을 위해 공백으로 치환)
+    text = regex.sub(r'\([^)]*\)', ' ', text)
+
     # 가운뎃점 제거
     text = text.replace('ㆍ', '')
-    
-    # 어절 경계 기준으로 각 어절 끝의 한글만 추출
-    # 공백, 구두점 등으로 어절 구분
-    words = regex.split(r'[^\p{Hangul}]+', text)
-    words = [w.strip() for w in words if w.strip()]
-    
-    # 각 어절의 마지막 글자 또는 음절묶음 추출 (현토는 어절 끝에만)
-    # 실제로는 마지막 2-4글자 정도가 현토 마커
-    markers = []
-    for word in words:
-        if len(word) > 0:
-            # 어절 끝에서 현토 마커 추출 (보통 마지막 1-3음절)
-            # 가장 간단하게: 어절 전체를 마커로 (정규화에서 걸러짐)
-            markers.append(word)
-    
-    return ','.join(markers) if markers else ''
+
+    # 말미의 비한글 제거 후, 끝부분 한글만 추출
+    text = regex.sub(r'[^\p{Hangul}]+$', '', text)
+    match = regex.search(r'[\p{Hangul}]+$', text)
+    if not match:
+        return ''
+
+    return match.group(0)
 
 def prepare_phrase_data():
-    """phrase_full.csv 준비"""
+    """phrase_full.csv 또는 기존 phrase_normalized.csv 로드"""
     phrase_full = DATASETS_DIR / "phrase_full.csv"
-    
-    if not phrase_full.exists():
+    phrase_existing = DATA_DIR / "phrase_normalized.csv"
+
+    if phrase_full.exists():
+        source_path = phrase_full
+    elif phrase_existing.exists():
+        source_path = phrase_existing
+    else:
         print(f"❌ {phrase_full} 없음")
+        print(f"❌ {phrase_existing} 없음")
         return False
-    
-    print(f"📖 로드: {phrase_full}")
-    df = pd.read_csv(phrase_full)
+
+    print(f"📖 로드: {source_path}")
+    df = pd.read_csv(source_path)
     print(f"   행 수: {len(df):,}")
     
     # 컬럼 확인
@@ -81,6 +78,10 @@ def prepare_phrase_data():
     # 마커 추출 (원문에서)
     print(f"   원문에서 마커 추출 중...")
     df['marker'] = df['원문'].apply(extract_markers_from_text)
+    if 'marker_final' in df.columns:
+        df = df.drop(columns=['marker_final'])
+    if 'marker_normalized' in df.columns:
+        df = df.drop(columns=['marker_normalized'])
     
     print(f"   마커 추출 완료")
     
@@ -166,7 +167,7 @@ def main():
     df = add_metadata(df)
     
     # Step 4: 저장 (번역문 익명화 전!)
-    output_path = DATA_DIR / "phrase_normalized_anonymized.csv"
+    output_path = DATA_DIR / "phrase_normalized.csv"
     save_data(df, output_path)
     
     print("\n" + "="*70)

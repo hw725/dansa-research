@@ -1,1 +1,9 @@
 .history/
+
+.claude/
+
+# Local-only raw/derived data (not for git)
+data/dansa_level1_judgments.csv
+data/dansa_level2_judgments.csv
+data/phrase_normalized.csv
+data/sentence_normalized.csv
