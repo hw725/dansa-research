@@ -231,10 +231,11 @@ def prepare_subsets(df: pd.DataFrame) -> dict:
     # section1: 로다 전체 + 동수 라 대조군
     section1_control = ra.sample(n=len(roda), random_state=42).copy()
 
-    # section2: 니라 vs 라 동수 매칭
-    section2_n = min(len(nira), len(ra))
-    section2_target = nira.sample(n=section2_n, random_state=42).copy()
-    section2_control = ra.sample(n=section2_n, random_state=42).copy()
+    # section2: 니라 전체 + 동수 라 대조군
+    if len(ra) < len(nira):
+        raise ValueError("section2 control pool is smaller than target pool")
+    section2_target = nira.copy()
+    section2_control = ra.sample(n=len(nira), random_state=42).copy()
 
     # section3: 하나니라(汎論以斷 종결형) vs 동수 라 대조군
     hananira = df[

@@ -1,6 +1,6 @@
 # 연구 재현 가이드
 
-본 문서는 2026-05-20 정리 이후의 `dansa-research` 기준 재현 절차만 남긴다. 이전 `CSP-dansa` v3 산출물과 구버전 백업은 `archive/2026-05-20_csp_sync/`에 보존되어 있다.
+본 문서는 현재 `dansa-research` 기준 재현 절차만 다룬다.
 
 ## 1. 기준 산출물
 
@@ -48,13 +48,13 @@ LLM 재실행에는 `OPENAI_API_KEY`, `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY`�
 python scripts/preflight_llm_pipeline.py
 ```
 
-보고된 수치를 exact 재현하려면 현재 LLM 입력 표본 manifest를 사용한다.
+보고된 수치를 exact 재현하려면 현재 LLM 입력 표본 manifest를 사용한다. manifest가 있으면 사용자가 추출한 동일 표본을 그대로 다시 쓰며, 새 표본을 뽑지 않는다.
 
 ```bash
 python scripts/build_llm_input_manifests.py
 ```
 
-manifest는 `data/llm_manifests/`에 저장되며 원문과 번역문을 포함하므로 로컬 전용이다. 새 랜덤 표본에서도 효과 크기가 유지되는지는 exact 재현이 아니라 별도 robustness 검증 문제다.
+manifest는 `data/llm_manifests/`에 저장되며 원문과 번역문을 포함하므로 로컬 전용이다. manifest가 없을 때의 고정 seed fallback과 여러 seed robustness 검증은 `docs/SAMPLING.md`를 따른다.
 
 ### 4.1 sentence 입력 준비
 
@@ -64,7 +64,7 @@ manifest는 `data/llm_manifests/`에 저장되며 원문과 번역문을 포함�
 python scripts/prepare_sentence_dataset.py
 ```
 
-최신 sentence 입력은 이미 `data/sentence_normalized.csv`에 반영되어 있다. 원본 보존본과 이전 결과는 `archive/2026-05-20_csp_sync/`에서 확인한다.
+최신 sentence 입력은 이미 `data/sentence_normalized.csv`에 반영되어 있다.
 
 ### 4.1.1 ‘하다’ 메타데이터 분석
 
@@ -133,18 +133,7 @@ python scripts/export_anonymized_results.py
 
 ## 6. 질적 분석
 
-LightRAG와 DCI 구버전 산출물은 아카이브에 보존되어 있으며, 활성 보고서는 11,327행 정제 TSV 기준으로 다시 생성해야 한다. 정량 표에는 반드시 `results/final_stats_v3.1_cleaned_balanced.json`을 사용하고, 질적 서술의 출처 빈도는 TSV 실측값으로 다시 확인한다.
+LightRAG와 DCI 보고서는 11,327행 정제 TSV 기준으로 생성한다. 정량 표에는 반드시 `results/final_stats_v3.1_cleaned_balanced.json`을 사용하고, 질적 서술의 출처 빈도는 TSV 실측값으로 다시 확인한다.
 
-## 7. 폐기된 기준
-
-다음 항목은 활성 기준에서 제외하고 아카이브에 보존했다.
-
-- `results/final_stats_v3.json`
-- `results/final_stats_v3.1_cleaned.json`
-- `results/truth_tables_v3.json`
-- `results/archive_old_prompt/`
-- 기존 `data/dansa_section*_judgments_anon.csv`
-- 모든 `*.bak` 파일
-
-## 8. 스크립트 파일명 기준
+## 7. 스크립트 파일명 기준
 현재 재현 명령과 보조 스크립트 목록은 docs/SCRIPTS.md를 기준으로 한다.

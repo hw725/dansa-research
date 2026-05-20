@@ -1,10 +1,6 @@
 # LightRAG 산출물 상태
 
-LightRAG 실행 스크립트는 유지하지만, 이전 `results/` 출력과 로그는 `analysis/parallel_data_v2_cleaned.tsv` 11,327행 기준과 맞지 않아 아카이브로 이동했다.
-
-보존 위치:
-
-`archive/2026-05-20_csp_sync/dansa-research_legacy/analysis/lightrag_out/`
+LightRAG 실행 기준 입력은 `analysis/parallel_data_v2_cleaned.tsv` 11,327행이다.
 
 재생성 순서:
 

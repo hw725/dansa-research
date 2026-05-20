@@ -10,7 +10,6 @@
 - ‘하다’ 메타데이터 통계: `results/hada_metadata_stats.json`
 - 표준 sentence 입력: `data/sentence_normalized.csv` 150,545행
 - 질적 분석 입력: `analysis/parallel_data_v2_cleaned.tsv` 11,327행
-- 구버전 보존 위치: `archive/2026-05-20_csp_sync/`
 
 ## 핵심 결과
 
@@ -36,15 +35,11 @@ python scripts/export_anonymized_results.py
 
 `run_multimodel_judgments.py`는 보충 대조군 반영 전 중간 통계를 `results/intermediate_multimodel_stats.json`에 쓴다. 논문과 문서에서 인용할 기준은 `results/final_stats_v3.1_cleaned_balanced.json`이다.
 
-보고된 통계 수치의 exact 재현에는 `data/llm_manifests/`의 LLM 입력 표본 manifest를 사용한다. 새 랜덤 표본에서 효과 크기가 유지되는지는 별도 robustness 검증으로 다룬다.
+보고된 통계 수치의 exact 재현에는 `data/llm_manifests/`의 LLM 입력 표본 manifest를 사용한다. manifest가 있으면 같은 표본을 그대로 쓰며, manifest가 없을 때만 코드의 고정 seed 표본 추출로 되돌아간다. 표본 추출 방식과 여러 seed robustness 검증은 `docs/SAMPLING.md`에 정리한다.
 
 ## 공개용 데이터
 
 원문 번역문은 미공개 자료이므로 raw CSV는 git 추적 대상이 아니다. 공개가 필요한 경우 `scripts/export_anonymized_results.py`로 생성한 `*_anon.csv`와 `*_anon.tsv`만 사용한다.
-
-## 아카이브 원칙
-
-2026-05-20 정리에서 `CSP-dansa` 스냅샷과 `dansa-research` 구버전 파일을 모두 `archive/2026-05-20_csp_sync/`에 보존했다. 이 폴더는 삭제가 아니라 보존용 격리이며, 기본적으로 git 추적에서 제외한다.
 
 ## 스크립트 파일명
 현재 스크립트 목록과 명명 규칙은 docs/SCRIPTS.md를 기준으로 한다.
