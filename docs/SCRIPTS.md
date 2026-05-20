@@ -57,6 +57,8 @@ python scripts/sample_dansa_examples.py
 python scripts/summarize_sentence_patterns.py
 ```
 
+`analyze_beomnon_heosa.py`는 기본적으로 `汎論以斷/하나니라` 296건에서 `夫`·`凡`·`蓋`·`大抵`의 원문 문자열 공기율을 계산하고 `results/beomnon_heosa_stats.json`을 쓴다. `--category-all`을 붙이면 `하나니`와 `하나니라`를 합친 `汎論以斷` 전체 641건 기준으로 확인한다.
+
 `analyze_hada_metadata.py`는 `data/sentence_normalized.csv`만 입력으로 사용한다.
 
 ## 질적 분석과 LightRAG 입력 구성

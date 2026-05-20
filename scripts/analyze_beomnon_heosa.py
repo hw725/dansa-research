@@ -1,112 +1,195 @@
 #!/usr/bin/env python3
-"""汎論以斷 허사 양방향 분석
+"""Analyze heosa co-occurrence for 汎論以斷 target endings."""
 
-방향1: 하나니(라) → 허사 동반율
-방향2: 허사 포함 문장 → 하나니(라) 종결 비율
-"""
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+from typing import Any
+
 import pandas as pd
+from scipy.stats import chi2_contingency
 
-df = pd.read_csv('data/sentence_normalized.csv', encoding='utf-8')
-HEOSA = ['夫', '凡', '蓋', '大抵']
 
-beomnon = df[df['dansa_category'] == '汎論以斷'].copy()
+HEOSA = ["夫", "凡", "蓋", "大抵"]
+TARGET_CATEGORY = "汎論以斷"
+DEFAULT_INPUT = Path("data/sentence_normalized.csv")
+DEFAULT_OUTPUT = Path("results/beomnon_heosa_stats.json")
 
-# ============================================================
-# 방향1: 하나니(라) → 허사 동반율
-# ============================================================
-print("=" * 60)
-print("방향1: 하나니(라) 문장 중 허사 동반율")
-print("=" * 60)
 
-def find_heosa(text):
+def find_heosa(text: object) -> list[str]:
     if not isinstance(text, str):
         return []
-    return [h for h in HEOSA if h in text]
+    return [term for term in HEOSA if term in text]
 
-beomnon['heosa_found'] = beomnon['원문'].apply(find_heosa)
-beomnon['has_heosa'] = beomnon['heosa_found'].apply(lambda x: len(x) > 0)
 
-total_b = len(beomnon)
-with_h = beomnon['has_heosa'].sum()
-print(f"  전체: {total_b}건")
-print(f"  허사 있음: {with_h}건 ({with_h/total_b*100:.1f}%)")
-print(f"  허사 없음: {total_b - with_h}건 ({(total_b - with_h)/total_b*100:.1f}%)")
+def build_target_mask(df: pd.DataFrame, marker: str | None) -> pd.Series:
+    category_mask = df["dansa_category"].eq(TARGET_CATEGORY)
+    if marker is None:
+        return category_mask
+    return category_mask & df["marker_normalized"].eq(marker)
 
-# ============================================================
-# 방향2: 허사 포함 문장 → 종결어미 분포
-# ============================================================
-print(f"\n{'=' * 60}")
-print("방향2: 허사 포함 문장의 종결어미 분포")
-print("=" * 60)
 
-for h in HEOSA:
-    mask = df['원문'].apply(lambda x: h in str(x))
-    h_sentences = df[mask]
-    total_h = len(h_sentences)
-    if total_h == 0:
-        print(f"\n{h}: 0건")
-        continue
+def pct(part: int, whole: int) -> float:
+    return round(part / whole * 100, 1) if whole else 0.0
 
-    cats = h_sentences['dansa_category'].value_counts()
-    beomnon_cnt = cats.get('汎論以斷', 0)
-    print(f"\n{h}: 전체 {total_h}건 → 汎論以斷 {beomnon_cnt}건 ({beomnon_cnt/total_h*100:.1f}%)")
-    print("  종결어미 분포:")
-    for cat, cnt in cats.items():
-        if cat:
-            print(f"    {cat}: {cnt} ({cnt/total_h*100:.1f}%)")
-    empty = (h_sentences['dansa_category'] == '').sum()
-    if empty:
-        print(f"    (미분류): {empty} ({empty/total_h*100:.1f}%)")
 
-# 전체 허사 통합
-print(f"\n{'=' * 60}")
-print("전체 허사 통합")
-print("=" * 60)
+def build_stats(df: pd.DataFrame, marker: str | None) -> dict[str, Any]:
+    target_mask = build_target_mask(df, marker)
+    target = df[target_mask].copy()
+    target["heosa_found"] = target["원문"].apply(find_heosa)
+    target["has_heosa"] = target["heosa_found"].apply(bool)
 
-any_heosa = df['원문'].apply(lambda x: any(h in str(x) for h in HEOSA))
-heosa_all = df[any_heosa]
-total_ha = len(heosa_all)
-cats_all = heosa_all['dansa_category'].value_counts()
-b_cnt = cats_all.get('汎論以斷', 0)
+    heosa_counts = {
+        term: int(target["원문"].astype(str).str.contains(term, regex=False).sum())
+        for term in HEOSA
+    }
+    has_any_heosa = df["원문"].apply(lambda value: bool(find_heosa(value)))
+    target_has_heosa = target["has_heosa"]
 
-print(f"허사(夫/凡/蓋/大抵) 포함 문장: {total_ha}건")
-print(f"  → 汎論以斷: {b_cnt}건 ({b_cnt/total_ha*100:.1f}%)")
-print(f"  → 기타 종결: {total_ha - b_cnt}건 ({(total_ha - b_cnt)/total_ha*100:.1f}%)")
-print("\n  종결어미 분포:")
-for cat, cnt in cats_all.items():
-    if cat:
-        print(f"    {cat}: {cnt} ({cnt/total_ha*100:.1f}%)")
-empty_all = (heosa_all['dansa_category'] == '').sum()
-if empty_all:
-    print(f"    (미분류): {empty_all} ({empty_all/total_ha*100:.1f}%)")
+    a = int((has_any_heosa & target_mask).sum())
+    b = int((has_any_heosa & ~target_mask).sum())
+    c = int((~has_any_heosa & target_mask).sum())
+    d = int((~has_any_heosa & ~target_mask).sum())
+    chi2, p_value, dof, expected = chi2_contingency([[a, b], [c, d]])
 
-# ============================================================
-# 요약 2x2 테이블
-# ============================================================
-print(f"\n{'=' * 60}")
-print("2x2 교차표")
-print("=" * 60)
+    term_corpus = {}
+    for term in HEOSA:
+        term_mask = df["원문"].astype(str).str.contains(term, regex=False)
+        total = int(term_mask.sum())
+        in_target = int((term_mask & target_mask).sum())
+        term_corpus[term] = {
+            "corpus_n": total,
+            "target_n": in_target,
+            "target_pct": pct(in_target, total),
+        }
 
-has_heosa_col = df['원문'].apply(lambda x: any(h in str(x) for h in HEOSA))
-is_beomnon_col = df['dansa_category'] == '汎論以斷'
+    target_n = int(len(target))
+    target_heosa_n = int(target_has_heosa.sum())
+    target_no_heosa_n = target_n - target_heosa_n
 
-a = (has_heosa_col & is_beomnon_col).sum()   # 허사O, 汎論O
-b = (has_heosa_col & ~is_beomnon_col).sum()  # 허사O, 汎論X
-c = (~has_heosa_col & is_beomnon_col).sum()  # 허사X, 汎論O
-d = (~has_heosa_col & ~is_beomnon_col).sum() # 허사X, 汎論X
+    return {
+        "input": str(DEFAULT_INPUT),
+        "target_category": TARGET_CATEGORY,
+        "target_marker": marker or "__category_all__",
+        "target_label": (
+            f"{TARGET_CATEGORY}/{marker}" if marker else f"{TARGET_CATEGORY} 전체"
+        ),
+        "matching_rule": "literal substring containment in 원문",
+        "target_n": target_n,
+        "target_heosa_n": target_heosa_n,
+        "target_heosa_pct": pct(target_heosa_n, target_n),
+        "target_no_heosa_n": target_no_heosa_n,
+        "target_no_heosa_pct": pct(target_no_heosa_n, target_n),
+        "heosa_counts_in_target": heosa_counts,
+        "heosa_corpus_counts": term_corpus,
+        "contingency": {
+            "heosa_and_target": a,
+            "heosa_and_other": b,
+            "no_heosa_and_target": c,
+            "no_heosa_and_other": d,
+            "chi2": round(float(chi2), 3),
+            "p_value": float(p_value),
+            "dof": int(dof),
+            "expected": [[round(float(v), 3) for v in row] for row in expected],
+            "p_target_given_heosa_pct": pct(a, a + b),
+            "p_target_given_no_heosa_pct": pct(c, c + d),
+            "p_heosa_given_target_pct": pct(a, a + c),
+            "p_heosa_given_other_pct": pct(b, b + d),
+        },
+    }
 
-print(f"                  汎論以斷    기타      합계")
-print(f"  허사 있음       {a:>7,}    {b:>7,}    {a+b:>7,}")
-print(f"  허사 없음       {c:>7,}    {d:>7,}    {c+d:>7,}")
-print(f"  합계            {a+c:>7,}    {b+d:>7,}    {a+b+c+d:>7,}")
 
-from scipy.stats import chi2_contingency, fisher_exact
-ct = [[a, b], [c, d]]
-chi2, pv, dof, expected = chi2_contingency(ct)
-odds_ratio = (a * d) / (b * c) if b * c > 0 else float('inf')
-print(f"\n  chi2 = {chi2:.1f}, p = {pv:.2e}")
-print(f"  odds ratio = {odds_ratio:.1f}")
-print(f"  P(汎論|허사) = {a/(a+b)*100:.1f}%")
-print(f"  P(汎論|허사없음) = {c/(c+d)*100:.2f}%")
-print(f"  P(허사|汎論) = {a/(a+c)*100:.1f}%")
-print(f"  P(허사|汎論아님) = {b/(b+d)*100:.1f}%")
+def print_stats(stats: dict[str, Any]) -> None:
+    print("=" * 60)
+    print(f"대상: {stats['target_label']}")
+    print(f"기준: {stats['matching_rule']}")
+    print("=" * 60)
+    print(f"  전체: {stats['target_n']}건")
+    print(
+        "  허사 있음: "
+        f"{stats['target_heosa_n']}건 ({stats['target_heosa_pct']:.1f}%)"
+    )
+    print(
+        "  허사 없음: "
+        f"{stats['target_no_heosa_n']}건 ({stats['target_no_heosa_pct']:.1f}%)"
+    )
+
+    print("\n허사별 대상 내부 출현")
+    for term, count in stats["heosa_counts_in_target"].items():
+        print(f"  {term}: {count}건")
+
+    print("\n허사별 코퍼스 전체 출현과 대상 포함")
+    for term, info in stats["heosa_corpus_counts"].items():
+        print(
+            f"  {term}: 전체 {info['corpus_n']}건 -> 대상 "
+            f"{info['target_n']}건 ({info['target_pct']:.1f}%)"
+        )
+
+    ctab = stats["contingency"]
+    print("\n2x2 교차표")
+    print("                  대상    기타       합계")
+    print(
+        f"  허사 있음       {ctab['heosa_and_target']:>5,} "
+        f"{ctab['heosa_and_other']:>7,} "
+        f"{ctab['heosa_and_target'] + ctab['heosa_and_other']:>8,}"
+    )
+    print(
+        f"  허사 없음       {ctab['no_heosa_and_target']:>5,} "
+        f"{ctab['no_heosa_and_other']:>7,} "
+        f"{ctab['no_heosa_and_target'] + ctab['no_heosa_and_other']:>8,}"
+    )
+    print(
+        f"  합계            {ctab['heosa_and_target'] + ctab['no_heosa_and_target']:>5,} "
+        f"{ctab['heosa_and_other'] + ctab['no_heosa_and_other']:>7,} "
+        f"{stats['target_n'] + ctab['heosa_and_other'] + ctab['no_heosa_and_other']:>8,}"
+    )
+    print(f"\n  chi2 = {ctab['chi2']:.3f}, p = {ctab['p_value']:.3e}")
+    print(f"  P(대상|허사) = {ctab['p_target_given_heosa_pct']:.1f}%")
+    print(f"  P(대상|허사없음) = {ctab['p_target_given_no_heosa_pct']:.1f}%")
+    print(f"  P(허사|대상) = {ctab['p_heosa_given_target_pct']:.1f}%")
+    print(f"  P(허사|기타) = {ctab['p_heosa_given_other_pct']:.1f}%")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Analyze 夫/凡/蓋/大抵 co-occurrence for 汎論以斷 endings."
+    )
+    parser.add_argument("--input", type=Path, default=DEFAULT_INPUT)
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument(
+        "--marker",
+        default="하나니라",
+        help="marker_normalized value to analyze; use --category-all to ignore marker.",
+    )
+    parser.add_argument(
+        "--category-all",
+        action="store_true",
+        help="Analyze all 汎論以斷 rows, including 하나니 and 하나니라.",
+    )
+    parser.add_argument(
+        "--no-write",
+        action="store_true",
+        help="Print statistics without writing the JSON result.",
+    )
+    args = parser.parse_args()
+
+    df = pd.read_csv(args.input, encoding="utf-8")
+    marker = None if args.category_all else args.marker
+    stats = build_stats(df, marker)
+    stats["input"] = str(args.input)
+
+    print_stats(stats)
+
+    if not args.no_write:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(
+            json.dumps(stats, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        print(f"\n결과 저장: {args.output}")
+
+
+if __name__ == "__main__":
+    main()

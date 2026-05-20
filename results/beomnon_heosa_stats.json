@@ -1,0 +1,63 @@
+{
+  "input": "data\\sentence_normalized.csv",
+  "target_category": "汎論以斷",
+  "target_marker": "하나니라",
+  "target_label": "汎論以斷/하나니라",
+  "matching_rule": "literal substring containment in 원문",
+  "target_n": 296,
+  "target_heosa_n": 27,
+  "target_heosa_pct": 9.1,
+  "target_no_heosa_n": 269,
+  "target_no_heosa_pct": 90.9,
+  "heosa_counts_in_target": {
+    "夫": 18,
+    "凡": 9,
+    "蓋": 0,
+    "大抵": 0
+  },
+  "heosa_corpus_counts": {
+    "夫": {
+      "corpus_n": 6829,
+      "target_n": 18,
+      "target_pct": 0.3
+    },
+    "凡": {
+      "corpus_n": 1820,
+      "target_n": 9,
+      "target_pct": 0.5
+    },
+    "蓋": {
+      "corpus_n": 3173,
+      "target_n": 0,
+      "target_pct": 0.0
+    },
+    "大抵": {
+      "corpus_n": 88,
+      "target_n": 0,
+      "target_pct": 0.0
+    }
+  },
+  "contingency": {
+    "heosa_and_target": 27,
+    "heosa_and_other": 11571,
+    "no_heosa_and_target": 269,
+    "no_heosa_and_other": 138678,
+    "chi2": 0.65,
+    "p_value": 0.41998130663594124,
+    "dof": 1,
+    "expected": [
+      [
+        22.804,
+        11575.196
+      ],
+      [
+        273.196,
+        138673.804
+      ]
+    ],
+    "p_target_given_heosa_pct": 0.2,
+    "p_target_given_no_heosa_pct": 0.2,
+    "p_heosa_given_target_pct": 9.1,
+    "p_heosa_given_other_pct": 7.7
+  }
+}
