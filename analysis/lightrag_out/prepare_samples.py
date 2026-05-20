@@ -5,14 +5,15 @@ centroid (most-representative first) so that LightRAG's chunk windows surface
 core meanings before edge cases.
 """
 import json, csv, os, sys
+from pathlib import Path
 import numpy as np
 
-ROOT = r"C:/Users/junto/Downloads/analysis_v8"
-OUT = os.path.join(ROOT, "lightrag_out")
+ROOT = Path(__file__).resolve().parent.parent
+OUT = ROOT / "lightrag_out"
 
 # 1. Load parallel data
 rows = []
-with open(os.path.join(ROOT, "parallel_data.tsv"), encoding="utf-8") as f:
+with open(ROOT / "parallel_data_v2_cleaned.tsv", encoding="utf-8") as f:
     reader = csv.DictReader(f, delimiter="\t")
     for r in reader:
         rows.append(r)
@@ -20,14 +21,14 @@ print(f"parallel_data: {len(rows)} rows")
 print(f"columns: {list(rows[0].keys())}")
 
 # 2. Load cluster info
-with open(os.path.join(ROOT, "clusters_openai.json"), encoding="utf-8") as f:
+with open(ROOT / "clusters_v2.json", encoding="utf-8") as f:
     clusters = json.load(f)
 
 # 3. Load embeddings + summaries
-emb = np.load(os.path.join(ROOT, "emb_openai.npy"))
+emb = np.load(ROOT / "emb_openai_v2.npy")
 print(f"embeddings shape: {emb.shape}")
 
-with open(os.path.join(ROOT, "cluster_summaries_openai.json"), encoding="utf-8") as f:
+with open(ROOT / "cluster_summaries_v2.json", encoding="utf-8") as f:
     summaries = json.load(f)
 
 # 4. For each (category, cluster), pick top-K sentences nearest to centroid

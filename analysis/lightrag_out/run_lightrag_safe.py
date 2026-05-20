@@ -11,7 +11,7 @@ import time
 import json
 from pathlib import Path
 
-ROOT = Path(r"C:/Users/junto/Downloads/analysis_v8")
+ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "lightrag_out"
 RESULTS = OUT / "results"
 PYTHON = [sys.executable]  # reuse whatever interpreter launched this script

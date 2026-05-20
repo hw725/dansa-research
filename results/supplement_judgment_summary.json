@@ -1,0 +1,47 @@
+{
+  "gpt5mini_section1": {
+    "n": 12,
+    "positive": 4,
+    "rate": 33.33
+  },
+  "gemini_section1": {
+    "n": 12,
+    "positive": 5,
+    "rate": 41.67
+  },
+  "claude_sonnet_section1": {
+    "n": 12,
+    "positive": 5,
+    "rate": 41.67
+  },
+  "gpt5mini_section2": {
+    "n": 465,
+    "positive": 287,
+    "rate": 61.72
+  },
+  "gemini_section2": {
+    "n": 465,
+    "positive": 282,
+    "rate": 60.65
+  },
+  "claude_sonnet_section2": {
+    "n": 465,
+    "positive": 154,
+    "rate": 33.12
+  },
+  "gpt5mini_section3": {
+    "n": 30,
+    "positive": 7,
+    "rate": 23.33
+  },
+  "gemini_section3": {
+    "n": 30,
+    "positive": 11,
+    "rate": 36.67
+  },
+  "claude_sonnet_section3": {
+    "n": 30,
+    "positive": 8,
+    "rate": 26.67
+  }
+}

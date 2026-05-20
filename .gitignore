@@ -1,20 +1,31 @@
 .history/
 
 .claude/
+archive/
+
+# Local environment and secrets
+.env
+env
+.venv/
+venv/
 
 # Local-only raw/derived data (not for git)
-data/dansa_level1_judgments.csv
-data/dansa_level2_judgments.csv
+data/dansa_section1_judgments.csv
+data/dansa_section2_judgments.csv
 data/phrase_normalized.csv
 data/sentence_normalized.csv
+data/supplement_*.csv
+data/llm_manifests/
 
 # ── analysis/ ──────────────────────────────────
 
 # 원본 코퍼스 (미공개, 추후 한국고전번역원 경유 공개)
 analysis/parallel_data_v2.tsv
+analysis/parallel_data_v2_cleaned.tsv
 
 # 임베딩 바이너리 (141MB, 재생성 가능)
 analysis/emb_openai_v2.npy
+analysis/emb_checkpoint*.npz
 
 # 클러스터링 산출물 (원본 기반)
 analysis/clusters_v2.json
@@ -26,6 +37,8 @@ analysis/lightrag_out/II_*/
 analysis/lightrag_out/III_*/
 analysis/lightrag_out/IV_*/
 analysis/lightrag_out/cluster_full_v2.json
+analysis/lightrag_out/cluster_full.json
+analysis/lightrag_out/ALL_*/
 analysis/lightrag_out/__pycache__/
 analysis/lightrag_out/log_*.txt
 analysis/lightrag_out/results/all_answers.json
@@ -36,9 +49,22 @@ analysis/dci_out/*_log.json
 analysis/dci_out/dashboard.html
 analysis/dci_out/comparison_dashboard.html
 
-# L2 원시 판정 CSV (원본 문장 포함)
-analysis/l2_analysis/*.csv
+# section2 원시 판정 CSV (원본 문장 포함)
+analysis/section2_analysis/*.csv
+
+# 원문 번역문을 포함한 판정 원본 CSV/TSV
+results/**/*.csv
+results/**/*.tsv
+!results/**/*_anon.csv
+!results/**/*_anon.tsv
 
 # 일반
+logs/
+intermediate_results/
 __pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
 *.log

@@ -1,0 +1,83 @@
+{
+  "section1": {
+    "section": "section1",
+    "target_mt": "로다",
+    "control_mt": "라(대조군)",
+    "target": {
+      "n": 2606,
+      "O": 1069,
+      "O_pct": 41.0,
+      "S": 1098,
+      "S_pct": 42.1,
+      "X": 439,
+      "X_pct": 16.8
+    },
+    "control": {
+      "n": 2606,
+      "O": 162,
+      "O_pct": 6.2,
+      "S": 809,
+      "S_pct": 31.0,
+      "X": 1635,
+      "X_pct": 62.7
+    },
+    "diff_pp": 34.8,
+    "chi2": 874.92,
+    "p": 2.778554338037536e-192,
+    "test": "chi2_no_correction"
+  },
+  "section2": {
+    "section": "section2",
+    "target_mt": "니라",
+    "control_mt": "라",
+    "target": {
+      "n": 11135,
+      "O": 5085,
+      "O_pct": 45.7,
+      "S": 4335,
+      "S_pct": 38.9,
+      "X": 1715,
+      "X_pct": 15.4
+    },
+    "control": {
+      "n": 11135,
+      "O": 3082,
+      "O_pct": 27.7,
+      "S": 6608,
+      "S_pct": 59.3,
+      "X": 1445,
+      "X_pct": 13.0
+    },
+    "diff_pp": 18.0,
+    "chi2": 775.73,
+    "p": 1.0230133326171613e-170,
+    "test": "chi2_no_correction"
+  },
+  "section3": {
+    "section": "section3",
+    "target_mt": "하나니라",
+    "control_mt": "라(대조군)",
+    "target": {
+      "n": 296,
+      "O": 239,
+      "O_pct": 80.7,
+      "S": 45,
+      "S_pct": 15.2,
+      "X": 12,
+      "X_pct": 4.1
+    },
+    "control": {
+      "n": 296,
+      "O": 137,
+      "O_pct": 46.3,
+      "S": 76,
+      "S_pct": 25.7,
+      "X": 83,
+      "X_pct": 28.0
+    },
+    "diff_pp": 34.4,
+    "chi2": 75.84,
+    "p": 3.0809279966043938e-18,
+    "test": "chi2_no_correction"
+  }
+}

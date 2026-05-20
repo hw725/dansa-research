@@ -11,20 +11,25 @@ import time
 import traceback
 from pathlib import Path
 
+import numpy as np
+from openai import AsyncOpenAI
+
 from lightrag import LightRAG, QueryParam
 from lightrag.utils import EmbeddingFunc, setup_logger
-from lightrag.llm.openai import openai_complete_if_cache, openai_embed
+from lightrag.llm.openai import openai_complete_if_cache
 from lightrag.kg.shared_storage import initialize_pipeline_status
 
-ROOT = Path(r"C:/Users/junto/Downloads/analysis_v8")
+_aclient = AsyncOpenAI()
+
+ROOT = Path(__file__).resolve().parent.parent  # dansa-research/analysis
 OUT = ROOT / "lightrag_out"
 RESULTS = OUT / "results_unified"
 RESULTS.mkdir(parents=True, exist_ok=True)
 
 LLM_MODEL = "gpt-5-mini"
 LLM_FALLBACK = "gpt-4o-mini"
-EMB_MODEL = "text-embedding-3-small"
-EMB_DIM = 1536
+EMB_MODEL = "text-embedding-3-large"
+EMB_DIM = 3072
 
 REASONING_EFFORT = "minimal"
 
@@ -57,7 +62,10 @@ async def llm_func(prompt, system_prompt=None, history_messages=None, **kwargs):
 
 
 async def embed_func(texts):
-    return await openai_embed(texts, model=EMB_MODEL)
+    """Direct OpenAI call — bypasses LightRAG's openai_embed which doubles vectors."""
+    texts = [t[:8191] if t else " " for t in texts]
+    resp = await _aclient.embeddings.create(input=texts, model=EMB_MODEL)
+    return np.array([d.embedding for d in resp.data], dtype=np.float32)
 
 
 # ---- Document builder (reuses per-category format) ----------------------------
@@ -100,8 +108,8 @@ def build_all_documents(samples: dict) -> list[tuple[str, str]]:
 # ---- Cross-category query battery --------------------------------------------
 def build_cross_queries() -> list[tuple[str, str]]:
     preamble = (
-        "[통합 분석: 4범주 전수 16,381건 — I_니라_O(3150건), II_니라_X(4899건), "
-        "III_라_O(1984건), IV_라_X(6348건)]\n\n"
+        "[통합 분석: 4범주 전수 11,327건 — I_니라_O(5,085건), II_니라_X(1,715건), "
+        "III_라_O(3,082건), IV_라_X(1,445건)]\n\n"
         "판정 기준: '행동·태도를 분명하게 결정하며 종결하는 형태' 여부 (O/X)\n"
         "任圭直 夬絶 가설: 종결어미 '니라'가 '라'보다 행동·태도 결정 종결을 더 자주 표지한다.\n\n"
     )
@@ -216,7 +224,7 @@ async def main():
         out_file.write_text(
             f"# Unified — {qid}\n\n## Question\n{q}\n\n## Answer\n{ans}\n\n_(elapsed: {elapsed:.1f}s)_\n",
             encoding="utf-8")
-        print(f"    -> {len(ans)} chars in {elapsed:.1f}s", flush=True)
+        print(f"    -> {len(ans) if ans else 0} chars in {elapsed:.1f}s", flush=True)
 
     with open(RESULTS / "unified_answers.json", "w", encoding="utf-8") as f:
         json.dump(answers, f, ensure_ascii=False, indent=2)

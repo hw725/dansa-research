@@ -1,0 +1,149 @@
+{
+  "analysis": "hada_metadata_by_genre_sentence",
+  "script_version": "2026-05-20-sentence-only",
+  "source": {
+    "path": "data/sentence_normalized.csv",
+    "sha256": "f7596555109b8d1354c31028d8ecd52e0c73e9ecd69109f543f080be2031d6d8",
+    "records": 150545
+  },
+  "method": {
+    "input_unit": "sentence",
+    "hada_rule": "marker_normalized.endswith('하다')",
+    "input_scope_rule": "use the current sentence corpus scope",
+    "out_of_scope_books_present": {},
+    "genre_rule": {
+      "歷史書": [
+        "자치통감강목",
+        "춘추좌씨전"
+      ],
+      "文集": [
+        "당송팔대가문초"
+      ],
+      "經傳": [
+        "예기",
+        "논어",
+        "맹자",
+        "대학장구",
+        "중용"
+      ],
+      "詩": [
+        "시경집전",
+        "당시삼백수"
+      ],
+      "기타": "주역전의, 서경집전, and unclassified books"
+    }
+  },
+  "totals": {
+    "records": 150545,
+    "hada_count": 12988,
+    "non_hada_count": 137557
+  },
+  "by_genre": [
+    {
+      "genre": "歷史書",
+      "records": 40062,
+      "hada_count": 9839,
+      "non_hada_count": 30223,
+      "hada_percent": 24.5594
+    },
+    {
+      "genre": "文集",
+      "records": 52139,
+      "hada_count": 3093,
+      "non_hada_count": 49046,
+      "hada_percent": 5.9322
+    },
+    {
+      "genre": "經傳",
+      "records": 20275,
+      "hada_count": 46,
+      "non_hada_count": 20229,
+      "hada_percent": 0.2269
+    },
+    {
+      "genre": "詩",
+      "records": 18009,
+      "hada_count": 6,
+      "non_hada_count": 18003,
+      "hada_percent": 0.0333
+    },
+    {
+      "genre": "기타",
+      "records": 20060,
+      "hada_count": 4,
+      "non_hada_count": 20056,
+      "hada_percent": 0.0199
+    }
+  ],
+  "history_vs_non_history": {
+    "table": {
+      "rows": [
+        "歷史書",
+        "非歷史書"
+      ],
+      "columns": [
+        "hada",
+        "non_hada"
+      ],
+      "values": [
+        [
+          9839,
+          30223
+        ],
+        [
+          3149,
+          107334
+        ]
+      ]
+    },
+    "chi_square_yates": 17574.778704,
+    "p_value_yates": 0.0,
+    "p_value_yates_label": "< 0.001",
+    "degrees_of_freedom": 1,
+    "expected": [
+      [
+        3456.277233,
+        36605.722767
+      ],
+      [
+        9531.722767,
+        100951.277233
+      ]
+    ],
+    "cramers_v_yates": 0.341674,
+    "chi_square_uncorrected": 17577.53252,
+    "p_value_uncorrected": 0.0,
+    "p_value_uncorrected_label": "< 0.001"
+  },
+  "rate_ratios": {
+    "history_to_classics": 108.2389
+  },
+  "hada_marker_variants_top25": {
+    "하다": 12243,
+    "라하다": 568,
+    "하라하다": 36,
+    "아하다": 34,
+    "리오하다": 23,
+    "오하다": 17,
+    "로다하다": 8,
+    "하소서하다": 7,
+    "호리라하다": 7,
+    "고하다": 7,
+    "니이다하다": 4,
+    "오라하다": 3,
+    "ㄴ저하다": 3,
+    "아라하다": 3,
+    "하리라하다": 3,
+    "타하다": 2,
+    "가하다": 2,
+    "다하다": 2,
+    "리라하다": 2,
+    "니라하다": 2,
+    "하노라하다": 2,
+    "어다하다": 2,
+    "이릿고하다": 1,
+    "리잇가하다": 1,
+    "잇가하다": 1
+  },
+  "report_text_ko": "記史之斷(‘하다’)은 메타데이터 분석만으로 文體 편중이 확인된다. 현재 sentence 데이터셋에서 ‘하다’의 출현 12,988건의 서종별 출현율은 歷史書 24.56%, 文集 5.93%, 經傳 0.23%, 詩 0.03%, 기타 0.02%이며, 歷史書 대 經傳의 격차는 약 108배이다. 歷史書 대 非歷史書 검정 결과는 χ² = 17574.78, p < 0.001이다."
+}

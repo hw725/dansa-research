@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from datetime import datetime
 
-OUT = Path(r"C:/Users/junto/Downloads/analysis_v8/lightrag_out")
+OUT = Path(__file__).resolve().parent
 RES = OUT / "results"
 
 CATS = ["I_니라_O", "II_니라_X", "III_라_O", "IV_라_X"]

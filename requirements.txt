@@ -1,0 +1,9 @@
+pandas
+numpy
+scipy
+tqdm
+openai
+python-dotenv
+regex
+lxml
+scikit-learn

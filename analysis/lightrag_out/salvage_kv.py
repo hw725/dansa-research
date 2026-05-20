@@ -8,7 +8,7 @@ import os
 import sys
 from pathlib import Path
 
-BASE = Path(r"C:/Users/junto/Downloads/analysis_v8/lightrag_out")
+BASE = Path(__file__).resolve().parent
 CATEGORIES = ["II_니라_X", "IV_라_X", "I_니라_O", "III_라_O"]
 
 

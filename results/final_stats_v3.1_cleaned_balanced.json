@@ -1,0 +1,205 @@
+{
+  "generated_at": "2026-05-20",
+  "manuscript_version": "v3.1_cleaned_balanced",
+  "basis": "Cleaned May 20 data plus section 1/2/3 control supplements",
+  "sections": {
+    "section1": {
+      "label": "游辭以斷",
+      "target_marker": "로다",
+      "control_marker": "라(대조군)",
+      "consensus": {
+        "target_n": 2606,
+        "control_n": 2606,
+        "target": {
+          "O": 1069,
+          "O_pct": 41.0,
+          "S": 1098,
+          "S_pct": 42.1,
+          "X": 439,
+          "X_pct": 16.8
+        },
+        "control": {
+          "O": 162,
+          "O_pct": 6.2,
+          "S": 809,
+          "S_pct": 31.0,
+          "X": 1635,
+          "X_pct": 62.7
+        },
+        "chi2": 1401.76,
+        "V": 0.519,
+        "N": 5212
+      },
+      "perModel": {
+        "gpt5mini": {
+          "display": "GPT-5-mini",
+          "target_n": 2606,
+          "control_n": 2606,
+          "target_rate": 55.26,
+          "control_rate": 8.75,
+          "diff": 46.51,
+          "target_positive": 1440,
+          "control_positive": 228,
+          "chi2": 1295.15,
+          "p_approx": 1.280308510178901e-283
+        },
+        "gemini": {
+          "display": "Gemini 2.5 Flash",
+          "target_n": 2606,
+          "control_n": 2606,
+          "target_rate": 72.41,
+          "control_rate": 33.12,
+          "diff": 39.29,
+          "target_positive": 1887,
+          "control_positive": 863,
+          "chi2": 807.2,
+          "p_approx": 1.4644697721192942e-177
+        },
+        "claude_sonnet": {
+          "display": "Claude Sonnet 4.6",
+          "target_n": 2606,
+          "control_n": 2606,
+          "target_rate": 63.2,
+          "control_rate": 16.16,
+          "diff": 47.04,
+          "target_positive": 1647,
+          "control_positive": 421,
+          "chi2": 1204.9,
+          "p_approx": 5.243578197977263e-264
+        }
+      }
+    },
+    "section2": {
+      "label": "夬絶之斷 vs 微絶之斷",
+      "target_marker": "니라",
+      "control_marker": "라",
+      "consensus": {
+        "target_n": 11135,
+        "control_n": 11135,
+        "target": {
+          "O": 5085,
+          "O_pct": 45.7,
+          "S": 4335,
+          "S_pct": 38.9,
+          "X": 1715,
+          "X_pct": 15.4
+        },
+        "control": {
+          "O": 3082,
+          "O_pct": 27.7,
+          "S": 6608,
+          "S_pct": 59.3,
+          "X": 1445,
+          "X_pct": 13.0
+        },
+        "chi2": 986.45,
+        "V": 0.21,
+        "N": 22270
+      },
+      "perModel": {
+        "gpt5mini": {
+          "display": "GPT-5-mini",
+          "target_n": 11135,
+          "control_n": 11135,
+          "target_rate": 76.51,
+          "control_rate": 72.72,
+          "diff": 3.79,
+          "target_positive": 8519,
+          "control_positive": 8097,
+          "chi2": 42.21,
+          "p_approx": 8.178652368692818e-11
+        },
+        "gemini": {
+          "display": "Gemini 2.5 Flash",
+          "target_n": 11135,
+          "control_n": 11135,
+          "target_rate": 71.32,
+          "control_rate": 70.35,
+          "diff": 0.97,
+          "target_positive": 7941,
+          "control_positive": 7833,
+          "chi2": 2.54,
+          "p_approx": 0.11134609940347474
+        },
+        "claude_sonnet": {
+          "display": "Claude Sonnet 4.6",
+          "target_n": 11135,
+          "control_n": 11135,
+          "target_rate": 52.06,
+          "control_rate": 33.56,
+          "diff": 18.5,
+          "target_positive": 5797,
+          "control_positive": 3737,
+          "chi2": 778.3,
+          "p_approx": 2.820558086313157e-171
+        }
+      }
+    },
+    "section3": {
+      "label": "汎論以斷",
+      "target_marker": "하나니라",
+      "control_marker": "라(대조군)",
+      "consensus": {
+        "target_n": 296,
+        "control_n": 296,
+        "target": {
+          "O": 239,
+          "O_pct": 80.7,
+          "S": 45,
+          "S_pct": 15.2,
+          "X": 12,
+          "X_pct": 4.1
+        },
+        "control": {
+          "O": 137,
+          "O_pct": 46.3,
+          "S": 76,
+          "S_pct": 25.7,
+          "X": 83,
+          "X_pct": 28.0
+        },
+        "chi2": 88.68,
+        "V": 0.387,
+        "N": 592
+      },
+      "perModel": {
+        "gpt5mini": {
+          "display": "GPT-5-mini",
+          "target_n": 296,
+          "control_n": 296,
+          "target_rate": 95.61,
+          "control_rate": 58.78,
+          "diff": 36.83,
+          "target_positive": 283,
+          "control_positive": 174,
+          "chi2": 114.01,
+          "p_approx": 1.2996595164145456e-26
+        },
+        "gemini": {
+          "display": "Gemini 2.5 Flash",
+          "target_n": 296,
+          "control_n": 296,
+          "target_rate": 84.8,
+          "control_rate": 62.84,
+          "diff": 21.96,
+          "target_positive": 251,
+          "control_positive": 186,
+          "chi2": 36.93,
+          "p_approx": 1.2268261400437202e-09
+        },
+        "claude_sonnet": {
+          "display": "Claude Sonnet 4.6",
+          "target_n": 296,
+          "control_n": 296,
+          "target_rate": 87.16,
+          "control_rate": 55.41,
+          "diff": 31.75,
+          "target_positive": 258,
+          "control_positive": 164,
+          "chi2": 72.91,
+          "p_approx": 1.353651779005519e-17
+        }
+      }
+    }
+  }
+}
