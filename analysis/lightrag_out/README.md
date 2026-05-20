@@ -7,6 +7,17 @@ LightRAG 실행 기준 입력은 `analysis/parallel_data_v2_cleaned.tsv` 11,327�
 ```bash
 python analysis/scripts/build_embeddings_from_tsv.py
 python analysis/scripts/build_section2_clusters.py
-python analysis/lightrag_out/run_lightrag_safe.py
+python analysis/lightrag_out/run_all.py
 python analysis/lightrag_out/build_report.py
 ```
+
+## 스크립트
+
+| 파일 | 역할 |
+|---|---|
+| `run_all.py` | 4범주를 각각 독립 subprocess로 실행하는 기본 진입점 |
+| `run_category.py` | 단일 범주 KG 구축과 Q1~Q6 질의 실행 |
+| `run_queries.py` | 구축된 범주별 KG에서 질의만 재실행 |
+| `run_unified.py` | 4범주 통합 KG와 CQ1~CQ7 질의 실행 |
+| `build_report.py` | 범주별 질의 결과를 보고서로 통합 |
+| `repair_kv.py` | 범주별 KV 저장소 교차오염 정리용 보수 스크립트 |

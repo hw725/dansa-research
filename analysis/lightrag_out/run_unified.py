@@ -38,7 +38,7 @@ setup_logger("lightrag", level="WARNING")
 CATS = ["I_니라_O", "II_니라_X", "III_라_O", "IV_라_X"]
 
 
-# ---- LLM / Embedding wrappers (same as run_lightrag.py) ----------------------
+# ---- LLM / Embedding wrappers (same as run_category.py) ----------------------
 async def llm_func(prompt, system_prompt=None, history_messages=None, **kwargs):
     history_messages = history_messages or []
     kwargs.pop("temperature", None)

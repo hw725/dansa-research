@@ -12,7 +12,7 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).parent
-SCRIPT = HERE / "run_lightrag.py"
+SCRIPT = HERE / "run_category.py"
 CATEGORIES = ["II_니라_X", "IV_라_X", "I_니라_O", "III_라_O"]
 
 if __name__ == "__main__":

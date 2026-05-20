@@ -229,7 +229,7 @@ async def run_category(cat: str, clusters: dict, only_query: bool = False):
 
 
 async def main():
-    # Optional CLI: python run_lightrag.py [cat1 cat2 ...] [--only-query]
+    # Optional CLI: python run_category.py [cat1 cat2 ...] [--only-query]
     only_query = "--only-query" in sys.argv
     cli_cats = [a for a in sys.argv[1:] if not a.startswith("--")]
 

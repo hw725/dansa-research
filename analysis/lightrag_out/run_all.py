@@ -1,9 +1,9 @@
 """Subprocess-isolated LightRAG runner. One process per category → no memory leak.
 
 Usage:
-    py -3.13 run_lightrag_safe.py              # all 4 categories
-    py -3.13 run_lightrag_safe.py I_니라_O      # specific category
-    py -3.13 run_lightrag_safe.py --only-query  # skip insert, query only
+    py -3.13 run_all.py              # all 4 categories
+    py -3.13 run_all.py I_니라_O      # specific category
+    py -3.13 run_all.py --only-query  # skip insert, query only
 """
 import subprocess
 import sys
@@ -22,7 +22,7 @@ MAX_RETRIES = 1
 
 def run_category(cat: str, only_query: bool = False) -> tuple[bool, float]:
     log_file = OUT / f"log_{cat}.txt"
-    args = PYTHON + [str(OUT / "run_lightrag.py"), cat]
+    args = PYTHON + [str(OUT / "run_category.py"), cat]
     if only_query:
         args.append("--only-query")
 

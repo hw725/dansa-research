@@ -74,5 +74,10 @@ python analysis/scripts/analyze_genre_by_category.py
 python analysis/scripts/analyze_genre_controlled.py
 python analysis/scripts/extract_translator_metadata.py
 python analysis/scripts/audit_cells.py
+python analysis/lightrag_out/run_all.py
+python analysis/lightrag_out/build_report.py
+python analysis/lightrag_out/run_unified.py
 python analysis/dci_out/build_dci_report.py
 ```
+
+LightRAG 폴더 내부에서는 디렉터리명이 이미 분석 방식을 표시하므로 파일명에서 `lightrag` 반복을 제거했다. 기본 실행은 `run_all.py`이고, 단일 범주 작업은 `run_category.py`, 질의 재실행은 `run_queries.py`, 통합 KG 실험은 `run_unified.py`를 사용한다.
