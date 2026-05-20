@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>任圭直 夬絶 가설 검증 대시보드 v4</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #ffffff; --bg2: #f5f5f7; --fg: #1d1d1f; --fg2: #6e6e73;
+  --card: #ffffff; --border: #d2d2d7; --accent: #0071e3; --accent2: #bf4800;
+  --green: #248a3d; --red: #d70015; --shadow: rgba(0,0,0,0.06);
+  --c1: #248a3d; --c2: #d70015; --c3: #0071e3; --c4: #bf4800;
+}
+[data-theme="dark"] {
+  --bg: #1d1d1f; --bg2: #2d2d2f; --fg: #f5f5f7; --fg2: #a1a1a6;
+  --card: #2d2d2f; --border: #424245; --accent: #2997ff; --accent2: #ff9f0a;
+  --green: #30d158; --red: #ff453a; --shadow: rgba(0,0,0,0.3);
+  --c1: #30d158; --c2: #ff453a; --c3: #2997ff; --c4: #ff9f0a;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system,'Segoe UI',sans-serif; background:var(--bg); color:var(--fg); line-height:1.6; transition:all .3s; }
+.container { max-width:1280px; margin:0 auto; padding:20px; }
+header { display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid var(--border); margin-bottom:24px; }
+h1 { font-size:1.5em; font-weight:700; }
+h2 { font-size:1.15em; font-weight:600; margin-bottom:14px; }
+h3 { font-size:.95em; font-weight:600; margin:10px 0 6px; color:var(--accent); }
+.theme-toggle { background:var(--bg2); border:1px solid var(--border); border-radius:20px; padding:6px 16px; cursor:pointer; color:var(--fg); font-size:14px; transition:all .3s; }
+.theme-toggle:hover { border-color:var(--accent); }
+.subtitle { color:var(--fg2); font-size:.85em; margin-top:4px; }
+.grid { display:grid; gap:16px; margin-bottom:24px; }
+.grid-2 { grid-template-columns:1fr 1fr; }
+.grid-3 { grid-template-columns:1fr 1fr 1fr; }
+.grid-4 { grid-template-columns:repeat(4,1fr); }
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px; box-shadow:0 1px 3px var(--shadow); }
+.stat-card { text-align:center; }
+.stat-num { font-size:1.9em; font-weight:700; color:var(--accent); }
+.stat-label { font-size:.82em; color:var(--fg2); margin-top:2px; }
+.stat-sub { font-size:.72em; color:var(--fg2); }
+.chart-wrap { position:relative; height:300px; }
+.chart-wrap-sm { position:relative; height:240px; }
+.badge { display:inline-block; padding:2px 8px; border-radius:6px; font-size:.72em; font-weight:600; }
+.badge-o { background:rgba(36,138,61,.15); color:var(--green); }
+.badge-x { background:rgba(215,0,21,.15); color:var(--red); }
+table { width:100%; border-collapse:collapse; font-size:.85em; }
+th,td { padding:6px 10px; text-align:left; border-bottom:1px solid var(--border); }
+th { font-weight:600; color:var(--fg2); font-size:.78em; text-transform:uppercase; }
+.finding { margin-bottom:10px; padding:10px 12px; background:var(--bg2); border-radius:8px; border-left:3px solid var(--accent); }
+.finding-title { font-weight:600; font-size:.9em; }
+.finding-body { font-size:.82em; color:var(--fg2); margin-top:3px; line-height:1.5; }
+.hypothesis-box { background:var(--bg2); border:2px solid var(--accent); border-radius:12px; padding:18px; margin-bottom:24px; }
+.tabs { display:flex; gap:4px; margin-bottom:12px; flex-wrap:wrap; }
+.tab { padding:5px 14px; border-radius:8px; cursor:pointer; font-size:.82em; background:var(--bg2); border:1px solid var(--border); color:var(--fg2); transition:all .2s; }
+.tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+.verdict { font-size:1.05em; font-weight:700; text-align:center; padding:12px; border-radius:8px; }
+.verdict-support { background:rgba(36,138,61,.1); color:var(--green); border:1px solid var(--green); }
+.cluster-bar { display:flex; border-radius:6px; overflow:hidden; height:28px; margin:6px 0; }
+.cluster-bar > div { display:flex; align-items:center; justify-content:center; font-size:.7em; font-weight:600; color:#fff; min-width:30px; }
+.note { font-size:.75em; color:var(--fg2); margin-top:6px; font-style:italic; }
+@media (max-width:768px) { .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div>
+    <h1>任圭直 夬絶 가설 검증</h1>
+    <div class="subtitle">종결어미 '니라' vs '라'의 행동·태도 결정 기능 비교 (L2 분석, 3모델 합의)</div>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()">테마 전환</button>
+</header>
+
+<div class="hypothesis-box">
+  <h3>연구 가설</h3>
+  <p>종결어미 <strong>'니라'</strong>가 <strong>'라'</strong>보다 화자가 행동·태도를 분명하게 결정하며 마무리하는 진술을 더 자주 표지한다.</p>
+</div>
+
+<!-- Stats -->
+<div class="grid grid-4">
+  <div class="card stat-card"><div class="stat-num">11,961</div><div class="stat-label">3모델 합의 문장</div><div class="stat-sub">총 23,490문장 중</div></div>
+  <div class="card stat-card"><div class="stat-num">74.7%</div><div class="stat-label">니라 결정 비율</div><div class="stat-sub">5,381 / 7,206</div></div>
+  <div class="card stat-card"><div class="stat-num">66.9%</div><div class="stat-label">라 결정 비율</div><div class="stat-sub">3,181 / 4,755</div></div>
+  <div class="card stat-card"><div class="stat-num">+7.8%p</div><div class="stat-label">니라-라 차이</div><div class="stat-sub">가설 방향 지지</div></div>
+</div>
+
+<!-- Charts row 1 -->
+<div class="grid grid-2">
+  <div class="card">
+    <h2>범주별 문장 분포</h2>
+    <div class="chart-wrap"><canvas id="distChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h2>결정(O) 비율 비교</h2>
+    <div class="chart-wrap"><canvas id="ratioChart"></canvas></div>
+  </div>
+</div>
+
+<!-- Cluster Structure -->
+<div class="card" style="margin-bottom:16px">
+  <h2>범주별 클러스터 구조</h2>
+  <p style="font-size:.85em; color:var(--fg2); margin-bottom:12px">I~III 범주는 2개 대형 클러스터로 양분, IV_라_X만 12개로 분산 (담화 유형의 이질성 반영)</p>
+
+  <div style="margin-bottom:10px">
+    <strong style="font-size:.85em">I_니라_O</strong> <span class="badge badge-o">결정O</span>
+    <div class="cluster-bar">
+      <div style="flex:3060; background:var(--c1)">Cl.1 규범·해설 (3060)</div>
+      <div style="flex:2321; background:var(--c3)">Cl.0 서사·기록 (2321)</div>
+    </div>
+  </div>
+  <div style="margin-bottom:10px">
+    <strong style="font-size:.85em">II_니라_X</strong> <span class="badge badge-x">비결정X</span>
+    <div class="cluster-bar">
+      <div style="flex:956; background:var(--c2)">Cl.0 사료형 보고 (956)</div>
+      <div style="flex:869; background:var(--c4)">Cl.1 전기·평론 (869)</div>
+    </div>
+  </div>
+  <div style="margin-bottom:10px">
+    <strong style="font-size:.85em">III_라_O</strong> <span class="badge badge-o">결정O</span>
+    <div class="cluster-bar">
+      <div style="flex:1772; background:var(--c3)">Cl.0 점괘·덕목 규범 (1772)</div>
+      <div style="flex:1409; background:var(--c1)">Cl.1 정치적 논증 (1409)</div>
+    </div>
+  </div>
+  <div style="margin-bottom:4px">
+    <strong style="font-size:.85em">IV_라_X</strong> <span class="badge badge-x">비결정X</span> <span style="font-size:.75em; color:var(--fg2)">(12개 클러스터)</span>
+    <div class="cluster-bar">
+      <div style="flex:246; background:#6366f1" title="관제·논설">논설</div>
+      <div style="flex:196; background:#8b5cf6" title="계보·전기">계보</div>
+      <div style="flex:190; background:#a78bfa" title="사전·주석">주석</div>
+      <div style="flex:176; background:#c084fc" title="상소·보고">상소</div>
+      <div style="flex:150; background:#e879f9" title="고난·회고">회고</div>
+      <div style="flex:149; background:#f472b6" title="기타 기술">기술</div>
+      <div style="flex:136; background:#fb7185" title="기타 논설">기타</div>
+      <div style="flex:105; background:#fbbf24" title="학술·수양">수양</div>
+      <div style="flex:97; background:#f59e0b" title="연대·기년">연대</div>
+      <div style="flex:56; background:#78716c" title="어휘 정의">정의</div>
+      <div style="flex:55; background:#a8a29e" title="감탄·외침">감탄</div>
+      <div style="flex:18; background:#d6d3d1" title="장르 분류">분류</div>
+    </div>
+  </div>
+  <div class="note">I~III: 담화 기능이 크게 2개 축으로 수렴 / IV: 정의·감탄·기록·회고·정책 등 12종으로 분산 → '라'의 비결정 용법이 범용적 평서 종결임을 시사</div>
+</div>
+
+<!-- Cluster Comparison Detail -->
+<div class="card" style="margin-bottom:16px">
+  <h2>범주 내 클러스터 비교</h2>
+  <div class="tabs" id="clusterTabs">
+    <div class="tab active" onclick="showClTab(0)">I_니라_O</div>
+    <div class="tab" onclick="showClTab(1)">II_니라_X</div>
+    <div class="tab" onclick="showClTab(2)">III_라_O</div>
+    <div class="tab" onclick="showClTab(3)">IV_라_X</div>
+  </div>
+  <div id="clTabContent">
+    <div class="tab-content active">
+      <table>
+        <tr><th>축</th><th>Cl.1 규범·해설 (3,060건)</th><th>Cl.0 서사·기록 (2,321건)</th></tr>
+        <tr><td>핵심 주제</td><td>유교 경전·주석 중심의 규범·해설적 담화</td><td>역사기록 중심의 서사·기록적 담화</td></tr>
+        <tr><td>주요 출처</td><td>맹자집주·논어집주·주역전의</td><td>자치통감강목·춘추좌씨전</td></tr>
+        <tr><td>담화 기능</td><td>당위·규범·교훈을 직접 표명</td><td>사건 서술 + 평가적 문장 병치</td></tr>
+        <tr><td>핵심 차이</td><td colspan="2">'왜 그래야 하는가' (도덕적 근거) vs '무엇이 일어났고 어떻게 평가되는가' (역사적 평가)</td></tr>
+      </table>
+    </div>
+    <div class="tab-content">
+      <table>
+        <tr><th>축</th><th>Cl.0 사료형 보고 (956건)</th><th>Cl.1 전기·평론 (869건)</th></tr>
+        <tr><td>핵심 주제</td><td>관직 이동·군사·의례 등 사실적 기록</td><td>문인 행적·인품·명성에 대한 전기·평론</td></tr>
+        <tr><td>행위자</td><td>관료·군사 지휘관</td><td>성현·문인·제자</td></tr>
+        <tr><td>서술 태도</td><td>객관적·연대기적 보고 (주관 배제)</td><td>설명·해석·평론적 (도덕적 평가 내포)</td></tr>
+        <tr><td>핵심 차이</td><td colspan="2">사료적·기록적 기능 (사실 보존) vs 평가적·교화적 기능 (인물평 통한 교훈)</td></tr>
+      </table>
+    </div>
+    <div class="tab-content">
+      <table>
+        <tr><th>축</th><th>Cl.0 점괘·덕목 규범 (1,772건)</th><th>Cl.1 정치적 논증 (1,409건)</th></tr>
+        <tr><td>핵심 주제</td><td>개인 처신·절제·겸손 + 점괘 해석</td><td>군주·신하 의무, 사직·천명 근거의 정치적 결단</td></tr>
+        <tr><td>근거 방식</td><td>점괘·덕목으로 길흉 단정</td><td>고사·역사·천명·사직으로 정당성 확보</td></tr>
+        <tr><td>행위 수준</td><td>개인·대인 관계 (인격 수준)</td><td>집단·제도적 (국가·정권 수준)</td></tr>
+        <tr><td>핵심 차이</td><td colspan="2">개인적·실천지침적 규범 vs 집단적·정치적 논증 — 설득의 근거와 적용 범위가 근본적으로 다름</td></tr>
+      </table>
+    </div>
+    <div class="tab-content">
+      <table>
+        <tr><th>기능 유형</th><th>클러스터</th><th>건수</th><th>특징</th></tr>
+        <tr><td>분류·주석·정의</td><td>Cl.2, 8, 11</td><td>264</td><td>"賦也라" 등 사전적 풀이, 극도로 간결한 정형문</td></tr>
+        <tr><td>감정 표출</td><td>Cl.6</td><td>55</td><td>"嗚呼라" 등 즉각적 감탄·탄식, 초단문</td></tr>
+        <tr><td>기록·연대·계보</td><td>Cl.4, 9</td><td>293</td><td>연호·관직·가계 등 명목적 나열형 기록</td></tr>
+        <tr><td>학술·수양·회고</td><td>Cl.5, 0, 7</td><td>404</td><td>독서·강론(5), 고난·탄식 회고(0), 기타 기술(7)</td></tr>
+        <tr><td>관제·정책·논설</td><td>Cl.3, 1, 10</td><td>558</td><td>상소·보고·간쟁·정치적 논쟁, 장문</td></tr>
+      </table>
+      <div class="note">12개 클러스터에 걸쳐 행동·태도 결정이 부재한다는 점만 공통 — '라'의 비결정 용법이 범용적 평서 종결임을 시사</div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts row 2 -->
+<div class="grid grid-2">
+  <div class="card">
+    <h2>상위 출처 문헌 (TSV 실측, 범주별 Top 5)</h2>
+    <div class="tabs" id="bookTabsWrap">
+      <div class="tab active" onclick="showBookTab(0)">I_니라_O</div>
+      <div class="tab" onclick="showBookTab(1)">II_니라_X</div>
+      <div class="tab" onclick="showBookTab(2)">III_라_O</div>
+      <div class="tab" onclick="showBookTab(3)">IV_라_X</div>
+    </div>
+    <div id="bookTabs">
+      <div class="tab-content active">
+        <table><tr><th>문헌</th><th>건수</th></tr>
+        <tr><td>맹자집주</td><td>662</td></tr>
+        <tr><td>논어집주</td><td>608</td></tr>
+        <tr><td>당송팔대가문초소철2</td><td>585</td></tr>
+        <tr><td>예기집설대전1</td><td>318</td></tr>
+        <tr><td>주역전의(하)</td><td>225</td></tr></table>
+      </div>
+      <div class="tab-content">
+        <table><tr><th>문헌</th><th>건수</th></tr>
+        <tr><td>당송팔대가문초한유3</td><td>275</td></tr>
+        <tr><td>당송팔대가문초한유2</td><td>190</td></tr>
+        <tr><td>당송팔대가문초소철2</td><td>178</td></tr>
+        <tr><td>당송팔대가문초소철3</td><td>85</td></tr>
+        <tr><td>서경집전(하)</td><td>75</td></tr></table>
+        <div class="note">당송팔대가문초 계열이 top 4 독점 (728건)</div>
+      </div>
+      <div class="tab-content">
+        <table><tr><th>문헌</th><th>건수</th></tr>
+        <tr><td>주역전의(하)</td><td>348</td></tr>
+        <tr><td>주역전의(상)</td><td>334</td></tr>
+        <tr><td>논어집주</td><td>146</td></tr>
+        <tr><td>시경집전(상)</td><td>144</td></tr>
+        <tr><td>시경집전(하)</td><td>144</td></tr></table>
+        <div class="note">주역전의 1~2위 (682건) — 점괘 해석과 '라' 결정 용법의 강한 결합</div>
+      </div>
+      <div class="tab-content">
+        <table><tr><th>문헌</th><th>건수</th></tr>
+        <tr><td>시경집전(상)</td><td>99</td></tr>
+        <tr><td>당송팔대가문초구양수4</td><td>83</td></tr>
+        <tr><td>시경집전(하)</td><td>81</td></tr>
+        <tr><td>당송팔대가문초구양수5</td><td>74</td></tr>
+        <tr><td>당송팔대가문초구양수6</td><td>61</td></tr></table>
+        <div class="note">시경집전 + 당송팔대가문초 구양수 계열이 지배적</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>시제·서법 분포 (레이더)</h2>
+    <div class="chart-wrap"><canvas id="moodChart"></canvas></div>
+  </div>
+</div>
+
+<!-- Q3 Decision Marker Density -->
+<div class="card" style="margin-bottom:16px">
+  <h2>행동·태도 결정 표지 밀도 위계 (Q3)</h2>
+  <div class="grid grid-2" style="margin-bottom:0">
+    <div>
+      <table>
+        <tr><th>범주</th><th>표지 빈도</th><th>기능적 위치</th><th>화용적 역할</th></tr>
+        <tr><td><strong>I_니라_O</strong></td><td>매우 높음</td><td>문장 종결부</td><td>규범적 단언·판단 직접 수행</td></tr>
+        <tr><td><strong>III_라_O</strong></td><td>높음</td><td>문장 종결부</td><td>조건부 판정·권고 직접 수행</td></tr>
+        <tr><td><strong>II_니라_X</strong></td><td>중간</td><td>문장 내부</td><td>사실적 논리 연결·설명</td></tr>
+        <tr><td><strong>IV_라_X</strong></td><td>매우 낮음</td><td>문장 내부(드묾)</td><td>부정·대조·인용·판단유보</td></tr>
+      </table>
+    </div>
+    <div>
+      <div class="finding"><div class="finding-title">'니라'의 표지 결합 — 단정·확언형</div><div class="finding-body">是/非/可/不可/當/必/故 + 也/矣/焉 → '니라'<br>"非學也니라", "不可試也니라", "當熟玩之니라"</div></div>
+      <div class="finding"><div class="finding-title">'라'의 표지 결합 — 조건-귀결형</div><div class="finding-body">(조건) → (연결어) → (판단 표지) → (결과) → '라'<br>"如是則可咎矣라", "若平時則不可也라"</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Qualitative Findings -->
+<div class="card" style="margin-bottom:16px">
+  <h2>질적 분석 핵심 발견</h2>
+  <div class="tabs" id="findTabsWrap">
+    <div class="tab active" onclick="showFindTab(0)">주제 패턴</div>
+    <div class="tab" onclick="showFindTab(1)">논리 접속</div>
+    <div class="tab" onclick="showFindTab(2)">서법·시제</div>
+    <div class="tab" onclick="showFindTab(3)">출처 특이점</div>
+  </div>
+  <div id="findTabs">
+    <div class="tab-content active">
+      <div class="finding"><div class="finding-title">결정(O) — 니라 vs 라의 주제 분화</div><div class="finding-body"><strong>I_니라_O</strong>: 도덕·수양·정치규범 (유교적 덕론, '왜 그래야 하는가')<br><strong>III_라_O</strong>: 조건부 판정·정치적 정당성 (점사, '어떤 조건에서 어떤 결과가')</div></div>
+      <div class="finding"><div class="finding-title">비결정(X) — 니라 vs 라의 담화 범위</div><div class="finding-body"><strong>II_니라_X</strong>: 역사적 보고에 집중 (2개 클러스터, 사료형 + 전기·평론형)<br><strong>IV_라_X</strong>: 정의·감탄·기록·회고·정책 등에 분산 (12개 클러스터) → '라'가 범용적</div></div>
+    </div>
+    <div class="tab-content">
+      <div class="finding"><div class="finding-title">결정(O) 범주의 접속표지</div><div class="finding-body"><strong>I_니라_O</strong>: 故·是以·然이나 → 원인-결론 연쇄. 도덕적 근거 후 '니라'로 선언적 단정<br><strong>III_라_O</strong>: 若…則… → 조건-귀결 구조. 상황적 판정 후 '라'로 종결</div></div>
+      <div class="finding"><div class="finding-title">비결정(X) 범주의 접속표지</div><div class="finding-body"><strong>II_니라_X</strong>: 시간 표지(於是·旣而·明年) 중심 서사적 연결<br><strong>IV_라_X</strong>: 즉(卽)·위(謂)·자(者) 등 정의·분류적 연결, 빈도 자체가 낮음</div></div>
+    </div>
+    <div class="tab-content">
+      <div class="finding"><div class="finding-title">결정(O): 당위·규범 우세 (but 차이 있음)</div><div class="finding-body">I_니라_O = 도덕적 처방·교훈 (무조건적 ought)<br>III_라_O = 조건부 길흉 판정 (조건적 if-then)</div></div>
+      <div class="finding"><div class="finding-title">비결정(X): 시제 분화가 핵심</div><div class="finding-body">II_니라_X = <strong>과거사건</strong> 보고 (역사적 서사)<br>IV_라_X = <strong>현재형</strong> 정의·주석 (사전적 설명)<br>→ '니라'의 비결정 = 역사 서사, '라'의 비결정 = 어휘 정의에 각각 편향</div></div>
+    </div>
+    <div class="tab-content">
+      <div class="finding"><div class="finding-title">범주별 1위 출처가 담화 성격을 결정</div><div class="finding-body">I_니라_O: 맹자집주(662) → 유교 경전 규범<br>II_니라_X: 당송팔대가문초한유3(275) → 문집류 전기<br>III_라_O: 주역전의(하)(348) → 역점 길흉 판정<br>IV_라_X: 시경집전(상)(99) → 어휘 풀이·주석</div></div>
+      <div class="finding"><div class="finding-title">LightRAG 출처 혼입 주의</div><div class="finding-body">LightRAG Q6 원응답에서 카테고리 간 출처 혼입(cross-leakage) 확인됨. II_니라_X에 주역전의·자치통감강목, IV_라_X에 논어집주·자치통감강목 등. 본 대시보드는 TSV 실측 데이터로 교정.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Verdict -->
+<div class="card" style="margin-bottom:16px">
+  <h2>종합 판단</h2>
+  <div class="verdict verdict-support">가설 방향적 지지 — '니라'는 '라'보다 행동·태도 결정에 +7.8%p 더 빈번</div>
+  <div style="margin-top:14px; font-size:.88em">
+    <p><strong>정량적 근거</strong>: 니라 결정 비율 74.7% vs 라 66.9% (3모델 만장일치 기준)</p>
+    <p style="margin-top:8px"><strong>질적 근거</strong>:</p>
+    <ul style="margin:4px 0 0 20px; font-size:.92em">
+      <li>'니라'는 단정·확언형 당위 논증(도덕적 근거 → 규범 선언)에 친화적, '라'는 조건-귀결형 판정(若…則…)에 친화적</li>
+      <li>'니라'의 비결정 용법은 2개 클러스터(역사 보고)에 한정, '라'의 비결정 용법은 12개 이질적 클러스터에 분산 → '니라'가 결정적 맥락으로 더 강하게 수렴</li>
+      <li>범주별 1위 출처(맹자집주 vs 주역전의 vs 당송팔대가문초 vs 시경집전)가 담화 장르 차이를 반영</li>
+    </ul>
+    <p style="margin-top:8px"><strong>유보</strong>: 차이는 존재하나 절대적이지 않음. '라'도 66.9%가 결정적 진술. 종결어미-결정성 관계는 담화 장르에 의해 매개되며, 동일 문헌 내 미시적 교체 분석이 추가 필요.</p>
+  </div>
+</div>
+
+<footer style="text-align:center; color:var(--fg2); font-size:.78em; padding:16px 0; border-top:1px solid var(--border)">
+  analysis_v8 | 3-model consensus (gpt-5-mini, gemini-2.5-flash, claude-sonnet) | text-embedding-3-large 3072d | LightRAG KG | TSV 실측 교정 | 2026-05-14
+</footer>
+
+</div>
+
+<script>
+function toggleTheme() {
+  const h = document.documentElement;
+  h.dataset.theme = h.dataset.theme === 'dark' ? '' : 'dark';
+  updateChartColors();
+}
+function showTab(wrapId, contentId, i) {
+  document.getElementById(contentId).querySelectorAll('.tab-content').forEach((el,j) => el.classList.toggle('active', j===i));
+  document.getElementById(wrapId).querySelectorAll('.tab').forEach((t,j) => t.classList.toggle('active', j===i));
+}
+function showBookTab(i) { showTab('bookTabsWrap','bookTabs',i); }
+function showFindTab(i) { showTab('findTabsWrap','findTabs',i); }
+function showClTab(i) { showTab('clusterTabs','clTabContent',i); }
+
+const getColors = () => {
+  const s = getComputedStyle(document.documentElement);
+  return { fg: s.getPropertyValue('--fg').trim(), fg2: s.getPropertyValue('--fg2').trim(), border: s.getPropertyValue('--border').trim(),
+           c1: s.getPropertyValue('--c1').trim(), c2: s.getPropertyValue('--c2').trim(), c3: s.getPropertyValue('--c3').trim(), c4: s.getPropertyValue('--c4').trim() };
+};
+
+const distChart = new Chart(document.getElementById('distChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: ['I_니라_O\n(5381)', 'II_니라_X\n(1825)', 'III_라_O\n(3181)', 'IV_라_X\n(1574)'],
+    datasets: [{
+      label: '문장 수',
+      data: [5381, 1825, 3181, 1574],
+      backgroundColor: ['#248a3d', '#d70015', '#0071e3', '#bf4800'],
+      borderRadius: 6
+    }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} }
+});
+
+const ratioChart = new Chart(document.getElementById('ratioChart').getContext('2d'), {
+  type: 'doughnut',
+  data: {
+    labels: ['니라_O (결정)', '니라_X (비결정)', '라_O (결정)', '라_X (비결정)'],
+    datasets: [{
+      data: [5381, 1825, 3181, 1574],
+      backgroundColor: ['#248a3d', '#ff6b6b', '#0071e3', '#ffa94d']
+    }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom', labels:{font:{size:11}}}} }
+});
+
+const moodChart = new Chart(document.getElementById('moodChart').getContext('2d'), {
+  type: 'radar',
+  data: {
+    labels: ['당위/규범', '정의/현재', '과거사건', '인용/중계'],
+    datasets: [
+      { label:'I_니라_O', data:[90,40,30,25], borderColor:'#248a3d', backgroundColor:'rgba(36,138,61,.1)', pointRadius:3 },
+      { label:'II_니라_X', data:[20,30,85,40], borderColor:'#d70015', backgroundColor:'rgba(215,0,21,.1)', pointRadius:3 },
+      { label:'III_라_O', data:[80,45,25,20], borderColor:'#0071e3', backgroundColor:'rgba(0,113,227,.1)', pointRadius:3 },
+      { label:'IV_라_X', data:[15,80,20,35], borderColor:'#bf4800', backgroundColor:'rgba(191,72,0,.1)', pointRadius:3 }
+    ]
+  },
+  options: { responsive:true, maintainAspectRatio:false, scales:{r:{beginAtZero:true,max:100,ticks:{stepSize:25}}}, plugins:{legend:{position:'bottom',labels:{font:{size:11}}}} }
+});
+
+function updateChartColors() {
+  const c = getColors();
+  [distChart, ratioChart, moodChart].forEach(chart => {
+    if(chart.options.scales?.y){chart.options.scales.y.ticks={color:c.fg2};chart.options.scales.y.grid={color:c.border};}
+    if(chart.options.scales?.x){chart.options.scales.x.ticks={color:c.fg2};chart.options.scales.x.grid={color:c.border};}
+    if(chart.options.scales?.r){chart.options.scales.r.ticks={color:c.fg2};chart.options.scales.r.grid={color:c.border};chart.options.scales.r.pointLabels={color:c.fg};}
+    if(chart.options.plugins?.legend){chart.options.plugins.legend.labels={...chart.options.plugins.legend.labels,color:c.fg};}
+    chart.update();
+  });
+}
+</script>
+</body>
+</html>

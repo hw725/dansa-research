@@ -7,3 +7,38 @@ data/dansa_level1_judgments.csv
 data/dansa_level2_judgments.csv
 data/phrase_normalized.csv
 data/sentence_normalized.csv
+
+# ── analysis/ ──────────────────────────────────
+
+# 원본 코퍼스 (미공개, 추후 한국고전번역원 경유 공개)
+analysis/parallel_data_v2.tsv
+
+# 임베딩 바이너리 (141MB, 재생성 가능)
+analysis/emb_openai_v2.npy
+
+# 클러스터링 산출물 (원본 기반)
+analysis/clusters_v2.json
+analysis/cluster_summaries_v2.json
+
+# LightRAG 내부 데이터 (원본 코퍼스 포함)
+analysis/lightrag_out/I_*/
+analysis/lightrag_out/II_*/
+analysis/lightrag_out/III_*/
+analysis/lightrag_out/IV_*/
+analysis/lightrag_out/cluster_full_v2.json
+analysis/lightrag_out/__pycache__/
+analysis/lightrag_out/log_*.txt
+analysis/lightrag_out/results/all_answers.json
+
+# DCI 전수집계 캐시/로그
+analysis/dci_out/all_answers.json
+analysis/dci_out/*_log.json
+analysis/dci_out/dashboard.html
+analysis/dci_out/comparison_dashboard.html
+
+# L2 원시 판정 CSV (원본 문장 포함)
+analysis/l2_analysis/*.csv
+
+# 일반
+__pycache__/
+*.log

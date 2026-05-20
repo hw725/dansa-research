@@ -1,0 +1,154 @@
+{
+  "survey_completed_at": "2026-05-13",
+  "manuscript_version": "v3",
+  "gemini_via": "OpenRouter API",
+  "levels": {
+    "gpt5mini": {
+      "display": "GPT-5-mini",
+      "levels": {
+        "L2": {
+          "n_target": 11745,
+          "n_control": 11745,
+          "target_positive": 8971,
+          "control_positive": 8479,
+          "target_rate": 76.38,
+          "control_rate": 72.19,
+          "chi2": 53.95,
+          "p_value": 2.0579e-13,
+          "significant": true
+        },
+        "L3A": {
+          "n_target": 297,
+          "n_control": 297,
+          "target_positive": 284,
+          "control_positive": 176,
+          "target_rate": 95.62,
+          "control_rate": 59.26,
+          "chi2": 110.33,
+          "p_value": 8.299e-26,
+          "significant": true
+        },
+        "L_selfref": {
+          "n_target": 615,
+          "n_control": 615,
+          "target_positive": 554,
+          "control_positive": 72,
+          "target_rate": 90.08,
+          "control_rate": 11.71,
+          "chi2": 752.63,
+          "p_value": 1.073e-165,
+          "significant": true
+        },
+        "L1": {
+          "n_target": 2853,
+          "n_control": 2853,
+          "target_positive": 1524,
+          "control_positive": 237,
+          "target_rate": 53.42,
+          "control_rate": 8.31,
+          "chi2": 1358.34,
+          "p_value": 2.377e-297,
+          "significant": true
+        }
+      }
+    },
+    "gemini": {
+      "display": "Gemini 2.5 Flash",
+      "levels": {
+        "L3A": {
+          "n_target": 297,
+          "n_control": 297,
+          "target_positive": 252,
+          "control_positive": 183,
+          "target_rate": 84.85,
+          "control_rate": 61.62,
+          "chi2": 39.71,
+          "p_value": 2.944e-10,
+          "significant": true
+        },
+        "L_selfref": {
+          "n_target": 615,
+          "n_control": 615,
+          "target_positive": 524,
+          "control_positive": 87,
+          "target_rate": 85.2,
+          "control_rate": 14.15,
+          "chi2": 618.22,
+          "p_value": 1.819e-136,
+          "significant": true
+        },
+        "L1": {
+          "n_target": 2853,
+          "n_control": 2853,
+          "target_positive": 2023,
+          "control_positive": 917,
+          "target_rate": 70.91,
+          "control_rate": 32.14,
+          "chi2": 856.76,
+          "p_value": 2.471e-188,
+          "significant": true
+        },
+        "L2": {
+          "n_target": 11745,
+          "n_control": 11745,
+          "target_positive": 8339,
+          "control_positive": 8118,
+          "target_rate": 71.0,
+          "control_rate": 69.12,
+          "chi2": 9.82,
+          "p_value": 0.001724,
+          "significant": true
+        }
+      }
+    },
+    "claude_sonnet": {
+      "display": "Claude Sonnet",
+      "levels": {
+        "L3A": {
+          "n_target": 297,
+          "n_control": 297,
+          "target_positive": 259,
+          "control_positive": 163,
+          "target_rate": 87.21,
+          "control_rate": 54.88,
+          "chi2": 73.86,
+          "p_value": 8.398e-18,
+          "significant": true
+        },
+        "L_selfref": {
+          "n_target": 615,
+          "n_control": 615,
+          "target_positive": 501,
+          "control_positive": 78,
+          "target_rate": 81.46,
+          "control_rate": 12.68,
+          "chi2": 581.13,
+          "p_value": 2.134e-128,
+          "significant": true
+        },
+        "L1": {
+          "n_target": 2853,
+          "n_control": 2853,
+          "target_positive": 1775,
+          "control_positive": 440,
+          "target_rate": 62.22,
+          "control_rate": 15.42,
+          "chi2": 1313.17,
+          "p_value": 1.556e-287,
+          "significant": true
+        },
+        "L2": {
+          "n_target": 11745,
+          "n_control": 11745,
+          "target_positive": 6158,
+          "control_positive": 3891,
+          "target_rate": 52.43,
+          "control_rate": 33.13,
+          "chi2": 892.99,
+          "p_value": 3.273e-196,
+          "significant": true
+        }
+      }
+    }
+  }
+}
