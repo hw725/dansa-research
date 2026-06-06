@@ -37,9 +37,5 @@ python scripts/export_anonymized_results.py
 
 보고된 통계 수치의 exact 재현에는 `data/llm_manifests/`의 LLM 입력 표본 manifest를 사용한다. manifest가 있으면 같은 표본을 그대로 쓰며, manifest가 없을 때만 코드의 고정 seed 표본 추출로 되돌아간다. 표본 추출 방식과 여러 seed robustness 검증은 `docs/SAMPLING.md`에 정리한다.
 
-## 공개용 데이터
-
-원문 번역문은 미공개 자료이므로 raw CSV는 git 추적 대상이 아니다. 공개가 필요한 경우 `scripts/export_anonymized_results.py`로 생성한 `*_anon.csv`와 `*_anon.tsv`만 사용한다.
-
 ## 스크립트 파일명
 현재 스크립트 목록과 명명 규칙은 docs/SCRIPTS.md를 기준으로 한다.
