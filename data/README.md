@@ -16,7 +16,7 @@
 | `dansa_section{1,2}_judgments.csv` | ❌ | 5,169·25,216 | 섹션별 단사 판정 (로컬 전용) |
 | `llm_manifests/` | ❌ | — | LLM 입력 표본 manifest (`section{1,2,3}_base.csv`) |
 
-대조군 보충 건수(12·465·30)는 [docs/REPRODUCE.md](../docs/REPRODUCE.md)의 정제 기준과 같다.
+대조군 보충 건수(12·465·30)는 [REPRODUCE.md](../REPRODUCE.md)의 정제 기준과 같다.
 
 ## 주요 컬럼
 
@@ -31,4 +31,4 @@ python scripts/prepare_sentence_dataset.py     # raw sentence_normalized.csv 재
 
 번역문을 해시로 치환하므로 익명화본으로는 임베딩·LightRAG·LLM 재판정을 할 수 없다(번역문 실텍스트 필요). 정량 통계는 marker·판정값만 쓰므로 익명화본과 익명 판정(`results/{model}/*_anon.csv`)만으로 재현된다 — 검증은 `python scripts/compute_final_stats.py --check --source anon`.
 
-raw 입력은 미공개 병렬 코퍼스에서 생성되며, 원본 병렬 자료는 추후 한국고전번역원 경유로 공개 예정이다. 상세 절차는 [docs/REPRODUCE.md](../docs/REPRODUCE.md), 표본 기준은 [docs/SAMPLING.md](../docs/SAMPLING.md).
+raw 입력은 미공개 병렬 코퍼스에서 생성되며, 원본 병렬 자료는 추후 한국고전번역원 경유로 공개 예정이다. 상세 절차는 [REPRODUCE.md](../REPRODUCE.md)(표본 기준은 §8).

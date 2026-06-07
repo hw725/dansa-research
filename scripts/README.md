@@ -35,9 +35,9 @@ python scripts/verify_section2_results.py
 
 `build_llm_input_manifests.py`는 현재 기준 LLM 입력 표본을 `data/llm_manifests/` 아래에 고정한다. 이 manifest는 보고된 수치의 exact 재현을 위한 로컬 전용 자료이며, 원문과 번역문을 포함하므로 git 추적 대상이 아니다.
 
-표본 추출 기준과 여러 seed robustness 검증 설계는 `docs/SAMPLING.md`에 정리한다.
+표본 추출 기준과 여러 seed robustness 검증 설계는 `REPRODUCE.md` §8에 정리한다.
 
-`compute_final_stats.py`는 `--source {auto,raw,anon}`로 입력을 고르고 `--check`로 기준 JSON과 대조한다. 익명 판정 파일(`results/{model}/*_anon.csv`)만으로도 동일 통계가 재현된다. 상세는 `docs/REPRODUCE.md`.
+`compute_final_stats.py`는 `--source {auto,raw,anon}`로 입력을 고르고 `--check`로 기준 JSON과 대조한다. 익명 판정 파일(`results/{model}/*_anon.csv`)만으로도 동일 통계가 재현된다. 상세는 `REPRODUCE.md`.
 
 ## 데이터 준비
 

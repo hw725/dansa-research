@@ -55,7 +55,7 @@ python scripts/preflight_llm_pipeline.py
 python scripts/build_llm_input_manifests.py
 ```
 
-manifest는 `data/llm_manifests/`에 저장되며 원문과 번역문을 포함하므로 로컬 전용이다. manifest가 없을 때의 고정 seed fallback과 여러 seed robustness 검증은 `docs/SAMPLING.md`를 따른다.
+manifest는 `data/llm_manifests/`에 저장되며 원문과 번역문을 포함하므로 로컬 전용이다. manifest가 없을 때의 고정 seed fallback과 여러 seed robustness 검증은 아래 §8 표본 추출 기준을 따른다.
 
 ### 4.1 sentence 입력 준비
 
@@ -146,3 +146,27 @@ LightRAG와 DCI 보고서는 11,327행 정제 TSV 기준으로 생성한다. 정
 
 ## 7. 스크립트 파일명 기준
 현재 재현 명령과 보조 스크립트 목록은 scripts/README.md를 기준으로 한다.
+
+## 8. 표본 추출 기준
+
+표본 추출은 exact 재현과 robustness 검증을 분리한다.
+
+### 8.1 Exact 재현
+
+보고된 통계 수치를 다시 만들 때는 `data/llm_manifests/`의 manifest를 사용한다. manifest는 이미 LLM 판정에 사용한 행 목록이므로, 재현 실행에서는 새 표본을 뽑지 않고 같은 문장들을 그대로 다시 사용한다.
+
+### 8.2 Manifest가 없을 때의 fallback
+
+manifest가 없으면 `scripts/run_multimodel_judgments.py`가 고정 seed로 대조군을 추출한다. 실행마다 달라지는 랜덤이 아니라, 같은 입력 CSV와 같은 코드에서는 같은 표본이 나오는 재현 가능한 fallback이다.
+
+| 섹션 | Target | Control |
+|---|---|---|
+| 섹션 1 | `游辭以斷/로다` 전체 | `微絶之斷/라`에서 로다 개수만큼 추출, seed 42 |
+| 섹션 2 | `夬絶之斷/니라` 전체 | `微絶之斷/라`에서 니라 개수만큼 추출, seed 42 |
+| 섹션 3 | `汎論以斷/하나니라` 전체 | `微絶之斷/라`에서 하나니라 개수만큼 추출, seed 99 |
+
+이 fallback은 서종별 층화추출이 아니다. 서종별 같은 개수나 비율을 맞추는 검증은 별도 robustness 설계가 필요하다.
+
+### 8.3 Robustness 검증
+
+통계적 안정성 확인은 exact 재현과 다른 작업이다. 여러 seed로 대조군을 다시 뽑아도 효과 방향과 크기가 안정적인지 확인한다. 예: seed 1~100으로 대조군을 반복 추출하고 seed별 Consensus O, χ², Cramér’s V, target/control 비율 분포를 비교한다. 단, 현재 결과 CSV는 모든 `라` 후보의 LLM 판정을 포함하지 않으므로, 새 seed robustness에는 더 넓은 control 후보 풀의 판정을 먼저 만들어야 한다.

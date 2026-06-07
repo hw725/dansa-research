@@ -8,7 +8,7 @@ LightRAG 실행 기준 입력은 `analysis/parallel_data_v2_cleaned.tsv` 11,327�
 python analysis/scripts/build_embeddings_from_tsv.py
 python analysis/scripts/build_section2_clusters.py
 python analysis/lightrag_out/run_all.py
-python analysis/lightrag_out/build_report.py
+python analysis/lightrag_out/build_percat_report.py
 ```
 
 ## 스크립트
@@ -19,5 +19,7 @@ python analysis/lightrag_out/build_report.py
 | `run_category.py` | 단일 범주 KG 구축과 Q1~Q6 질의 실행 |
 | `run_queries.py` | 구축된 범주별 KG에서 질의만 재실행 |
 | `run_unified.py` | 4범주 통합 KG와 CQ1~CQ7 질의 실행 |
-| `build_report.py` | 범주별 질의 결과를 보고서로 통합 |
+| `build_percat_report.py` | 범주별 질의 결과(24파일)를 `REPORT_v4.md`로 통합 — 정본 per-category 빌더 |
 | `repair_kv.py` | 범주별 KV 저장소 교차오염 정리용 보수 스크립트 |
+
+구 `build_report.py`(→`REPORT.md`)는 `build_percat_report.py`가 대체했다. 현재 로컬에서 폐기된 unified(v5) 빌더로 전환 중이라 추적 보고서는 없다.
