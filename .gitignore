@@ -41,6 +41,7 @@ analysis/lightrag_out/cluster_full.json
 analysis/lightrag_out/ALL_*/
 analysis/lightrag_out/__pycache__/
 analysis/lightrag_out/log_*.txt
+analysis/lightrag_out/err_*.txt
 analysis/lightrag_out/results/all_answers.json
 
 # DCI 전수집계 캐시/로그
