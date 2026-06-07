@@ -22,4 +22,4 @@ python analysis/lightrag_out/build_percat_report.py
 | `build_percat_report.py` | 범주별 질의 결과(24파일)를 `REPORT_v4.md`로 통합 — 정본 per-category 빌더 |
 | `repair_kv.py` | 범주별 KV 저장소 교차오염 정리용 보수 스크립트 |
 
-구 `build_report.py`(→`REPORT.md`)는 `build_percat_report.py`가 대체했다. 현재 로컬에서 폐기된 unified(v5) 빌더로 전환 중이라 추적 보고서는 없다.
+per-category 빌더는 `build_percat_report.py` 하나다. 구 `build_report.py`(→`REPORT.md`)와 로컬에서 폐기된 unified(v5) 빌더는 제거했고, v5 코드는 `archive/`에, 결과물 `REPORT_v5.md`는 로컬에 보존했다.

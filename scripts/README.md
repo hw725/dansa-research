@@ -77,7 +77,6 @@ python analysis/scripts/analyze_genre_controlled.py
 python analysis/scripts/extract_translator_metadata.py
 python analysis/scripts/audit_cells.py
 python analysis/lightrag_out/run_all.py
-python analysis/lightrag_out/build_report.py
 python analysis/lightrag_out/build_percat_report.py
 python analysis/lightrag_out/run_unified.py
 python analysis/dci_out/build_dci_report.py
