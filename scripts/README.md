@@ -1,4 +1,4 @@
-# 스크립트 파일명 기준
+# scripts — 스크립트 목록과 명명 규칙
 
 2026-05-20 정리 이후 스크립트 파일명은 역할 접두사를 먼저 둔다. 파일명만 보고 입력 준비, 모델 실행, 통계 산출, 익명화, 검증, 표본 추출, 감사 작업을 구분할 수 있어야 한다.
 
@@ -37,7 +37,7 @@ python scripts/verify_section2_results.py
 
 표본 추출 기준과 여러 seed robustness 검증 설계는 `docs/SAMPLING.md`에 정리한다.
 
-`compute_final_stats.py`는 `--source {auto,raw,anon}`로 입력을 고르고 `--check`로 기준 JSON과 대조한다. 익명 판정 파일(`results/{model}/*_anon.csv`)만으로도 동일 통계가 재현되며, 병합 분석 테이블 `results/consensus_analysis_table_anon.csv`를 함께 생성한다. 상세는 `docs/REPRODUCE.md`.
+`compute_final_stats.py`는 `--source {auto,raw,anon}`로 입력을 고르고 `--check`로 기준 JSON과 대조한다. 익명 판정 파일(`results/{model}/*_anon.csv`)만으로도 동일 통계가 재현된다. 상세는 `docs/REPRODUCE.md`.
 
 ## 데이터 준비
 

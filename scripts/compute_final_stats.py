@@ -16,7 +16,6 @@ from __future__ import annotations
 import argparse
 import csv
 import datetime as dt
-import hashlib
 import json
 import math
 from collections import OrderedDict
@@ -31,9 +30,6 @@ RESULTS = REPO / "results"
 #   anon = section*_judgments_anon.csv (추적 대상, 번역문 해시)
 #   auto = raw가 있으면 raw, 없으면 anon (새 클론은 anon으로 재현)
 SOURCE = "auto"
-
-# 병합된 공개용 per-item 분석 테이블 (consensus + 모델별 O/X, 번역문 해시).
-ANALYSIS_TABLE = RESULTS / "consensus_analysis_table_anon.csv"
 
 MODELS = OrderedDict(
     [
@@ -280,73 +276,6 @@ def build_payload() -> tuple[dict, dict]:
     return sections_out, truth_tables
 
 
-def _to_hash(value: str | None) -> str | None:
-    """번역문을 SHA-256 16자로 익명화. 이미 익명화된 값은 그대로 둔다."""
-    if not value:
-        return value
-    if len(value) == 16 and all(c in "0123456789abcdef" for c in value):
-        return value
-    return hashlib.sha256(value.encode("utf-8")).hexdigest()[:16]
-
-
-def write_analysis_table() -> int:
-    """모델별 판정을 병합해 per-item 공개용 분석 테이블을 쓴다.
-
-    원문(공개 도메인)은 보존하고 번역문은 해시한다. consensus와 모델별 O/X를
-    담으므로, 이 테이블 하나로 섹션별 통계를 그대로 재계산할 수 있다.
-    """
-    fieldnames = [
-        "section", "label", "book", "문단식별자", "문장식별자",
-        "marker_type", "marker_normalized", "dansa_category",
-        "원문", "번역문_hash",
-        "judgment_gpt5mini", "judgment_gemini", "judgment_claude_sonnet",
-        "consensus", "n_positive",
-    ]
-    out_rows: list[dict[str, str | int | None]] = []
-    for section, cfg in SECTIONS.items():
-        rows_by_model = {m: load_section_rows(m, cfg) for m in MODELS}
-        keyed = {m: {row_key(r): r for r in rows} for m, rows in rows_by_model.items()}
-        common = set.intersection(*(set(k.keys()) for k in keyed.values()))
-        target, control = str(cfg["target"]), str(cfg["control"])
-        seen: set[tuple[str, str, str, str]] = set()
-        for r in rows_by_model["gpt5mini"]:
-            key = row_key(r)
-            if key not in common or key in seen:
-                continue
-            seen.add(key)
-            base = keyed["gpt5mini"][key]
-            mt = base.get("marker_type", "")
-            if mt not in (target, control):
-                continue
-            votes = {m: parse_bool(keyed[m][key].get("llm_judgment")) for m in MODELS}
-            n_pos = sum(votes.values())
-            consensus = "O" if n_pos == len(MODELS) else ("X" if n_pos == 0 else "S")
-            out_rows.append({
-                "section": section,
-                "label": cfg["label"],
-                "book": base.get("book", ""),
-                "문단식별자": base.get("문단식별자", ""),
-                "문장식별자": base.get("문장식별자", ""),
-                "marker_type": mt,
-                "marker_normalized": base.get("marker_normalized", ""),
-                "dansa_category": base.get("dansa_category", ""),
-                "원문": base.get("원문", ""),
-                "번역문_hash": _to_hash(base.get("번역문", "")),
-                "judgment_gpt5mini": "O" if votes["gpt5mini"] else "X",
-                "judgment_gemini": "O" if votes["gemini"] else "X",
-                "judgment_claude_sonnet": "O" if votes["claude_sonnet"] else "X",
-                "consensus": consensus,
-                "n_positive": n_pos,
-            })
-    ANALYSIS_TABLE.parent.mkdir(parents=True, exist_ok=True)
-    with open(ANALYSIS_TABLE, "w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(out_rows)
-    print(f"wrote {ANALYSIS_TABLE.relative_to(REPO)} ({len(out_rows):,} rows)")
-    return len(out_rows)
-
-
 def run_check() -> int:
     """현재 SOURCE로 통계를 재계산해 기준 JSON과 대조한다 (파일 미기록)."""
     sections_out, _ = build_payload()
@@ -370,21 +299,16 @@ def run_check() -> int:
 
 def main(argv: list[str] | None = None) -> int:
     global SOURCE
-    parser = argparse.ArgumentParser(description="3-model 통계 재계산 및 공개용 분석 테이블 생성")
+    parser = argparse.ArgumentParser(description="3-model 통계 재계산")
     parser.add_argument("--source", choices=["auto", "raw", "anon"], default="auto",
                         help="판정 CSV 소스 (기본 auto: raw 없으면 anon)")
     parser.add_argument("--check", action="store_true",
                         help="기준 JSON과 대조만 하고 파일을 쓰지 않는다")
-    parser.add_argument("--table-only", action="store_true",
-                        help="병합 분석 테이블만 쓴다")
     args = parser.parse_args(argv)
     SOURCE = args.source
 
     if args.check:
         return run_check()
-    if args.table_only:
-        write_analysis_table()
-        return 0
 
     sections_out, truth_tables = build_payload()
     today = dt.date.today().isoformat()
@@ -405,7 +329,6 @@ def main(argv: list[str] | None = None) -> int:
         with open(path, "w", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False, indent=2)
         print(f"wrote {path.relative_to(REPO)}")
-    write_analysis_table()
     return 0
 
 

@@ -5,6 +5,7 @@
 공개 가능한 _anon.csv 짝꿍을 생성한다. 원문(한문)은 공개 도메인이므로 보존.
 
 대상:
+- data/sentence_normalized.csv (공개용 전체 입력 데이터셋)
 - results/beomnon_no_heosa.csv
 - results/{gpt5mini,gemini,claude_sonnet}/{section*,supplement_section*}_judgments.csv
 """
@@ -21,6 +22,9 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 REPO = Path(__file__).resolve().parent.parent
 TARGET_COLUMN = "번역문"
 ANON_SUFFIX = "_anon"
+
+# data/ 입력 중 공개용 anon 생성 대상 (원문 보존, 번역문 해시)
+DATA_INPUTS = ("sentence_normalized.csv",)
 
 
 def anon_hash(value: str | None) -> str | None:
@@ -54,6 +58,10 @@ def anonymize_csv(in_path: Path, out_path: Path) -> tuple[int, int]:
 
 def collect_targets() -> list[Path]:
     targets: list[Path] = []
+    for name in DATA_INPUTS:
+        p = REPO / "data" / name
+        if p.exists():
+            targets.append(p)
     one = REPO / "results" / "beomnon_no_heosa.csv"
     if one.exists():
         targets.append(one)
