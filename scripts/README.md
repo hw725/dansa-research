@@ -18,6 +18,7 @@
 | `summarize_` | 패턴 요약 산출 |
 | `classify_` | 분류 작업 |
 | `normalize_` | 정규화 유틸리티 |
+| `freeze_` | 기준 실행 산출물·코퍼스 동결(매니페스트·백업) |
 
 ## 주요 재현 스크립트
 
@@ -38,6 +39,8 @@ python scripts/verify_section2_results.py
 표본 추출 기준과 여러 seed robustness 검증 설계는 `REPRODUCE.md` §8에 정리한다.
 
 `compute_final_stats.py`는 `--source {auto,raw,anon}`로 입력을 고르고 `--check`로 기준 JSON과 대조한다. 익명 판정 파일(`results/{model}/*_anon.csv`)만으로도 동일 통계가 재현된다. 상세는 `REPRODUCE.md`.
+
+`freeze_run.py`는 기준 산출물과 로컬 입력 파일의 SHA-256 매니페스트(`RUN_MANIFEST.json`)·물리 백업을 만들어 동결 기준을 남긴다. 재현 샌드박스(`sandbox/`)는 이 기준과 재실행 결과를 비교하며, 라이브 재현 환경 구성은 `sandbox/README.md`·`sandbox/HOSTING.md`를 따른다.
 
 ## 데이터 준비
 

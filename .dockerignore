@@ -1,0 +1,17 @@
+# 재현 샌드박스 빌드 컨텍스트 축소·누출 방지.
+# (docker build -f sandbox/Dockerfile . 전용. 다른 빌드는 이 저장소에 없음)
+
+# 대용량·재생성·비공개 — 컨텍스트에서 제외
+.git
+archive/
+analysis/
+logs/
+data/
+env
+.env
+**/__pycache__/
+
+# results: 익명 판정(*_anon.csv)·통계(*.json)만 이미지에 굽는다.
+# 번역문 평문이 든 raw CSV는 전부 제외(이미지 공유 시 누출 방지).
+results/**/*.csv
+!results/**/*_anon.csv

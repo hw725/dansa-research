@@ -16,6 +16,7 @@
 ├─ results/    A단계 정본 통계와 공개용 익명 CSV
 ├─ analysis/   B단계 질적·보조 분석 (자체 README)
 ├─ logs/       실행 로그 (비추적)
+├─ sandbox/    재현 샌드박스 + 웹 진입 앱 (sandbox/README.md)
 └─ archive/    폐기·구버전 보관 (비추적)
 ```
 
@@ -49,3 +50,18 @@
 전체 재현 절차(preflight → 판정 → 보충 → 통계 → 익명화)는 [REPRODUCE.md](REPRODUCE.md)를 단일 기준으로 한다. 스크립트 목록과 명명 규칙은 [scripts/README.md](scripts/README.md), 표본 추출과 seed robustness는 REPRODUCE.md §8에 있다.
 
 논문과 문서에서 인용할 정량 기준은 `results/final_stats_v3.1_cleaned_balanced.json`이다. `run_multimodel_judgments.py`가 보충 대조군 반영 전 중간 통계를 `results/intermediate_multimodel_stats.json`에 쓰지만, 인용 기준은 final 파일이다.
+
+## 재현 샌드박스 (라이브)
+
+斷辭 분류의 LLM 판정은 입력으로 번역문(한국고전번역원 국역, 미공개 저작물)을 사용한다. 번역문을 공개하지 않으면서 외부에서 재현할 수 있도록 두 층으로 제공한다.
+
+- **통계 재현 — 영구·완전 공개**: 공개 익명 데이터만으로 보고된 합의 통계를 그대로 재계산한다. 번역문 없이 marker와 판정값만 쓰므로 누구나 영구히 재현할 수 있다.
+  ```bash
+  python scripts/compute_final_stats.py --check --source anon   # CHECK PASS
+  ```
+- **LLM 판정 재현 — 한시 공개 샌드박스**: 공개 웹 재현 환경에서 동일한 판정 절차를 다시 실행하고 동결 기준 결과와 비교한다. 미공개 입력 자료는 공개 저장소에 포함하지 않는다.
+  - 현재 라이브 주소(임시 — 변경 시 이 줄을 갱신): https://realistic-screenshots-groove-character.trycloudflare.com
+  - 영구 주소(DNS 승인 후 예정): https://dansa.eu.org
+  - 구축·운영·보안 설계: [sandbox/README.md](sandbox/README.md), [sandbox/HOSTING.md](sandbox/HOSTING.md)
+
+라이브 샌드박스는 한시 공개이며(공개 종료일: 미정) 종료 후에는 요청 시 제공한다. 영구 재현 기준은 공개 익명화 데이터셋과 코드(위 통계 재현)다.
