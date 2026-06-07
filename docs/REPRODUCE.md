@@ -13,6 +13,7 @@
 | `results/cleaned_balanced_stats.json` | 논문 표 작성용 요약 통계 |
 | `results/truth_tables_v3.1_cleaned_balanced.json` | 3모델 합의 truth table |
 | `results/*/*_anon.csv` | 공개용 익명화 판정 CSV |
+| `results/consensus_analysis_table_anon.csv` | 병합 per-item 분석 테이블 28,074행 (모델별 O/X + consensus, 번역문 해시) |
 
 ## 2. 데이터 상태
 
@@ -112,6 +113,16 @@ python scripts/compute_final_stats.py
 | `results/cleaned_balanced_stats.json` | 섹션별 consensus와 per-model 통계 |
 | `results/final_stats_v3.1_cleaned_balanced.json` | 메타데이터 포함 최종 통계 |
 | `results/truth_tables_v3.1_cleaned_balanced.json` | consensus truth table |
+| `results/consensus_analysis_table_anon.csv` | 병합 per-item 분석 테이블 (번역문 해시) |
+
+원본 raw CSV가 없는 클론에서도 익명 판정 파일(`results/{model}/*_anon.csv`)만으로 동일 통계를 재계산할 수 있다. 통계는 marker_type과 판정값만 사용하므로 raw와 anon 결과가 같다.
+
+```bash
+python scripts/compute_final_stats.py --check --source anon   # 익명 파일로 재현 검증 (CHECK PASS)
+python scripts/compute_final_stats.py --table-only            # 병합 분석 테이블만 생성
+```
+
+`--source`는 입력을 고른다(`auto`: raw 있으면 raw, 없으면 anon / `raw` / `anon`). `--check`는 기준 JSON과 대조만 하고 파일을 쓰지 않는다.
 
 ### 4.5 익명화
 
