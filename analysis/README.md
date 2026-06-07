@@ -18,6 +18,16 @@
 - per-category Q7(가설 평가)도 제거. 단일 범주 KG로는 횡단 비교 불가.
 - 정량 비교는 pandas/scipy로 직접 계산.
 
+## 보고서
+
+정본 보고서 (git 추적):
+- `lightrag_out/REPORT_v4.md` — LightRAG per-category KG 분석 (범주별 × 6질의)
+- `dci_out/REPORT.md`, `dci_out/cross/CQ1~6.md` — DCI 종합·횡단 비교
+- `CROSS_CATEGORY_REPORT.md` — 니라(I+II) 대 라(III+IV) 종합
+- `COMPARISON_REPORT.md` — DCI 대 LightRAG 방법 비교
+
+`REPORT_v5.md`(unified KG, 위에서 폐기한 방법)와 각 `results/`의 범주별 질의 산출은 로컬 전용이다.
+
 ## 모델 설정
 
 | 용도 | 모델 |

@@ -37,6 +37,8 @@ python scripts/verify_section2_results.py
 
 표본 추출 기준과 여러 seed robustness 검증 설계는 `docs/SAMPLING.md`에 정리한다.
 
+`compute_final_stats.py`는 `--source {auto,raw,anon}`로 입력을 고르고 `--check`로 기준 JSON과 대조한다. 익명 판정 파일(`results/{model}/*_anon.csv`)만으로도 동일 통계가 재현되며, 병합 분석 테이블 `results/consensus_analysis_table_anon.csv`를 함께 생성한다. 상세는 `docs/REPRODUCE.md`.
+
 ## 데이터 준비
 
 ```bash
@@ -76,8 +78,10 @@ python analysis/scripts/extract_translator_metadata.py
 python analysis/scripts/audit_cells.py
 python analysis/lightrag_out/run_all.py
 python analysis/lightrag_out/build_report.py
+python analysis/lightrag_out/build_percat_report.py
 python analysis/lightrag_out/run_unified.py
 python analysis/dci_out/build_dci_report.py
+python analysis/build_comparison_report.py
 ```
 
 LightRAG 폴더 내부에서는 디렉터리명이 이미 분석 방식을 표시하므로 파일명에서 `lightrag` 반복을 제거했다. 기본 실행은 `run_all.py`이고, 단일 범주 작업은 `run_category.py`, 질의 재실행은 `run_queries.py`, 통합 KG 실험은 `run_unified.py`를 사용한다.
