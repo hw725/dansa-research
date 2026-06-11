@@ -60,7 +60,7 @@
   python scripts/compute_final_stats.py --check --source anon   # CHECK PASS
   ```
 - **LLM 판정 재현 — 한시 공개 샌드박스**: 공개 웹 재현 환경에서 동일한 판정 절차를 다시 실행하고 동결 기준 결과와 비교한다. 미공개 입력 자료는 공개 저장소에 포함하지 않는다.
-  - 현재 라이브 주소(임시 — 변경 시 이 줄을 갱신): https://realistic-screenshots-groove-character.trycloudflare.com
+  - 현재 라이브 주소(임시 — 변경 시 이 줄을 갱신): https://gen-childhood-nuclear-cindy.trycloudflare.com
   - 영구 주소(DNS 승인 후 예정): https://dansa.eu.org
   - 구축·운영·보안 설계: [sandbox/README.md](sandbox/README.md), [sandbox/HOSTING.md](sandbox/HOSTING.md)
 
