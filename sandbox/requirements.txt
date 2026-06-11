@@ -1,0 +1,8 @@
+# 샌드박스 전용 최소 의존성. 판정 로직(run_multimodel_judgments)이
+# scipy/pandas/openai/tqdm/dotenv 를 import 하므로 함께 설치한다.
+# 운영 전 동결 기준 실행 당시 버전으로 정확히 핀할 것.
+openai>=1.40.0
+pandas>=2.0.0
+scipy>=1.11.0
+tqdm>=4.66.0
+python-dotenv>=1.0.0

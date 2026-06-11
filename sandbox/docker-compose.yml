@@ -1,0 +1,52 @@
+# dansa-research 재현 샌드박스.
+# 로컬 입력 파일과 LLM manifest가 있는 운영 환경에서 실행한다.
+#
+#   OPENAI_API_KEY=... ANTHROPIC_API_KEY=... GEMINI_API_KEY=... \
+#     docker compose -f sandbox/docker-compose.yml run --rm sandbox
+#
+# 네트워크 구조: sandbox 는 internal 망에만 붙고 벤더 API 호출은 프록시를 거친다.
+name: dansa-repro-sandbox
+
+networks:
+  internal:
+    internal: true        # 인터넷 직접 접근 불가 — egress 경유만
+  egress_out: {}          # egress 프록시만 외부로 나간다
+
+services:
+  egress:
+    image: ubuntu/squid:latest
+    restart: "no"
+    networks: [internal, egress_out]
+    volumes:
+      - ./squid.conf:/etc/squid/squid.conf:ro
+
+  sandbox:
+    build:
+      context: ..
+      dockerfile: sandbox/Dockerfile
+    depends_on: [egress]
+    networks: [internal]   # internal 전용 → 외부는 무조건 egress 프록시 통해야 함
+    environment:
+      HTTP_PROXY: http://egress:3128
+      HTTPS_PROXY: http://egress:3128
+      NO_PROXY: localhost,127.0.0.1,egress
+      # 제공된 벤더 키만 사용한다.
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      # 문장별 출력: VIEW_CAP=표시 상한, SHOW_IDS=특정 문장만
+      VIEW_CAP: ${VIEW_CAP:-30}
+      SHOW_IDS: ${SHOW_IDS:-}
+      # 검증용: 1이면 네트워크 없이 가짜 판정(키 불필요)
+      SANDBOX_MOCK: ${SANDBOX_MOCK:-}
+    volumes:
+      # corpus·manifest 는 호스트의 실제 파일을 read-only 마운트(이미지에 굽지 않음)
+      - ../data/sentence_normalized.csv:/app/data/sentence_normalized.csv:ro
+      - ../data/llm_manifests:/app/data/llm_manifests:ro
+    read_only: true        # 루트 파일시스템 읽기전용
+    tmpfs:
+      - /tmp               # 재실행 산출물 임시 저장
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 512
+    mem_limit: 2g

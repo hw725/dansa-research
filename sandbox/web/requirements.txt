@@ -1,0 +1,4 @@
+# 웹 진입 앱 의존성. 호스트(내 PC 또는 VPS)에서 직접 실행한다(컨테이너 아님).
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
