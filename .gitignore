@@ -3,6 +3,11 @@
 .claude/
 archive/
 
+# Local-only notes for agents/operators. Never push these.
+local_private/
+.agent-private/
+memory/private/
+
 # Local environment and secrets
 .env
 env
@@ -53,6 +58,10 @@ analysis/dci_out/all_answers.json
 analysis/dci_out/*_log.json
 analysis/dci_out/dashboard.html
 analysis/dci_out/comparison_dashboard.html
+analysis/dci_out/results/
+analysis/lightrag_out/results/
+analysis/lightrag_out/REPORT_v5.md
+analysis/lightrag_out/OLD_vs_NEW_COMPARISON.md
 
 # section2 원시 판정 CSV (원본 문장 포함)
 analysis/section2_analysis/*.csv

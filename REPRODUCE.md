@@ -130,6 +130,24 @@ python scripts/export_anonymized_results.py
 
 `번역문` 컬럼을 SHA-256 16자 해시로 바꾼 `*_anon.csv`를 생성한다.
 
+### 4.6 강건성·일치도 통계
+
+기존 판정 CSV에서 final 통계를 보완하는 지표를 산출한다. LLM 호출은 없다.
+
+```bash
+python scripts/compute_robustness_stats.py                 # raw 우선 (auto)
+python scripts/compute_robustness_stats.py --source anon   # 공개 익명본 — 동일 수치
+```
+
+| 산출 항목 | 내용 |
+|---|---|
+| 모델 간 일치도 | Fleiss κ(전체·군별), pairwise Cohen κ, 일치율 |
+| 효과크기 95% CI | O율차 Newcombe CI, OR Woolf CI, Cramér’s V 부트스트랩 CI |
+| 합의 정의 민감도 | O 정의를 만장일치/과반/1표 이상으로 바꿔 효과 방향 점검 |
+| 서종 층화 | book·部 층화 Mantel-Haenszel OR, Woolf 동질성, book sign test, 모델별 MH |
+
+출력은 `results/robustness_stats.json`과 `results/ROBUSTNESS_REPORT.md`, 실행 기록은 `logs/robustness_stats.jsonl`이다. 부트스트랩은 고정 seed(기본 20260611)라 재실행 수치가 같고, raw와 anon 소스의 결과 일치를 확인했다.
+
 ## 5. 최신 통계 요약
 
 | 섹션 | Target n | Control n | Consensus O | χ² | V |
@@ -170,3 +188,5 @@ manifest가 없으면 `scripts/run_multimodel_judgments.py`가 고정 seed로 �
 ### 8.3 Robustness 검증
 
 통계적 안정성 확인은 exact 재현과 다른 작업이다. 여러 seed로 대조군을 다시 뽑아도 효과 방향과 크기가 안정적인지 확인한다. 예: seed 1~100으로 대조군을 반복 추출하고 seed별 Consensus O, χ², Cramér’s V, target/control 비율 분포를 비교한다. 단, 현재 결과 CSV는 모든 `라` 후보의 LLM 판정을 포함하지 않으므로, 새 seed robustness에는 더 넓은 control 후보 풀의 판정을 먼저 만들어야 한다.
+
+현재 표본 안에서의 안정성 점검 — 부트스트랩 CI, 합의 정의 민감도, 서종 층화 MH OR, 모델 간 일치도 — 은 §4.6의 `compute_robustness_stats.py`로 산출되며 익명 데이터만으로 재현된다. 새 seed 대조군 robustness는 위 제약대로 추가 LLM 판정이 필요한 별도 작업으로 남는다.

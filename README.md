@@ -31,6 +31,7 @@
 - 최신 정량 기준: `results/final_stats_v3.1_cleaned_balanced.json`
 - 요약 통계: `results/cleaned_balanced_stats.json`
 - 합의 판정 truth table: `results/truth_tables_v3.1_cleaned_balanced.json`
+- 강건성·일치도 통계: `results/robustness_stats.json` (보고서: `results/ROBUSTNESS_REPORT.md`)
 - ‘하다’ 메타데이터 통계: `results/hada_metadata_stats.json`
 - 표준 sentence 입력: `data/sentence_normalized.csv` 150,545행
 - 질적 분석 입력: `analysis/parallel_data_v2_cleaned.tsv` 11,327행
@@ -44,6 +45,8 @@
 | 섹션 3 汎論以斷 | 296 | 296 | 80.7% vs 46.3% | 88.68 | 0.387 |
 
 현재 sentence 기준 ‘하다’ 메타데이터 통계는 출현 12,988건, 歷史書 24.56%, 文集 5.93%, 經傳 0.23%, 詩 0.03%, 기타 0.02%, 歷史書 대 非歷史書 χ² = 17574.78, p < 0.001이다.
+
+세 섹션 효과는 서종(book) 층화 Mantel-Haenszel OR 7.67·2.27·2.04로 층화 후에도 유지된다. 모델 간 일치도(Fleiss κ), 효과크기 95% CI, 합의 정의 민감도는 [results/ROBUSTNESS_REPORT.md](results/ROBUSTNESS_REPORT.md), 원고 반영 함의는 [analysis/robustness_note.md](analysis/robustness_note.md)를 본다.
 
 ## 재현
 

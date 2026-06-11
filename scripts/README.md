@@ -28,6 +28,7 @@ python scripts/build_llm_input_manifests.py
 python scripts/run_multimodel_judgments.py
 python scripts/run_supplement_judgments.py
 python scripts/compute_final_stats.py
+python scripts/compute_robustness_stats.py
 python scripts/export_anonymized_results.py
 python scripts/verify_section2_results.py
 ```
@@ -39,6 +40,8 @@ python scripts/verify_section2_results.py
 표본 추출 기준과 여러 seed robustness 검증 설계는 `REPRODUCE.md` §8에 정리한다.
 
 `compute_final_stats.py`는 `--source {auto,raw,anon}`로 입력을 고르고 `--check`로 기준 JSON과 대조한다. 익명 판정 파일(`results/{model}/*_anon.csv`)만으로도 동일 통계가 재현된다. 상세는 `REPRODUCE.md`.
+
+`compute_robustness_stats.py`는 같은 판정 CSV에서 final 통계를 보완하는 강건성 지표를 산출한다 — 모델 간 일치도(Fleiss·Cohen κ), 효과크기 95% CI(비율차 Newcombe·OR Woolf·Cramér’s V 부트스트랩), 합의 정의 민감도(만장일치/과반/1표 이상), 서종(book·部) 층화 Mantel-Haenszel OR과 Woolf 동질성·sign test. LLM 호출이 없고 표준 라이브러리만 쓰며 `--source anon`으로 동일 수치가 재현된다. 출력은 `results/robustness_stats.json`·`results/ROBUSTNESS_REPORT.md`, 실행 기록은 `logs/robustness_stats.jsonl`.
 
 `freeze_run.py`는 기준 산출물과 로컬 입력 파일의 SHA-256 매니페스트(`RUN_MANIFEST.json`)·물리 백업을 만들어 동결 기준을 남긴다. 재현 샌드박스(`sandbox/`)는 이 기준과 재실행 결과를 비교하며, 라이브 재현 환경 구성은 `sandbox/README.md`·`sandbox/HOSTING.md`를 따른다.
 
