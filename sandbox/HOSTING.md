@@ -23,6 +23,12 @@ OPENAI_API_KEY=... ANTHROPIC_API_KEY=... GEMINI_API_KEY=... \
 실행은 입력 확인, 모델 호출, 동결 기준 대비 비교 리포트 생성 순서로 진행된다.
 키를 제공한 모델만 호출된다.
 
+선택 환경변수: `VIEW_CAP`(문장별 열람 표시 상한, 기본 30 — 0이면 식별자만),
+`SHOW_IDS`(특정 문장만 열람), `SANDBOX_MOCK=1`(네트워크 없이 결정적 가짜 판정),
+`A_RUN_DIR`(재실행 산출물 경로, 기본 `/tmp/a_run`). 모델 ID와 엔드포인트는
+`OPENAI_MODEL`/`GEMINI_MODEL`/`ANTHROPIC_MODEL`과 대응 `*_BASE_URL` 로 덮어쓸 수 있다
+(`sandbox/vendor_clients.py` 기준).
+
 ## 웹 앱
 
 `sandbox/web/` 은 같은 재현 실행을 브라우저에서 시작하기 위한 FastAPI 래퍼다.

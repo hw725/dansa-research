@@ -2,6 +2,8 @@
 
 LightRAG 실행 기준 입력은 `analysis/parallel_data_v2_cleaned.tsv` 11,327행이다.
 
+`run_*.py` 실행에는 `lightrag` 패키지가 별도로 필요하다(루트 `requirements.txt`에 포함되지 않은 로컬 전용 의존성).
+
 재생성 순서:
 
 ```bash
@@ -18,8 +20,8 @@ python analysis/lightrag_out/build_percat_report.py
 | `run_all.py` | 4범주를 각각 독립 subprocess로 실행하는 기본 진입점 |
 | `run_category.py` | 단일 범주 KG 구축과 Q1~Q6 질의 실행 |
 | `run_queries.py` | 구축된 범주별 KG에서 질의만 재실행 |
-| `run_unified.py` | 4범주 통합 KG와 CQ1~CQ7 질의 실행 |
+| `run_unified.py` | 4범주 통합 KG와 CQ1~CQ7 질의 실행 (횡단 비교 방법 자체는 폐기 — 재현용 보존) |
 | `build_percat_report.py` | 범주별 질의 결과(24파일)를 `REPORT_v4.md`로 통합 — 정본 per-category 빌더 |
 | `repair_kv.py` | 범주별 KV 저장소 교차오염 정리용 보수 스크립트 |
 
-per-category 빌더는 `build_percat_report.py` 하나다. 구 `build_report.py`(→`REPORT.md`)와 로컬에서 폐기된 unified(v5) 빌더는 제거했고, v5 코드는 `archive/`에, 결과물 `REPORT_v5.md`는 로컬에 보존했다.
+per-category 빌더는 `build_percat_report.py` 하나다.

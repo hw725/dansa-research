@@ -9,7 +9,7 @@
 | 파일 | 추적 | 행수 | 내용 |
 |---|:---:|---:|---|
 | `sentence_normalized_anon.csv` | ✅ | 150,545 | **공개용 전체 sentence 입력** — 번역문 해시, 원문·marker_normalized·dansa_category·compound_tags 보존 |
-| `book_names.txt` | ✅ | 52 | 코퍼스 서명 목록 |
+| `book_names.txt` | ✅ | 53 | 코퍼스 서명 목록 |
 | `sentence_normalized.csv` | ❌ | 150,545 | 번역문 평문 포함 raw (로컬 전용) |
 | `phrase_normalized.csv` | ❌ | 643,357 | phrase(구) 기준 입력 (로컬 전용) |
 | `supplement_section{1,2,3}_control_*.csv` | ❌ | 12·465·30건 | 섹션별 대조군 보충 |

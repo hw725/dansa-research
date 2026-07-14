@@ -1,7 +1,8 @@
 """run_a_run.py — 로컬 입력으로 LLM 판정을 다시 수행한다.
 
 동결 기준과 동일한 프롬프트·표본(LLM manifest)·O/X 파서를 그대로 import 해 쓴다.
-따라서 차이는 모델 버전·비결정성에서만 온다.
+차이는 호출 경로(동결 실행은 gemini·claude를 OpenRouter 경유로 호출했고,
+샌드박스는 벤더 직결 — vendor_clients.py 참조)와 비결정성에서 온다.
 
 출력은 쓰기 가능한 임시 공간(A_RUN_DIR, 기본 /tmp/a_run)에 쓴다. 키 컬럼과
 marker_type·llm_judgment 만 쓰고 번역문·원문은 쓰지 않는다.

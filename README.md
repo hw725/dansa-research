@@ -17,7 +17,7 @@
 ├─ analysis/   B단계 질적·보조 분석 (자체 README)
 ├─ logs/       실행 로그 (비추적)
 ├─ sandbox/    재현 샌드박스 + 웹 진입 앱 (sandbox/README.md)
-└─ archive/    폐기·구버전 보관 (비추적)
+└─ archive/    보관용 스냅샷 (비추적)
 ```
 
 ## 처음 보는 분께
@@ -46,7 +46,7 @@
 
 현재 sentence 기준 ‘하다’ 메타데이터 통계는 출현 12,988건, 歷史書 24.56%, 文集 5.93%, 經傳 0.23%, 詩 0.03%, 기타 0.02%, 歷史書 대 非歷史書 χ² = 17574.78, p < 0.001이다.
 
-세 섹션 효과는 서종(book) 층화 Mantel-Haenszel OR 7.67·2.27·2.04로 층화 후에도 유지된다. 모델 간 일치도(Fleiss κ), 효과크기 95% CI, 합의 정의 민감도는 [results/ROBUSTNESS_REPORT.md](results/ROBUSTNESS_REPORT.md), 원고 반영 함의는 [analysis/robustness_note.md](analysis/robustness_note.md)를 본다.
+세 섹션 효과는 서종(book) 층화 Mantel-Haenszel OR 7.67·2.27·2.04로 층화 후에도 유지된다. 모델 간 일치도(Fleiss κ), 효과크기 95% CI, 합의 정의 민감도는 [results/ROBUSTNESS_REPORT.md](results/ROBUSTNESS_REPORT.md)를 본다.
 
 ## 재현
 

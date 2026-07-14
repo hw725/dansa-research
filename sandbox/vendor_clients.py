@@ -33,9 +33,9 @@ SANDBOX_MODELS: dict[str, dict] = {
         "key_env": "GEMINI_API_KEY",
     },
     "claude_sonnet": {
-        "display": "Claude Sonnet",
+        "display": "Claude Sonnet 4.6",
         "vendor": "anthropic",
-        "model_id": os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-5"),
+        "model_id": os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6"),
         "base_url": os.environ.get("ANTHROPIC_BASE_URL", "https://api.anthropic.com/v1/"),
         "key_env": "ANTHROPIC_API_KEY",
     },

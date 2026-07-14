@@ -17,7 +17,7 @@
 
 ## 2. 데이터 상태
 
-원본 병렬 코퍼스와 번역문 포함 raw CSV는 미공개 자료를 포함하므로 git 추적 대상이 아니다. 공개 또는 공유에는 `scripts/export_anonymized_results.py`로 생성한 `*_anon.csv`와 `*_anon.tsv`만 사용한다.
+원본 병렬 코퍼스와 번역문 포함 raw CSV는 미공개 자료를 포함하므로 git 추적 대상이 아니다. 공개 또는 공유에는 `scripts/export_anonymized_results.py`로 생성한 `*_anon.csv`만 사용한다.
 
 정제 기준은 다음과 같다.
 
@@ -27,8 +27,10 @@
 ## 3. 환경
 
 ```bash
-pip install pandas numpy tqdm openai python-dotenv
+pip install -r requirements.txt
 ```
+
+LLM 판정·보조 분석 스크립트는 `scipy`를 임포트하므로 개별 설치 대신 `requirements.txt` 전체 설치를 권장한다.
 
 현재 저장소의 검증용 통계 재계산과 익명화는 표준 라이브러리만으로 동작한다.
 
@@ -37,7 +39,7 @@ python scripts/compute_final_stats.py
 python scripts/export_anonymized_results.py
 ```
 
-LLM 재실행에는 `OPENAI_API_KEY`, `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY`가 필요하다. 이 저장소에서는 로컬 `env` 파일을 읽을 수 있지만, 해당 파일은 git 추적 대상이 아니다.
+LLM 재실행에는 `OPENAI_API_KEY`(gpt-5-mini)와 `OPENROUTER_API_KEY`(gemini·claude sonnet — OpenRouter 경유)가 필요하다. 이 저장소에서는 로컬 `env` 파일을 읽을 수 있지만, 해당 파일은 git 추적 대상이 아니다.
 
 ## 4. 재현 순서
 

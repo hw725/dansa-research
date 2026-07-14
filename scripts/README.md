@@ -39,7 +39,7 @@ python scripts/verify_section2_results.py
 
 표본 추출 기준과 여러 seed robustness 검증 설계는 `REPRODUCE.md` §8에 정리한다.
 
-`compute_final_stats.py`는 `--source {auto,raw,anon}`로 입력을 고르고 `--check`로 기준 JSON과 대조한다. 익명 판정 파일(`results/{model}/*_anon.csv`)만으로도 동일 통계가 재현된다. 상세는 `REPRODUCE.md`.
+`compute_final_stats.py`는 `--source {auto,raw,anon}`로 입력을 고르고 `--check`로 기준 JSON과 대조한다. 익명 판정 파일(`results/{model}/*_anon.csv`)만으로도 동일 통계가 재현된다. 상세는 `REPRODUCE.md`. `compute_truth_tables.py`는 이 스크립트의 호환 래퍼로, 같은 main을 호출해 truth table을 포함한 동일 산출을 낸다.
 
 `compute_robustness_stats.py`는 같은 판정 CSV에서 final 통계를 보완하는 강건성 지표를 산출한다 — 모델 간 일치도(Fleiss·Cohen κ), 효과크기 95% CI(비율차 Newcombe·OR Woolf·Cramér’s V 부트스트랩), 합의 정의 민감도(만장일치/과반/1표 이상), 서종(book·部) 층화 Mantel-Haenszel OR과 Woolf 동질성·sign test. LLM 호출이 없고 표준 라이브러리만 쓰며 `--source anon`으로 동일 수치가 재현된다. 출력은 `results/robustness_stats.json`·`results/ROBUSTNESS_REPORT.md`, 실행 기록은 `logs/robustness_stats.jsonl`.
 
@@ -52,6 +52,8 @@ python scripts/prepare_sentence_dataset.py
 python scripts/prepare_phrase_data.py
 python scripts/prepare_full_corpus.py
 ```
+
+`classify_premodern_markers.py`(전근대 원전 기준 현토 재분류 — phrase 단위 보조 분석용)와 `normalize_hyeonto.py`(현토 정규화 유틸리티)는 현행 재현 절차(§주요 재현 스크립트)에 포함되지 않는 보조 유틸이다.
 
 ## 보조 분석
 
