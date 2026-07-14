@@ -43,7 +43,7 @@ python scripts/verify_section2_results.py
 
 `compute_robustness_stats.py`는 같은 판정 CSV에서 final 통계를 보완하는 강건성 지표를 산출한다 — 모델 간 일치도(Fleiss·Cohen κ), 효과크기 95% CI(비율차 Newcombe·OR Woolf·Cramér’s V 부트스트랩), 합의 정의 민감도(만장일치/과반/1표 이상), 서종(book·部) 층화 Mantel-Haenszel OR과 Woolf 동질성·sign test. LLM 호출이 없고 표준 라이브러리만 쓰며 `--source anon`으로 동일 수치가 재현된다. 출력은 `results/robustness_stats.json`·`results/ROBUSTNESS_REPORT.md`, 실행 기록은 `logs/robustness_stats.jsonl`.
 
-`freeze_run.py`는 기준 산출물과 로컬 입력 파일의 SHA-256 매니페스트(`RUN_MANIFEST.json`)·물리 백업을 만들어 동결 기준을 남긴다. 재현 샌드박스(`sandbox/`)는 이 기준과 재실행 결과를 비교하며, 라이브 재현 환경 구성은 `sandbox/README.md`·`sandbox/HOSTING.md`를 따른다.
+`freeze_run.py`는 기준 산출물과 로컬 입력 파일의 SHA-256 매니페스트(`RUN_MANIFEST.json`)·물리 백업을 만들어 동결 기준을 남긴다. 재현 샌드박스(`sandbox/`)는 이 기준과 재실행 결과를 비교하며, 라이브 재현 환경 구성은 `sandbox/README.md`를 따른다.
 
 ## 데이터 준비
 

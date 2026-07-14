@@ -2,7 +2,8 @@
 
 이 디렉터리는 LLM 판정 절차를 다시 실행하고 동결 기준 결과와 비교하기 위한
 도구를 둔다. 공개 저장소에는 원문·번역문 포함 입력 파일이 포함되지 않으며,
-공개 가능한 익명 데이터와 통계 산출물만 추적한다.
+공개 가능한 익명 데이터와 통계 산출물만 추적한다. 배포 주소·임시 키 같은
+운영 세부사항은 `local_private/` 아래에서 비공개로 관리한다.
 
 ## 공개 기준
 
@@ -23,21 +24,31 @@ python scripts/compute_final_stats.py --check --source anon
 | `vendor_clients.py` | 벤더별 모델 호출 래퍼 |
 | `run_a_run.py` | 동결 기준과 같은 표본·프롬프트·파서로 판정을 재실행 |
 | `compare_run_drift.py` | 동결 기준 대비 비율·효과방향·문장 단위 일치를 비교 |
+| `web/` | 브라우저에서 재현을 시작하는 FastAPI 래퍼 — [web/README.md](web/README.md) |
 | `Dockerfile` / `.dockerignore` | 공개 가능한 파일만 이미지 빌드 컨텍스트에 포함 |
 | `docker-compose.yml` | 재현 실행 컨테이너 구성 |
 | `squid.conf` / `egress_allowlist.md` | 벤더 API 연결에 필요한 네트워크 설정 |
 
-## 실행 요약
+## 준비와 실행
 
 로컬에 비공개 입력 파일과 LLM manifest가 있는 환경에서 실행한다.
 
 ```bash
+docker build -f sandbox/Dockerfile -t dansa-sandbox .
+python sandbox/verify_corpus.py
 OPENAI_API_KEY=... ANTHROPIC_API_KEY=... GEMINI_API_KEY=... \
   docker compose -f sandbox/docker-compose.yml run --rm sandbox
 ```
 
-키를 제공한 모델만 실행된다. 실행 결과는 동결 기준 결과와 비교되어 섹션별
-효과방향과 문장 단위 일치율로 요약된다.
+키를 제공한 모델만 실행된다. 실행은 입력 확인, 모델 호출, 동결 기준 대비
+비교 리포트 생성 순서로 진행되며, 결과는 섹션별 효과방향과 문장 단위
+일치율로 요약된다.
+
+선택 환경변수: `VIEW_CAP`(문장별 열람 표시 상한, 기본 30 — 0이면 식별자만),
+`SHOW_IDS`(특정 문장만 열람), `SANDBOX_MOCK=1`(네트워크 없이 결정적 가짜 판정),
+`A_RUN_DIR`(재실행 산출물 경로, 기본 `/tmp/a_run`). 모델 ID와 엔드포인트는
+`OPENAI_MODEL`/`GEMINI_MODEL`/`ANTHROPIC_MODEL`과 대응 `*_BASE_URL` 로 덮어쓸 수 있다
+(`vendor_clients.py` 기준).
 
 ## 기준 결과와 재실행 결과
 

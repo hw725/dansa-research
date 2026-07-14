@@ -64,6 +64,6 @@
   ```
 - **LLM 판정 재현 — 한시 공개 샌드박스**: 공개 웹 재현 환경에서 동일한 판정 절차를 다시 실행하고 동결 기준 결과와 비교한다. 미공개 입력 자료는 공개 저장소에 포함하지 않는다.
   - 현재 라이브 주소(임시 — 변경 시 이 줄을 갱신): https://synthetic-purpose-mother-november.trycloudflare.com
-  - 구축·운영·보안 설계: [sandbox/README.md](sandbox/README.md), [sandbox/HOSTING.md](sandbox/HOSTING.md)
+  - 구축·운영·보안 설계: [sandbox/README.md](sandbox/README.md)
 
 라이브 샌드박스는 한시 공개이며(공개 종료일: 미정) 종료 후에는 요청 시 제공한다. 영구 재현 기준은 공개 익명화 데이터셋과 코드(위 통계 재현)다.
