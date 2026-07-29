@@ -15,9 +15,6 @@ env
 venv/
 .venv_web/
 
-# 로컬 도구 (cloudflared 바이너리·터널/uvicorn 로그) — 비추적
-tools/
-
 # Local-only raw/derived data (not for git)
 data/dansa_section1_judgments.csv
 data/dansa_section2_judgments.csv

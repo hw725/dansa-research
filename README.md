@@ -54,7 +54,7 @@
 
 논문과 문서에서 인용할 정량 기준은 `results/final_stats_v3.1_cleaned_balanced.json`이다. `run_multimodel_judgments.py`가 보충 대조군 반영 전 중간 통계를 `results/intermediate_multimodel_stats.json`에 쓰지만, 인용 기준은 final 파일이다.
 
-## 재현 샌드박스 (라이브)
+## 재현 샌드박스
 
 斷辭 분류의 LLM 판정은 입력으로 번역문(한국고전번역원 국역, 미공개 저작물)을 사용한다. 번역문을 공개하지 않으면서 외부에서 재현할 수 있도록 두 층으로 제공한다.
 
@@ -62,8 +62,8 @@
   ```bash
   python scripts/compute_final_stats.py --check --source anon   # CHECK PASS
   ```
-- **LLM 판정 재현 — 한시 공개 샌드박스**: 공개 웹 재현 환경에서 동일한 판정 절차를 다시 실행하고 동결 기준 결과와 비교한다. 미공개 입력 자료는 공개 저장소에 포함하지 않는다.
-  - 현재 라이브 주소(임시 — 변경 시 이 줄을 갱신): https://hearts-identity-announcements-hunter.trycloudflare.com
-  - 구축·운영·보안 설계: [sandbox/README.md](sandbox/README.md)
+- ~~**LLM 판정 재현 — 한시 공개 샌드박스**: 공개 웹 재현 환경에서 동일한 판정 절차를 다시 실행하고 동결 기준 결과와 비교한다. 미공개 입력 자료는 공개 저장소에 포함하지 않는다.~~
+  - ~~현재 라이브 주소(임시 — 변경 시 이 줄을 갱신): https://hearts-identity-announcements-hunter.trycloudflare.com~~
+  - **지원 종료(2026-07-29)**: 당초 계획대로 한시 공개를 마치고 라이브 샌드박스 운영을 종료했다. LLM 판정 재현 환경이 필요한 경우 요청 시 제공하며, [sandbox/README.md](sandbox/README.md)의 구축·운영·보안 설계에 따라 로컬 재구축이 가능하다.
 
-라이브 샌드박스는 한시 공개이며(공개 종료일: 미정) 종료 후에는 요청 시 제공한다. 영구 재현 기준은 공개 익명화 데이터셋과 코드(위 통계 재현)다.
+라이브 샌드박스는 한시 공개 운영을 마쳤으며(2026-07-29 종료) 이후에는 요청 시 제공한다. 영구 재현 기준은 공개 익명화 데이터셋과 코드(위 통계 재현)다.
