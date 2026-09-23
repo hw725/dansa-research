@@ -35,7 +35,7 @@ def out_json(model: str) -> Path:
 
 
 def read_probs(section: str, mode: str, model: str = JEV) -> dict[tuple, float]:
-    path = rj.out_path(section, mode, model)
+    path = rj.out_path(section, mode, model, "mixed")  # 첫 시험(섞어 묶기) 결과만 채점한다
     out: dict[tuple, float] = {}
     if path.exists():
         for line in path.read_text(encoding="utf-8").splitlines():

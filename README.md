@@ -13,8 +13,9 @@
 ├─ REPRODUCE.md 재현 가이드 (표본 추출 기준 §8 포함)
 ├─ scripts/    A단계 재현 스크립트 (목록·명명 규칙은 scripts/README.md)
 ├─ data/       입력 데이터 (대부분 비공개·로컬 전용 — data/README.md)
-├─ results/    A단계 정본 통계와 공개용 익명 CSV
+├─ results/    A단계 정본 통계와 공개용 익명 CSV (jev/ = 네 번째 판정자 점검, 보조)
 ├─ analysis/   B단계 질적·보조 분석 (자체 README)
+├─ tests/      스크립트 테스트 (대부분 합성 문항, 일부만 raw 판정 CSV 필요)
 ├─ logs/       실행 로그 (비추적)
 ├─ sandbox/    재현 샌드박스 + 웹 진입 앱 (sandbox/README.md)
 └─ archive/    보관용 스냅샷 (비추적)
@@ -32,6 +33,7 @@
 - 요약 통계: `results/cleaned_balanced_stats.json`
 - 합의 판정 truth table: `results/truth_tables_v3.1_cleaned_balanced.json`
 - 강건성·일치도 통계: `results/robustness_stats.json` (보고서: `results/ROBUSTNESS_REPORT.md`)
+- 네 번째 판정자(Jev) 점검 — 보조: `results/jev/panels/SUMMARY.md` (해설: `results/jev/README.md`)
 - ‘하다’ 메타데이터 통계: `results/hada_metadata_stats.json`
 - 표준 sentence 입력: `data/sentence_normalized.csv` 150,545행
 - 질적 분석 입력: `analysis/parallel_data_v2_cleaned.tsv` 11,327행

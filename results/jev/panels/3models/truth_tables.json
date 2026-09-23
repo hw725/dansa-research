@@ -6,6 +6,10 @@
     "gemini",
     "claude_sonnet"
   ],
+  "threshold": 0.5,
+  "order": "single",
+  "source": "auto",
+  "allow_partial": false,
   "coverage": {
     "section1": {
       "n_base": 5212,

@@ -1,8 +1,8 @@
-> 판정자 구성 **3models**: gpt5mini, gemini, claude_sonnet. `scripts/compute_judge_panels.py`가 `compute_robustness_stats.py`의 함수를 그대로 불러 낸 것이다. 아래 본문의 «새 LLM 호출 없음» 문구는 원 보고서의 것이다 — Jev·Solar 판정은 run_jev_judgments.py로 따로 받았다.
+> 판정자 구성 **3models**: gpt5mini, gemini, claude_sonnet · 판정 모델 O = 확률 ≥ 0.5 · 묶음 single · 3모델 소스 auto. `scripts/compute_judge_panels.py`가 `compute_robustness_stats.py`의 함수를 그대로 불러 낸 것이다. 아래 본문의 «새 LLM 호출 없음» 문구는 원 보고서의 것이다 — 판정 모델의 판정은 run_jev_judgments.py로 따로 받았다.
 
 # 강건성·일치도 보고서
 
-생성: 2026-09-23 · source=panel · bootstrap B=2000 (seed 20260611)
+생성: 2026-09-23 · source=auto · bootstrap B=2000 (seed 20260611)
 
 `scripts/compute_robustness_stats.py`가 기존 판정 CSV에서 산출한다. 새 LLM 호출은 없으며, 익명 판정 CSV만으로 동일 수치가 재현된다. 기준 점추정은 `results/final_stats_v3.1_cleaned_balanced.json`을 그대로 두고, 본 보고서는 그 위에 구간추정·일치도·민감도·층화 결과를 보탠다.
 

@@ -8,7 +8,8 @@
 2. 효과크기 구간추정 — O율 차이 Newcombe 95% CI, OR Woolf 95% CI,
    Cramér's V 부트스트랩 95% CI
 3. 합의 정의 민감도 — O 정의를 만장일치(3표)/과반(2표 이상)/1표 이상으로
-   바꿔도 효과 방향이 유지되는지
+   바꿔도 효과 방향이 유지되는지. 판정자 수는 len(cfs.MODELS)를 따른다(기본 3모델;
+   compute_judge_panels.py가 판정자 구성을 바꿔 부를 때는 만장일치=전원, 과반=절반 초과)
 4. 서종 층화 — book 층화 Mantel-Haenszel 공통 OR(+RBG 95% CI),
    Woolf 동질성 검정, book별 sign test, 부(경부 사서/오경, 집부) 층화,
    모델별 층화 MH OR
@@ -298,7 +299,7 @@ def classify_bu(book: str) -> str:
 
 
 def collect_items(cfg: dict) -> list[dict]:
-    """세 모델 공통 키 항목을 (book, arm, votes)로 수집한다."""
+    """판정자(cfs.MODELS) 전원의 공통 키 항목을 (book, arm, votes)로 수집한다."""
     rows_by_model = {model: cfs.load_section_rows(model, cfg) for model in cfs.MODELS}
     keyed = {
         model: {cfs.row_key(row): row for row in rows}

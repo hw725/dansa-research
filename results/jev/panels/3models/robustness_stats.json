@@ -6,6 +6,10 @@
     "gemini",
     "claude_sonnet"
   ],
+  "threshold": 0.5,
+  "order": "single",
+  "source": "auto",
+  "allow_partial": false,
   "coverage": {
     "section1": {
       "n_base": 5212,
@@ -23,7 +27,6 @@
       "complete": true
     }
   },
-  "source": "panel",
   "boot": 2000,
   "seed": 20260611,
   "basis": "판정자 gpt5mini, gemini, claude_sonnet",

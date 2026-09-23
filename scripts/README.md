@@ -55,7 +55,7 @@ python scripts/compute_judge_panels.py            # 호출 0건, --source anon �
 python scripts/probe_jev_block.py --every 1200    # 차단(403·1010)이 풀렸는지만 본다
 ```
 
-`run_jev_judgments.py`는 3모델과 같은 문항·같은 정의를 판정 모델에 한 문장씩 묻는다. Jev가 기본이고, `--model solar-mini4-jev`로 Solar 래퍼도 부를 수 있다. 계획 호출이 `--max-calls`를 넘으면 한 건도 보내지 않고, 끊기면 이어서 돈다. 번역문은 저장하지 않는다. `compute_judge_panels.py`는 `compute_final_stats`·`compute_robustness_stats`의 함수를 판정자 목록만 바꿔 불러 `results/jev/panels/`에 구성별 산출물을 쓰고, 3모델 구성을 정본과 대조한다. `jev_client.py`는 classical-text-browser `src/llm/jev.py`에서 가져온 전송 모듈이다(직접 실행하지 않는다). `compute_jev_agreement.py`는 첫 시험(섞어 묶기)의 채점기라 현행 산출에는 쓰지 않는다. 테스트는 `tests/test_jev_judgments.py`이고, raw 판정 CSV가 있어야 돈다.
+`run_jev_judgments.py`는 3모델과 같은 문항·같은 정의를 판정 모델에 한 문장씩 묻는다. Jev가 기본이고, `--model solar-mini4-jev`로 Solar 래퍼도 부를 수 있다. `--max-calls`는 재시도를 포함한 **실행 전체의 HTTP 시도 상한**이다. 섹션을 합친 계획이 상한을 넘으면 한 건도 보내지 않는다. 도중에 상한에 닿으면 멈추고 사용량을 로그에 남긴다. 끊기면 이어서 돌고(잘린 줄은 건너뜀), 번역문은 저장하지 않는다. `compute_judge_panels.py`는 `compute_final_stats`·`compute_robustness_stats`의 함수를 그대로 부르되, 판정자 목록·섹션·행을 읽는 함수·확률의 O/X 변환을 바꿔 `results/jev/panels/`에 구성별 산출물을 쓴다. 표본은 3모델 공통 문항이고, threshold·order·source를 산출물에 적으며, 3모델 구성을 정본의 섹션 전체와 대조한다. `jev_client.py`는 classical-text-browser `src/llm/jev.py`에서 가져온 전송 모듈이다(직접 실행하지 않는다). `compute_jev_agreement.py`는 첫 시험(섞어 묶기)의 채점기라 현행 산출에는 쓰지 않는다. 테스트는 `tests/test_jev_judgments.py`다. 상한·재시도·이어 쓰기·병렬·전역 복구는 합성 문항으로 재므로 공개 클론에서도 돌고, 실제 번역문이 필요한 두 건만 raw 판정 CSV가 있을 때 돈다.
 
 `compute_robustness_stats.py`는 판정자 수를 `len(MODELS)`로 일반화했다. 만장일치는 전원, 과반은 절반 초과다. 3모델일 때 산출은 이전과 같다(2026-09-23 대조).
 

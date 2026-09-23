@@ -30,7 +30,7 @@
 
 `REPORT_v5.md`(unified KG, 위에서 폐기한 방법)와 각 `results/`·`results_unified/`의 범주별·통합 질의 산출은 로컬 전용이다. `results_unified/`가 없는 클론에서는 `build_comparison_report.py`의 Part B(unified 대조)가 결과 없음으로 비게 된다.
 
-A단계 정량 결과의 강건성 — 모델 간 일치도, 효과크기 CI, 합의 정의 민감도, 섹션 1·2·3 전체의 서종 층화 MH OR — 은 `../results/ROBUSTNESS_REPORT.md`가 다룬다. 여기 장르 통제 분석(섹션 2 만장일치분 한정)과 상보적이다.
+A단계 정량 결과의 강건성 — 모델 간 일치도, 효과크기 CI, 합의 정의 민감도, 섹션 1·2·3 전체의 서종 층화 MH OR — 은 `../results/ROBUSTNESS_REPORT.md`가 다룬다. 여기 장르 통제 분석(섹션 2 만장일치분 한정)과 상보적이다. 판정 모델 Jev를 네 번째 판정자로 넣은 점검은 `../results/jev/README.md`에 있다. 이 절의 분석은 여전히 3모델 만장일치분을 입력으로 쓴다.
 
 ## 모델 설정
 

@@ -8,6 +8,10 @@
     "jev",
     "solar"
   ],
+  "threshold": 0.5,
+  "order": "single",
+  "source": "auto",
+  "allow_partial": false,
   "coverage": {
     "section3": {
       "n_base": 592,

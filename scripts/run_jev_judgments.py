@@ -30,9 +30,11 @@
     적었다(아래 SECTION_Q). 내용을 더하지 않도록 정의 문구만 뒤집었다.
 
 게이트(전역 규칙 11):
-    실행 전 `size`로 호출 수·글자 수를 센다. `run`은 계획 호출이 --max-calls를 넘으면
-    **한 건도 쏘지 않고** 거부한다. 결과는 문항마다 JSONL에 바로 붙여 쓰고(재시작 시 이어감),
-    번역문은 저장하지 않는다 — 키(book·문단·문장·marker_type)와 확률만 남긴다.
+    실행 전 `size`로 호출 수·글자 수를 센다. `run`은 **모든 섹션을 합친** 계획 호출이
+    --max-calls를 넘으면 한 건도 보내지 않고 거부한다. 상한은 HTTP 시도 단위로 세며
+    재시도도 포함한다(Budget). 도중에 상한에 닿으면 멈추고, 그때까지의 사용량을 로그에 남긴다.
+    결과는 문항마다 JSONL에 바로 붙여 쓰고(재시작 시 이어감, 잘린 줄은 건너뜀),
+    번역문은 저장하지 않는다 — 키(book·문단·문장·marker_type)와 받은 확률 그대로만 남긴다.
 
 사용:
     py scripts/run_jev_judgments.py size --sections section3,section1,section2
@@ -62,6 +64,7 @@ OUT_DIR = REPO / "results" / "jev"
 LOG = REPO / "logs" / "jev_judgments.jsonl"
 SEED = 20260923
 DEFAULT_BATCH = 20
+ORDERS = ("single", "paper", "mixed")
 
 # 섹션별 질문. pos는 run_multimodel_judgments.py의 정의를 옮긴 것, neg는 그 반대 틀(flip 대조군).
 SECTION_Q = {
@@ -193,9 +196,12 @@ def build_call(section: str, mode: str, batch: list[dict]) -> tuple[str, dict]:
 
 
 def out_path(section: str, mode: str, model: str = jev_client.TYPESAFE_MODEL,
-             order_name: str = "mixed") -> Path:
+             order_name: str = "single") -> Path:
     """모델·묶는 방식마다 파일을 가른다 — 한 파일에 섞이면 resume이 «이미 물었다»로 건너뛴다.
-    mixed(섞어 묶기, 2026-09-23 첫 시험)는 옛 이름을 지키고, paper(논문 조건)는 paper/ 아래에 둔다."""
+    single·paper는 그 이름의 폴더 아래(results/jev/single/…), mixed(첫 시험)는 옛 이름
+    (results/jev/section3_pos.jsonl)을 지킨다."""
+    if order_name not in ORDERS:
+        raise ValueError(f"order_name은 {ORDERS} 중 하나여야 합니다: {order_name!r}")
     if order_name in ("paper", "single"):
         return OUT_DIR / order_name / f"{section}_{mode}.{model}.jsonl"
     if model == jev_client.TYPESAFE_MODEL:
@@ -219,7 +225,9 @@ JUDGES = {
 def make_client(model: str, max_calls: int) -> jev_client.JevClient:
     spec = JUDGES[model]
     key = jev_client.resolve_key(env_file=spec["env"], names=spec["keys"]) or ""
-    return jev_client.JevClient(api_key=key, url=spec["url"], model=model, max_calls=max_calls)
+    # retries=0 — 재시도는 run()이 Budget을 쓰며 한다. 클라이언트 안에서 다시 보내면 상한에 안 잡힌다.
+    return jev_client.JevClient(api_key=key, url=spec["url"], model=model, max_calls=max_calls,
+                                retries=0)
 
 
 def cost_usd(model: str, usage: dict) -> float:
@@ -229,25 +237,38 @@ def cost_usd(model: str, usage: dict) -> float:
                   + usage.get("output_tokens", 0) * spec["usd_out_per_m"]) / 1_000_000, 6)
 
 
-def done_keys(path: Path) -> set[tuple]:
+def read_jsonl(path: Path) -> tuple[list[dict], int]:
+    """JSONL을 읽는다. 강제 종료로 잘린 줄은 건너뛰고 그 수를 함께 돌려준다 —
+    잘린 마지막 줄 하나 때문에 이어 돌리기와 채점이 통째로 죽지 않게 한다."""
     if not path.exists():
-        return set()
-    keys = set()
+        return [], 0
+    recs, bad = [], 0
     for line in path.read_text(encoding="utf-8").splitlines():
-        if line.strip():
-            rec = json.loads(line)
-            if rec.get("noul") is not None:
-                keys.add(tuple(rec["key"]))
-    return keys
+        if not line.strip():
+            continue
+        try:
+            recs.append(json.loads(line))
+        except json.JSONDecodeError:
+            bad += 1
+    return recs, bad
+
+
+def done_keys(path: Path) -> set[tuple]:
+    """확률을 받은 문항의 키. noul이 null인 문항은 다시 묻는다."""
+    recs, _ = read_jsonl(path)
+    return {tuple(r["key"]) for r in recs if r.get("noul") is not None}
 
 
 def plan(section: str, mode: str, limit: int | None, batch_size: int,
-         model: str = jev_client.TYPESAFE_MODEL, order_name: str = "mixed") -> dict:
+         model: str = jev_client.TYPESAFE_MODEL, order_name: str = "single") -> dict:
     """보낼 것을 센다(호출 0건). 출력: todo 문항·호출 수·보낼 글자 수.
 
-    order_name: mixed = target·control을 섞어(seed) 묶는다(첫 시험).
-                paper = 3모델과 같게 — target과 control을 따로, 처리 순서대로 묶는다.
+    order_name: single = 한 요청에 한 문장(batch_size를 1로 강제한다, 기본).
+                paper  = 3모델과 같게 — target과 control을 따로, 처리 순서대로 묶는다.
+                mixed  = target·control을 섞어(seed) 묶는다(첫 시험).
     """
+    if order_name not in ORDERS:
+        raise ValueError(f"order_name은 {ORDERS} 중 하나여야 합니다: {order_name!r}")
     items = load_items(section)
     items = items if order_name in ("paper", "single") else order(items)
     if order_name == "single":
@@ -265,14 +286,15 @@ def plan(section: str, mode: str, limit: int | None, batch_size: int,
         state, qs = build_call(section, mode, b)
         chars += len(state) + sum(len(q["instructions"]) + len(q["criteria"]["true"])
                                   + len(q["criteria"]["false"]) for q in qs.values())
-    return {"section": section, "mode": mode, "order": order_name, "items": len(items),
-            "done": len(items) - len(todo), "todo": todo, "batches": batches,
+    return {"section": section, "mode": mode, "order": order_name, "batch_size": batch_size,
+            "items": len(items), "done": len(items) - len(todo), "todo": todo, "batches": batches,
             "calls": len(batches), "chars": chars}
 
 
-RATE_RETRIES = 8
+RETRIES = 8
 RATE_WAIT_START = 5.0
 RATE_WAIT_MAX = 120.0
+TRANSIENT_STATUS = (500, 502, 503, 504, 520, 522, 524)
 
 
 def is_rate_limited(e: Exception) -> bool:
@@ -284,13 +306,27 @@ def is_rate_limited(e: Exception) -> bool:
     return status in (429, 529) or (status == 401 and "429" in detail)
 
 
-class _Budget:
-    """여러 스레드가 나눠 쓰는 호출 상한. 넘으면 그 호출은 나가지 않는다."""
+def is_transient(e: Exception) -> bool:
+    """잠깐 뒤 다시 보내면 되는 오류 — 연결 실패와 서버 쪽 5xx(Cloudflare 520 포함, 2026-09-23 15건)."""
+    return str(e) == "jev_transport_error" or getattr(e, "status", None) in TRANSIENT_STATUS
+
+
+class Budget:
+    """실행 전체가 나눠 쓰는 호출 상한 — **HTTP 시도 한 번마다** 하나씩 쓴다(재시도 포함).
+
+    클라이언트는 retries=0으로 만들어 재시도를 모두 여기서 하게 한다. 그래야 재시도도
+    상한에 세어진다(JevClient 안의 재시도는 자기 상한 검사 밖에서 돈다 — Codex 리뷰 #2).
+    """
 
     def __init__(self, max_calls: int) -> None:
         self.max_calls = max_calls
         self.used = 0
         self.lock = threading.Lock()
+
+    @property
+    def remaining(self) -> int:
+        with self.lock:
+            return self.max_calls - self.used
 
     def take(self) -> None:
         with self.lock:
@@ -299,77 +335,120 @@ class _Budget:
             self.used += 1
 
 
+def _usage_of(clients: list) -> dict:
+    total: dict = {}
+    for c in clients:
+        for k, v in (c.usage() if hasattr(c, "usage") else {}).items():
+            total[k] = total.get(k, 0) + v
+    return total
+
+
 def run(section: str, mode: str, limit: int | None, batch_size: int, client,
-        order_name: str = "mixed", workers: int = 1, factory=None) -> dict:
-    """묶음을 보내고 문항마다 JSONL에 붙여 쓴다. workers > 1이면 factory로 스레드마다
-    클라이언트를 따로 만든다(JevClient의 셈은 스레드 안전하지 않다)."""
+        order_name: str = "single", workers: int = 1, factory=None,
+        budget: Budget | None = None) -> dict:
+    """묶음을 보내고 문항마다 JSONL에 붙여 쓴다.
+
+    - budget: 실행 전체가 나눠 쓰는 상한. 이 섹션의 계획 호출이 남은 상한을 넘으면 **한 건도
+      보내지 않고** JevGateExceeded를 올린다. 도중에 상한에 닿으면 남은 묶음을 보내지 않고
+      stopped="gate"로 돌아온다(사용량은 그때까지의 값).
+    - workers > 1이면 factory가 있어야 한다 — 스레드마다 클라이언트를 따로 만든다
+      (JevClient의 셈은 스레드 안전하지 않다).
+    - 사용량은 **이 호출에서 쓴 만큼**만 돌려준다(같은 클라이언트로 여러 섹션을 돌려도 겹치지 않는다).
+    """
+    if workers > 1 and factory is None:
+        raise ValueError("workers > 1에는 factory가 필요합니다.")
     model = getattr(client, "model", jev_client.TYPESAFE_MODEL)
     p = plan(section, mode, limit, batch_size, model, order_name)
-    client.gate(p["calls"] + getattr(client, "calls_made", 0))  # 상한을 넘으면 여기서 한 건도 쏘지 않고 멈춘다
+    budget = budget or Budget(10**9)
+    if p["calls"] > budget.remaining:
+        raise jev_client.JevGateExceeded(
+            f"{section}: 계획 호출 {p['calls']}회가 남은 상한 {budget.remaining}회를 넘습니다 — "
+            "한 건도 보내지 않습니다.")
     path = out_path(section, mode, model, order_name)
     path.parent.mkdir(parents=True, exist_ok=True)
-    budget = _Budget(getattr(client, "_max_calls", 10**9) - getattr(client, "calls_made", 0))
-    write_lock = threading.Lock()
+    # 강제 종료로 잘린 마지막 줄에는 줄바꿈이 없다 — 그대로 이어 쓰면 새 첫 레코드가 그 줄에
+    # 붙어 함께 버려진다. 끝이 줄바꿈이 아니면 하나 넣고 시작한다.
+    if path.exists() and path.stat().st_size:
+        with path.open("rb") as f:
+            f.seek(-1, 2)
+            if f.read(1) != b"\n":
+                with path.open("a", encoding="utf-8", newline="\n") as g:
+                    g.write("\n")
+    lock = threading.Lock()
     local = threading.local()
-    clients = [client]
+    before = _usage_of([client])
+    made: list = []
     errors: list[str] = []
-    got = 0
+    state = {"got": 0, "stopped": None, "until": 0.0, "wait": RATE_WAIT_START}
 
     def my_client():
-        if workers <= 1 or factory is None:
+        if workers <= 1:
             return client
         if not hasattr(local, "c"):
             local.c = factory()
-            with write_lock:
-                clients.append(local.c)
+            with lock:
+                made.append(local.c)
         return local.c
 
-    cool = {"until": 0.0, "wait": RATE_WAIT_START}
+    def wait_cooldown() -> None:
+        """공유 쉬는 시각이 지날 때까지 잔다 — 자는 동안 다른 스레드가 늘렸으면 다시 잔다."""
+        while True:
+            with lock:
+                pause = state["until"] - time.time()
+            if pause <= 0:
+                return
+            time.sleep(pause)
 
-    def ask_with_backoff(state: str, questions: dict):
-        """속도 제한이면 **모든 스레드가 함께** 쉬었다가 다시 보낸다. 다른 오류는 그대로 올린다."""
-        for attempt in range(RATE_RETRIES + 1):
-            with write_lock:
-                pause = cool["until"] - time.time()
-            if pause > 0:
-                time.sleep(pause)
+    def ask_with_retry(st: str, questions: dict):
+        """속도 제한이면 **모든 스레드가 함께** 쉬고, 일시 오류면 이 묶음만 쉬었다가 다시 보낸다.
+        시도마다 budget을 쓴다. 다른 오류는 그대로 올린다."""
+        local_wait = 2.0
+        for attempt in range(RETRIES + 1):
+            wait_cooldown()
             budget.take()
             try:
-                answers = my_client().ask(state, questions)
-                with write_lock:
-                    cool["wait"] = RATE_WAIT_START
+                answers = my_client().ask(st, questions)
+                with lock:
+                    state["wait"] = RATE_WAIT_START
                 return answers
             except jev_client.JevCallFailed as e:
-                if not is_rate_limited(e) or attempt == RATE_RETRIES:
+                if attempt == RETRIES or not (is_rate_limited(e) or is_transient(e)):
                     raise
-                with write_lock:
-                    cool["until"] = max(cool["until"], time.time() + cool["wait"])
-                    cool["wait"] = min(cool["wait"] * 2, RATE_WAIT_MAX)
+                if is_rate_limited(e):
+                    with lock:
+                        state["until"] = max(state["until"], time.time() + state["wait"])
+                        state["wait"] = min(state["wait"] * 2, RATE_WAIT_MAX)
+                else:
+                    time.sleep(local_wait)
+                    local_wait = min(local_wait * 2, RATE_WAIT_MAX)
 
     def one(bi: int, batch: list[dict]) -> None:
-        nonlocal got
-        state, questions = build_call(section, mode, batch)
+        if state["stopped"]:
+            return
+        st, questions = build_call(section, mode, batch)
         try:
-            answers = ask_with_backoff(state, questions)
+            answers = ask_with_retry(st, questions)
         except jev_client.JevGateExceeded:
-            raise
+            with lock:
+                state["stopped"] = "gate"
+            return
         except Exception as e:  # noqa: BLE001 — 한 묶음이 죽어도 이미 쓴 것은 남는다
             status = getattr(e, "status", None)
-            with write_lock:
-                detail = " ".join((getattr(e, "detail", "") or "")[:80].split())
+            detail = " ".join((getattr(e, "detail", "") or "")[:80].split())
+            with lock:
                 errors.append(f"batch {bi}: {type(e).__name__}: {e}" + (f" [{status}]" if status else "")
                               + (f" {detail}" if detail else ""))
             return
-        lines = []
+        recs = []
         for i, it in enumerate(batch):
             p_yes = jev_client.noul(answers.get(f"q{i + 1}"))
-            lines.append(json.dumps({"key": it["key"], "marker_type": it["marker_type"],
-                                     "noul": None if p_yes is None else round(p_yes, 4),
-                                     "model": model, "batch": bi}, ensure_ascii=False))
-        with write_lock:
-            got += sum(1 for ln in lines if '"noul": null' not in ln)
+            # 받은 값을 그대로 둔다 — 반올림하면 0.49996이 0.5가 되어 O/X가 바뀔 수 있다(Codex #12)
+            recs.append({"key": it["key"], "marker_type": it["marker_type"], "noul": p_yes,
+                         "model": model, "batch": bi})
+        with lock:
+            state["got"] += sum(r["noul"] is not None for r in recs)
             with path.open("a", encoding="utf-8", newline="\n") as f:
-                f.write("\n".join(lines) + "\n")
+                f.write("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in recs))
 
     if workers <= 1:
         for bi, batch in enumerate(p["batches"]):
@@ -379,12 +458,13 @@ def run(section: str, mode: str, limit: int | None, batch_size: int, client,
             for fut in [ex.submit(one, bi, b) for bi, b in enumerate(p["batches"])]:
                 fut.result()
 
-    usage: dict = {}
-    for c in clients[1:] if len(clients) > 1 else clients:
-        for k, v in (c.usage() if hasattr(c, "usage") else {}).items():
-            usage[k] = usage.get(k, 0) + v
-    return {"section": section, "mode": mode, "order": order_name, "planned_calls": p["calls"],
-            "answered": got, "asked": len(p["todo"]), "errors": errors, "usage": usage}
+    after = _usage_of([client])
+    usage = {k: after.get(k, 0) - before.get(k, 0) for k in after}
+    for k, v in _usage_of(made).items():
+        usage[k] = usage.get(k, 0) + v
+    return {"section": section, "mode": mode, "order": order_name, "batch_size": p["batch_size"],
+            "planned_calls": p["calls"], "answered": state["got"], "asked": len(p["todo"]),
+            "stopped": state["stopped"], "errors": errors, "usage": usage}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -393,43 +473,60 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--sections", default="section3")
     ap.add_argument("--mode", choices=["pos", "neg", "flip"], default="pos",
                     help="pos=원 정의, flip(=neg)=반대 틀 대조군")
-    ap.add_argument("--order", choices=["single", "paper", "mixed"], default="single",
-                    help="single=한 요청에 한 문장(기본·두 판정 모델의 같은 조건), "
+    ap.add_argument("--order", choices=list(ORDERS), default="single",
+                    help="single=한 요청에 한 문장(기본·판정 모델끼리 같은 조건), "
                          "paper=3모델처럼 20개씩 arm별, mixed=섞어 묶기(첫 시험)")
     ap.add_argument("--limit", type=int, default=None, help="앞 N문항만")
-    ap.add_argument("--batch", type=int, default=DEFAULT_BATCH)
-    ap.add_argument("--max-calls", type=int, default=60)
+    ap.add_argument("--batch", type=int, default=DEFAULT_BATCH, help="paper·mixed의 묶음 크기")
+    ap.add_argument("--max-calls", type=int, default=60,
+                    help="실행 전체의 HTTP 시도 상한(재시도 포함)")
     ap.add_argument("--workers", type=int, default=1)
     ap.add_argument("--model", choices=list(JUDGES), default=jev_client.TYPESAFE_MODEL)
     a = ap.parse_args(argv)
     mode = "neg" if a.mode == "flip" else a.mode
     sections = [s.strip() for s in a.sections.split(",") if s.strip()]
 
+    plans = [plan(s, mode, a.limit, a.batch, a.model, a.order) for s in sections]
     if a.cmd == "size":
-        for s in sections:
-            p = plan(s, mode, a.limit, a.batch, a.model, a.order)
-            print(json.dumps({k: p[k] for k in ("section", "mode", "order", "items", "done", "calls", "chars")},
-                             ensure_ascii=False))
+        for p in plans:
+            print(json.dumps({k: p[k] for k in ("section", "mode", "order", "batch_size", "items",
+                                                "done", "calls", "chars")}, ensure_ascii=False))
         return 0
 
-    client = make_client(a.model, a.max_calls)
+    total = sum(p["calls"] for p in plans)
+    if total > a.max_calls:  # 섹션을 다 합친 계획으로 먼저 거른다 — 한 건도 보내지 않는다
+        print(f"계획 호출 {total}회가 --max-calls {a.max_calls}회를 넘습니다 — 실행을 거부합니다.",
+              file=sys.stderr)
+        return 3
+
+    def factory():
+        return make_client(a.model, a.max_calls)
+
+    client = factory()
     if not client.has_key:
         print(f"{a.model} 키가 없습니다({' / '.join(JUDGES[a.model]['keys'])}).", file=sys.stderr)
         return 2
+    budget = Budget(a.max_calls)
     LOG.parent.mkdir(parents=True, exist_ok=True)
+    code = 0
     for s in sections:
-        res = run(s, mode, a.limit, a.batch, client, a.order, a.workers,
-                  factory=lambda: make_client(a.model, a.max_calls))
+        try:
+            res = run(s, mode, a.limit, a.batch, client, a.order, a.workers, factory, budget)
+        except jev_client.JevGateExceeded as e:  # 이 섹션은 한 건도 보내지 않았다
+            res = {"section": s, "mode": mode, "order": a.order, "planned_calls": None, "answered": 0,
+                   "asked": 0, "stopped": f"gate_before_send: {e}", "errors": [], "usage": {}}
         res["model"] = a.model
         res["usage"]["cost_usd"] = cost_usd(a.model, res["usage"])  # 공급자 단가로
         res["ts"] = dt.datetime.now().isoformat(timespec="seconds")
-        res["limit"], res["workers"] = a.limit, a.workers
-        res["batch"] = 1 if a.order == "single" else a.batch  # 실제로 쓴 묶음 크기
+        res["limit"], res["workers"], res["max_calls"] = a.limit, a.workers, a.max_calls
         with LOG.open("a", encoding="utf-8", newline="\n") as f:
             f.write(json.dumps(res, ensure_ascii=False) + "\n")
         print(json.dumps({k: v for k, v in res.items() if k != "errors"} | {"n_errors": len(res["errors"]),
                           "errors_head": res["errors"][:5]}, ensure_ascii=False))
-    return 0
+        if res["stopped"]:
+            code = 3
+            break
+    return code
 
 
 if __name__ == "__main__":
