@@ -1,0 +1,71 @@
+{
+  "generated_at": "2026-09-23",
+  "panel": "jev_solar",
+  "judges": [
+    "jev",
+    "solar"
+  ],
+  "coverage": {
+    "section3": {
+      "n_base": 592,
+      "n_common": 592,
+      "complete": true
+    }
+  },
+  "sections": {
+    "section3": {
+      "label": "汎論以斷",
+      "target_marker": "하나니라",
+      "control_marker": "라(대조군)",
+      "consensus": {
+        "target_n": 296,
+        "control_n": 296,
+        "target": {
+          "O": 257,
+          "O_pct": 86.8,
+          "S": 37,
+          "S_pct": 12.5,
+          "X": 2,
+          "X_pct": 0.7
+        },
+        "control": {
+          "O": 147,
+          "O_pct": 49.7,
+          "S": 136,
+          "S_pct": 45.9,
+          "X": 13,
+          "X_pct": 4.4
+        },
+        "chi2": 94.67,
+        "V": 0.4,
+        "N": 592
+      },
+      "perModel": {
+        "jev": {
+          "display": "Jev (jev-latest)",
+          "target_n": 296,
+          "control_n": 296,
+          "target_rate": 86.82,
+          "control_rate": 50.0,
+          "diff": 36.82,
+          "target_positive": 257,
+          "control_positive": 148,
+          "chi2": 92.87,
+          "p_approx": 5.582877293847174e-22
+        },
+        "solar": {
+          "display": "Solar Mini4 (solar-mini4-jev)",
+          "target_n": 296,
+          "control_n": 296,
+          "target_rate": 99.32,
+          "control_rate": 95.27,
+          "diff": 4.05,
+          "target_positive": 294,
+          "control_positive": 282,
+          "chi2": 9.25,
+          "p_approx": 0.002354954251694485
+        }
+      }
+    }
+  }
+}

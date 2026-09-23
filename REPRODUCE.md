@@ -150,6 +150,18 @@ python scripts/compute_robustness_stats.py --source anon   # 공개 익명본 �
 
 출력은 `results/robustness_stats.json`과 `results/ROBUSTNESS_REPORT.md`, 실행 기록은 `logs/robustness_stats.jsonl`이다. 부트스트랩은 고정 seed(기본 20260611)라 재실행 수치가 같고, raw와 anon 소스의 결과 일치를 확인했다.
 
+### 4.7 네 번째 판정자(Jev) 점검 — 보조
+
+판정 모델 Jev로 같은 문항을 다시 판정하고, 4.4·4.6의 산출을 판정자 구성별로 다시 낸다. 기준 산출물(1절)은 바꾸지 않는다. 판정 단계만 외부 API를 부른다(2026-09-23 실측: 28,074문항, 약 $0.54, 동시 2개로 약 2시간 20분).
+
+```bash
+python scripts/run_jev_judgments.py run --sections section3,section1,section2 --workers 2 --max-calls 60000
+python scripts/compute_judge_panels.py                 # 호출 0건
+python scripts/compute_judge_panels.py --source anon   # 공개 익명본 — 동일 수치
+```
+
+판정 결과(`results/jev/single/*.jsonl`)는 추적 대상이라, 두 번째 명령만으로 공개 클론에서도 산출을 다시 낼 수 있다. 출력은 `results/jev/panels/`이고, 3모델 구성은 정본과 대조한다. 설계와 해석은 `results/jev/README.md`에 있다.
+
 ## 5. 최신 통계 요약
 
 | 섹션 | Target n | Control n | Consensus O | χ² | V |

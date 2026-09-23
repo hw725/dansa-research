@@ -1,0 +1,110 @@
+{
+  "generated_at": "2026-09-23",
+  "panel": "3models_jev",
+  "judges": [
+    "gpt5mini",
+    "gemini",
+    "claude_sonnet",
+    "jev"
+  ],
+  "coverage": {
+    "section1": {
+      "n_base": 5212,
+      "n_common": 5212,
+      "complete": true
+    },
+    "section2": {
+      "n_base": 22270,
+      "n_common": 22270,
+      "complete": true
+    },
+    "section3": {
+      "n_base": 592,
+      "n_common": 592,
+      "complete": true
+    }
+  },
+  "sections": {
+    "section1": {
+      "section": "section1",
+      "target_mt": "로다",
+      "control_mt": "라(대조군)",
+      "target": {
+        "n": 2606,
+        "O": 732,
+        "O_pct": 28.1,
+        "S": 1473,
+        "S_pct": 56.5,
+        "X": 401,
+        "X_pct": 15.4
+      },
+      "control": {
+        "n": 2606,
+        "O": 84,
+        "O_pct": 3.2,
+        "S": 901,
+        "S_pct": 34.6,
+        "X": 1621,
+        "X_pct": 62.2
+      },
+      "diff_pp": 24.9,
+      "chi2": 610.11,
+      "p": 1.0599922741641472e-134,
+      "test": "chi2_no_correction"
+    },
+    "section2": {
+      "section": "section2",
+      "target_mt": "니라",
+      "control_mt": "라",
+      "target": {
+        "n": 11135,
+        "O": 2754,
+        "O_pct": 24.7,
+        "S": 6746,
+        "S_pct": 60.6,
+        "X": 1635,
+        "X_pct": 14.7
+      },
+      "control": {
+        "n": 11135,
+        "O": 1484,
+        "O_pct": 13.3,
+        "S": 8273,
+        "S_pct": 74.3,
+        "X": 1378,
+        "X_pct": 12.4
+      },
+      "diff_pp": 11.4,
+      "chi2": 470.03,
+      "p": 3.161497869334128e-104,
+      "test": "chi2_no_correction"
+    },
+    "section3": {
+      "section": "section3",
+      "target_mt": "하나니라",
+      "control_mt": "라(대조군)",
+      "target": {
+        "n": 296,
+        "O": 219,
+        "O_pct": 74.0,
+        "S": 69,
+        "S_pct": 23.3,
+        "X": 8,
+        "X_pct": 2.7
+      },
+      "control": {
+        "n": 296,
+        "O": 114,
+        "O_pct": 38.5,
+        "S": 102,
+        "S_pct": 34.5,
+        "X": 80,
+        "X_pct": 27.0
+      },
+      "diff_pp": 35.5,
+      "chi2": 75.68,
+      "p": 3.3430056403113368e-18,
+      "test": "chi2_no_correction"
+    }
+  }
+}

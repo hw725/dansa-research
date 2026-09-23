@@ -38,13 +38,26 @@ RESULTS = REPO / "results"
 LOGS = REPO / "logs"
 
 Z95 = 1.959963984540054
-DEFINITIONS = OrderedDict(
-    [
-        ("unanimous", "만장일치(3표) O — 현행 기준"),
-        ("majority", "과반(2표 이상) O"),
-        ("any", "1표 이상 O"),
-    ]
-)
+def n_raters() -> int:
+    """판정자 수. 기준은 3모델이지만 판정자 구성을 바꿔 같은 통계를 다시 낼 수 있게 한다
+    (Jev·Solar 비교, 2026-09-23). 3명일 때 산출은 이전과 같다."""
+    return len(cfs.MODELS)
+
+
+def sensitivity_thresholds() -> dict[str, int]:
+    r = n_raters()
+    return {"unanimous": r, "majority": r // 2 + 1, "any": 1}
+
+
+def definition_labels() -> OrderedDict:
+    t = sensitivity_thresholds()
+    return OrderedDict(
+        [
+            ("unanimous", f"만장일치({t['unanimous']}표) O — 현행 기준"),
+            ("majority", f"과반({t['majority']}표 이상) O"),
+            ("any", "1표 이상 O"),
+        ]
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -324,7 +337,7 @@ def collect_items(cfg: dict) -> list[dict]:
 def agreement_block(items: list[dict]) -> dict:
     model_names = list(cfs.MODELS)
     vote_sums = [it["vote_sum"] for it in items]
-    unanimous = sum(1 for v in vote_sums if v in (0, 3))
+    unanimous = sum(1 for v in vote_sums if v in (0, n_raters()))
     pairwise = OrderedDict()
     for i in range(len(model_names)):
         for j in range(i + 1, len(model_names)):
@@ -338,9 +351,9 @@ def agreement_block(items: list[dict]) -> dict:
     by_arm = {}
     for arm in ("target", "control"):
         arm_sums = [it["vote_sum"] for it in items if it["arm"] == arm]
-        k = fleiss_kappa(arm_sums)
+        k = fleiss_kappa(arm_sums, n_raters())
         by_arm[arm] = round(k, 3) if k is not None else None
-    overall = fleiss_kappa(vote_sums)
+    overall = fleiss_kappa(vote_sums, n_raters())
     return {
         "n_items": len(items),
         "unanimous_pct": round(unanimous / len(items) * 100, 1) if items else None,
@@ -354,7 +367,7 @@ def consensus_counts(items: list[dict]) -> dict[str, Counter]:
     """arm별 O/S/X 카운트 (만장일치 O, 만장일치 X, 분할 S)."""
     out = {"target": Counter(), "control": Counter()}
     for it in items:
-        cat = "O" if it["vote_sum"] == 3 else ("X" if it["vote_sum"] == 0 else "S")
+        cat = "O" if it["vote_sum"] == n_raters() else ("X" if it["vote_sum"] == 0 else "S")
         out[it["arm"]][cat] += 1
     return out
 
@@ -390,19 +403,20 @@ def bootstrap_v(counts: dict[str, Counter], boot: int, rng: random.Random) -> di
 
 
 def sensitivity_block(items: list[dict]) -> OrderedDict:
-    thresholds = {"unanimous": 3, "majority": 2, "any": 1}
+    thresholds = sensitivity_thresholds()
+    labels = definition_labels()
     out = OrderedDict()
     for name, thr in thresholds.items():
         a = sum(1 for it in items if it["arm"] == "target" and it["vote_sum"] >= thr)
         b = sum(1 for it in items if it["arm"] == "target" and it["vote_sum"] < thr)
         c = sum(1 for it in items if it["arm"] == "control" and it["vote_sum"] >= thr)
         d = sum(1 for it in items if it["arm"] == "control" and it["vote_sum"] < thr)
-        out[name] = {"label": DEFINITIONS[name], **two_by_two_stats(a, b, c, d)}
+        out[name] = {"label": labels[name], **two_by_two_stats(a, b, c, d)}
     return out
 
 
 def build_strata(
-    items: list[dict], group_key: str, positive=lambda it: it["vote_sum"] == 3
+    items: list[dict], group_key: str, positive=lambda it: it["vote_sum"] == n_raters()
 ) -> "OrderedDict[str, tuple[int, int, int, int]]":
     """group_key('book'|'bu') 층별 (a,b,c,d). a/c는 positive, target/control 순."""
     table: "OrderedDict[str, list[int]]" = OrderedDict()

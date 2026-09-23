@@ -1,0 +1,389 @@
+{
+  "generated_at": "2026-09-23",
+  "panel": "jev_solar",
+  "judges": [
+    "jev",
+    "solar"
+  ],
+  "coverage": {
+    "section3": {
+      "n_base": 592,
+      "n_common": 592,
+      "complete": true
+    }
+  },
+  "source": "panel",
+  "boot": 2000,
+  "seed": 20260611,
+  "basis": "판정자 jev, solar",
+  "sections": {
+    "section3": {
+      "label": "汎論以斷",
+      "target_marker": "하나니라",
+      "control_marker": "라(대조군)",
+      "n_target": 296,
+      "n_control": 296,
+      "agreement": {
+        "n_items": 592,
+        "unanimous_pct": 70.8,
+        "fleiss_kappa": -0.029,
+        "fleiss_kappa_by_arm": {
+          "target": 0.03,
+          "control": -0.156
+        },
+        "pairwise": {
+          "jev__solar": {
+            "percent_agreement": 70.8,
+            "cohen_kappa": 0.103
+          }
+        }
+      },
+      "interval_estimates": {
+        "o_vs_rest": {
+          "target_positive": 257,
+          "target_n": 296,
+          "control_positive": 147,
+          "control_n": 296,
+          "target_rate": 86.82,
+          "control_rate": 49.66,
+          "diff_pp": 37.16,
+          "diff_ci95_pp": [
+            30.03,
+            43.75
+          ],
+          "odds_ratio": {
+            "or": 6.679,
+            "ci95": [
+              4.448,
+              10.031
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 94.31,
+          "p": 2.6948462113362533e-22
+        },
+        "o_vs_x_strict": {
+          "target_positive": 257,
+          "target_n": 259,
+          "control_positive": 147,
+          "control_n": 160,
+          "target_rate": 99.23,
+          "control_rate": 91.88,
+          "diff_pp": 7.35,
+          "diff_ci95_pp": [
+            3.48,
+            12.66
+          ],
+          "odds_ratio": {
+            "or": 11.364,
+            "ci95": [
+              2.529,
+              51.054
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 15.49,
+          "p": 8.291919833928302e-05
+        },
+        "cramers_v_bootstrap": {
+          "boot": 2000,
+          "v_ci95": [
+            0.329,
+            0.466
+          ]
+        }
+      },
+      "sensitivity": {
+        "unanimous": {
+          "label": "만장일치(2표) O — 현행 기준",
+          "target_positive": 257,
+          "target_n": 296,
+          "control_positive": 147,
+          "control_n": 296,
+          "target_rate": 86.82,
+          "control_rate": 49.66,
+          "diff_pp": 37.16,
+          "diff_ci95_pp": [
+            30.03,
+            43.75
+          ],
+          "odds_ratio": {
+            "or": 6.679,
+            "ci95": [
+              4.448,
+              10.031
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 94.31,
+          "p": 2.6948462113362533e-22
+        },
+        "majority": {
+          "label": "과반(2표 이상) O",
+          "target_positive": 257,
+          "target_n": 296,
+          "control_positive": 147,
+          "control_n": 296,
+          "target_rate": 86.82,
+          "control_rate": 49.66,
+          "diff_pp": 37.16,
+          "diff_ci95_pp": [
+            30.03,
+            43.75
+          ],
+          "odds_ratio": {
+            "or": 6.679,
+            "ci95": [
+              4.448,
+              10.031
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 94.31,
+          "p": 2.6948462113362533e-22
+        },
+        "any": {
+          "label": "1표 이상 O",
+          "target_positive": 294,
+          "target_n": 296,
+          "control_positive": 283,
+          "control_n": 296,
+          "target_rate": 99.32,
+          "control_rate": 95.61,
+          "diff_pp": 3.72,
+          "diff_ci95_pp": [
+            1.2,
+            6.73
+          ],
+          "odds_ratio": {
+            "or": 6.753,
+            "ci95": [
+              1.51,
+              30.191
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 8.28,
+          "p": 0.004016430047580601
+        }
+      },
+      "stratified": {
+        "books_total": 46,
+        "books_with_both_arms": 25,
+        "books_min_arm": {
+          "threshold": 5,
+          "count": 10
+        },
+        "crude": {
+          "target_positive": 257,
+          "target_n": 296,
+          "control_positive": 147,
+          "control_n": 296,
+          "target_rate": 86.82,
+          "control_rate": 49.66,
+          "diff_pp": 37.16,
+          "diff_ci95_pp": [
+            30.03,
+            43.75
+          ],
+          "odds_ratio": {
+            "or": 6.679,
+            "ci95": [
+              4.448,
+              10.031
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 94.31,
+          "p": 2.6948462113362533e-22
+        },
+        "mh_book": {
+          "or": 2.79,
+          "ci95": [
+            1.687,
+            4.616
+          ],
+          "strata_used": 25
+        },
+        "woolf_homogeneity_book": {
+          "chi2": 12.87,
+          "df": 9,
+          "p": 0.16862775180225317,
+          "strata": 10
+        },
+        "sign_test_book": {
+          "positive": 8,
+          "negative": 1,
+          "ties": 1,
+          "p_two_sided": 0.0390625
+        },
+        "per_book": [
+          {
+            "book": "주역전의(하)",
+            "target_n": 52,
+            "control_n": 13,
+            "target_o_pct": 98.1,
+            "control_o_pct": 92.3,
+            "diff_pp": 5.8
+          },
+          {
+            "book": "주역전의(상)",
+            "target_n": 40,
+            "control_n": 16,
+            "target_o_pct": 95.0,
+            "control_o_pct": 75.0,
+            "diff_pp": 20.0
+          },
+          {
+            "book": "시경집전(상)",
+            "target_n": 16,
+            "control_n": 24,
+            "target_o_pct": 68.8,
+            "control_o_pct": 62.5,
+            "diff_pp": 6.2
+          },
+          {
+            "book": "시경집전(하)",
+            "target_n": 6,
+            "control_n": 30,
+            "target_o_pct": 83.3,
+            "control_o_pct": 60.0,
+            "diff_pp": 23.3
+          },
+          {
+            "book": "서경집전(상)",
+            "target_n": 13,
+            "control_n": 11,
+            "target_o_pct": 15.4,
+            "control_o_pct": 45.5,
+            "diff_pp": -30.1
+          },
+          {
+            "book": "서경집전(하)",
+            "target_n": 11,
+            "control_n": 13,
+            "target_o_pct": 90.9,
+            "control_o_pct": 69.2,
+            "diff_pp": 21.7
+          },
+          {
+            "book": "예기집설대전2",
+            "target_n": 14,
+            "control_n": 10,
+            "target_o_pct": 78.6,
+            "control_o_pct": 70.0,
+            "diff_pp": 8.6
+          },
+          {
+            "book": "논어집주",
+            "target_n": 6,
+            "control_n": 15,
+            "target_o_pct": 66.7,
+            "control_o_pct": 66.7,
+            "diff_pp": 0.0
+          },
+          {
+            "book": "당송팔대가문초소식5",
+            "target_n": 10,
+            "control_n": 6,
+            "target_o_pct": 90.0,
+            "control_o_pct": 16.7,
+            "diff_pp": 73.3
+          },
+          {
+            "book": "맹자집주",
+            "target_n": 9,
+            "control_n": 7,
+            "target_o_pct": 100.0,
+            "control_o_pct": 71.4,
+            "diff_pp": 28.6
+          }
+        ],
+        "per_bu": {
+          "경부(사서)": {
+            "target_n": 15,
+            "control_n": 27,
+            "target_o_pct": 86.7,
+            "control_o_pct": 74.1,
+            "odds_ratio": {
+              "or": 2.275,
+              "ci95": [
+                0.408,
+                12.7
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "집부": {
+            "target_n": 62,
+            "control_n": 110,
+            "target_o_pct": 83.9,
+            "control_o_pct": 35.5,
+            "odds_ratio": {
+              "or": 9.467,
+              "ci95": [
+                4.333,
+                20.681
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "경부(오경)": {
+            "target_n": 217,
+            "control_n": 137,
+            "target_o_pct": 87.6,
+            "control_o_pct": 62.0,
+            "odds_ratio": {
+              "or": 4.305,
+              "ci95": [
+                2.532,
+                7.318
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "사부": {
+            "target_n": 2,
+            "control_n": 22,
+            "target_o_pct": 100.0,
+            "control_o_pct": 13.6,
+            "odds_ratio": {
+              "or": 27.857,
+              "ci95": [
+                1.088,
+                713.105
+              ],
+              "haldane_corrected": true
+            }
+          }
+        },
+        "mh_bu": {
+          "or": 5.475,
+          "ci95": [
+            3.603,
+            8.321
+          ],
+          "strata_used": 4
+        },
+        "per_model_mh_book": {
+          "jev": {
+            "or": 2.767,
+            "ci95": [
+              1.672,
+              4.579
+            ],
+            "strata_used": 25
+          },
+          "solar": {
+            "or": 7.88,
+            "ci95": [
+              1.092,
+              56.884
+            ],
+            "strata_used": 25
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1781 @@
+{
+  "generated_at": "2026-09-23",
+  "panel": "3models_jev",
+  "judges": [
+    "gpt5mini",
+    "gemini",
+    "claude_sonnet",
+    "jev"
+  ],
+  "coverage": {
+    "section1": {
+      "n_base": 5212,
+      "n_common": 5212,
+      "complete": true
+    },
+    "section2": {
+      "n_base": 22270,
+      "n_common": 22270,
+      "complete": true
+    },
+    "section3": {
+      "n_base": 592,
+      "n_common": 592,
+      "complete": true
+    }
+  },
+  "source": "panel",
+  "boot": 2000,
+  "seed": 20260611,
+  "basis": "판정자 gpt5mini, gemini, claude_sonnet, jev",
+  "sections": {
+    "section1": {
+      "label": "游辭以斷",
+      "target_marker": "로다",
+      "control_marker": "라(대조군)",
+      "n_target": 2606,
+      "n_control": 2606,
+      "agreement": {
+        "n_items": 5212,
+        "unanimous_pct": 54.5,
+        "fleiss_kappa": 0.463,
+        "fleiss_kappa_by_arm": {
+          "target": 0.349,
+          "control": 0.302
+        },
+        "pairwise": {
+          "gpt5mini__gemini": {
+            "percent_agreement": 71.2,
+            "cohen_kappa": 0.435
+          },
+          "gpt5mini__claude_sonnet": {
+            "percent_agreement": 80.0,
+            "cohen_kappa": 0.567
+          },
+          "gpt5mini__jev": {
+            "percent_agreement": 82.4,
+            "cohen_kappa": 0.568
+          },
+          "gemini__claude_sonnet": {
+            "percent_agreement": 75.7,
+            "cohen_kappa": 0.519
+          },
+          "gemini__jev": {
+            "percent_agreement": 65.2,
+            "cohen_kappa": 0.323
+          },
+          "claude_sonnet__jev": {
+            "percent_agreement": 75.0,
+            "cohen_kappa": 0.442
+          }
+        }
+      },
+      "interval_estimates": {
+        "o_vs_rest": {
+          "target_positive": 732,
+          "target_n": 2606,
+          "control_positive": 84,
+          "control_n": 2606,
+          "target_rate": 28.09,
+          "control_rate": 3.22,
+          "diff_pp": 24.87,
+          "diff_ci95_pp": [
+            23.01,
+            26.73
+          ],
+          "odds_ratio": {
+            "or": 11.728,
+            "ci95": [
+              9.285,
+              14.813
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 610.11,
+          "p": 1.0599922741641472e-134
+        },
+        "o_vs_x_strict": {
+          "target_positive": 732,
+          "target_n": 1133,
+          "control_positive": 84,
+          "control_n": 1705,
+          "target_rate": 64.61,
+          "control_rate": 4.93,
+          "diff_pp": 59.68,
+          "diff_ci95_pp": [
+            56.63,
+            62.57
+          ],
+          "odds_ratio": {
+            "or": 35.227,
+            "ci95": [
+              27.411,
+              45.271
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 1183.48,
+          "p": 2.3741929381160406e-259
+        },
+        "cramers_v_bootstrap": {
+          "boot": 2000,
+          "v_ci95": [
+            0.494,
+            0.537
+          ]
+        }
+      },
+      "sensitivity": {
+        "unanimous": {
+          "label": "만장일치(4표) O — 현행 기준",
+          "target_positive": 732,
+          "target_n": 2606,
+          "control_positive": 84,
+          "control_n": 2606,
+          "target_rate": 28.09,
+          "control_rate": 3.22,
+          "diff_pp": 24.87,
+          "diff_ci95_pp": [
+            23.01,
+            26.73
+          ],
+          "odds_ratio": {
+            "or": 11.728,
+            "ci95": [
+              9.285,
+              14.813
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 610.11,
+          "p": 1.0599922741641472e-134
+        },
+        "majority": {
+          "label": "과반(3표 이상) O",
+          "target_positive": 1328,
+          "target_n": 2606,
+          "control_positive": 187,
+          "control_n": 2606,
+          "target_rate": 50.96,
+          "control_rate": 7.18,
+          "diff_pp": 43.78,
+          "diff_ci95_pp": [
+            41.59,
+            45.91
+          ],
+          "odds_ratio": {
+            "or": 13.442,
+            "ci95": [
+              11.37,
+              15.892
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 1211.47,
+          "p": 1.9587680731731908e-265
+        },
+        "any": {
+          "label": "1표 이상 O",
+          "target_positive": 2205,
+          "target_n": 2606,
+          "control_positive": 985,
+          "control_n": 2606,
+          "target_rate": 84.61,
+          "control_rate": 37.8,
+          "diff_pp": 46.82,
+          "diff_ci95_pp": [
+            44.45,
+            49.09
+          ],
+          "odds_ratio": {
+            "or": 9.049,
+            "ci95": [
+              7.925,
+              10.333
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 1202.69,
+          "p": 1.5906325558363344e-263
+        }
+      },
+      "stratified": {
+        "books_total": 50,
+        "books_with_both_arms": 49,
+        "books_min_arm": {
+          "threshold": 5,
+          "count": 41
+        },
+        "crude": {
+          "target_positive": 732,
+          "target_n": 2606,
+          "control_positive": 84,
+          "control_n": 2606,
+          "target_rate": 28.09,
+          "control_rate": 3.22,
+          "diff_pp": 24.87,
+          "diff_ci95_pp": [
+            23.01,
+            26.73
+          ],
+          "odds_ratio": {
+            "or": 11.728,
+            "ci95": [
+              9.285,
+              14.813
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 610.11,
+          "p": 1.0599922741641472e-134
+        },
+        "mh_book": {
+          "or": 8.641,
+          "ci95": [
+            6.512,
+            11.466
+          ],
+          "strata_used": 49
+        },
+        "woolf_homogeneity_book": {
+          "chi2": 72.63,
+          "df": 40,
+          "p": 0.0012151214111703582,
+          "strata": 41
+        },
+        "sign_test_book": {
+          "positive": 35,
+          "negative": 5,
+          "ties": 1,
+          "p_two_sided": 1.382612026645802e-06
+        },
+        "per_book": [
+          {
+            "book": "시경집전(상)",
+            "target_n": 786,
+            "control_n": 181,
+            "target_o_pct": 43.5,
+            "control_o_pct": 1.1,
+            "diff_pp": 42.4
+          },
+          {
+            "book": "시경집전(하)",
+            "target_n": 664,
+            "control_n": 212,
+            "target_o_pct": 30.0,
+            "control_o_pct": 0.9,
+            "diff_pp": 29.0
+          },
+          {
+            "book": "주역전의(하)",
+            "target_n": 48,
+            "control_n": 201,
+            "target_o_pct": 8.3,
+            "control_o_pct": 0.5,
+            "diff_pp": 7.8
+          },
+          {
+            "book": "주역전의(상)",
+            "target_n": 45,
+            "control_n": 195,
+            "target_o_pct": 2.2,
+            "control_o_pct": 0.5,
+            "diff_pp": 1.7
+          },
+          {
+            "book": "논어집주",
+            "target_n": 76,
+            "control_n": 138,
+            "target_o_pct": 30.3,
+            "control_o_pct": 1.4,
+            "diff_pp": 28.8
+          },
+          {
+            "book": "맹자집주",
+            "target_n": 66,
+            "control_n": 145,
+            "target_o_pct": 13.6,
+            "control_o_pct": 0.0,
+            "diff_pp": 13.6
+          },
+          {
+            "book": "서경집전(상)",
+            "target_n": 45,
+            "control_n": 106,
+            "target_o_pct": 0.0,
+            "control_o_pct": 0.9,
+            "diff_pp": -0.9
+          },
+          {
+            "book": "당송팔대가문초구양수3",
+            "target_n": 69,
+            "control_n": 64,
+            "target_o_pct": 36.2,
+            "control_o_pct": 17.2,
+            "diff_pp": 19.0
+          },
+          {
+            "book": "예기집설대전2",
+            "target_n": 36,
+            "control_n": 95,
+            "target_o_pct": 11.1,
+            "control_o_pct": 0.0,
+            "diff_pp": 11.1
+          },
+          {
+            "book": "당송팔대가문초왕안석2",
+            "target_n": 90,
+            "control_n": 34,
+            "target_o_pct": 16.7,
+            "control_o_pct": 8.8,
+            "diff_pp": 7.8
+          },
+          {
+            "book": "당송팔대가문초구양수4",
+            "target_n": 53,
+            "control_n": 70,
+            "target_o_pct": 18.9,
+            "control_o_pct": 2.9,
+            "diff_pp": 16.0
+          },
+          {
+            "book": "서경집전(하)",
+            "target_n": 9,
+            "control_n": 114,
+            "target_o_pct": 0.0,
+            "control_o_pct": 2.6,
+            "diff_pp": -2.6
+          },
+          {
+            "book": "당송팔대가문초증공1",
+            "target_n": 15,
+            "control_n": 72,
+            "target_o_pct": 20.0,
+            "control_o_pct": 4.2,
+            "diff_pp": 15.8
+          },
+          {
+            "book": "당송팔대가문초소순1",
+            "target_n": 11,
+            "control_n": 74,
+            "target_o_pct": 27.3,
+            "control_o_pct": 9.5,
+            "diff_pp": 17.8
+          },
+          {
+            "book": "당송팔대가문초유종원2",
+            "target_n": 28,
+            "control_n": 56,
+            "target_o_pct": 10.7,
+            "control_o_pct": 19.6,
+            "diff_pp": -8.9
+          },
+          {
+            "book": "당송팔대가문초한유2",
+            "target_n": 52,
+            "control_n": 31,
+            "target_o_pct": 13.5,
+            "control_o_pct": 9.7,
+            "diff_pp": 3.8
+          },
+          {
+            "book": "당송팔대가문초구양수2",
+            "target_n": 6,
+            "control_n": 63,
+            "target_o_pct": 33.3,
+            "control_o_pct": 11.1,
+            "diff_pp": 22.2
+          },
+          {
+            "book": "당송팔대가문초소식5",
+            "target_n": 39,
+            "control_n": 27,
+            "target_o_pct": 43.6,
+            "control_o_pct": 14.8,
+            "diff_pp": 28.8
+          },
+          {
+            "book": "예기집설대전1",
+            "target_n": 12,
+            "control_n": 54,
+            "target_o_pct": 0.0,
+            "control_o_pct": 0.0,
+            "diff_pp": 0.0
+          },
+          {
+            "book": "당송팔대가문초구양수6",
+            "target_n": 5,
+            "control_n": 58,
+            "target_o_pct": 20.0,
+            "control_o_pct": 1.7,
+            "diff_pp": 18.3
+          },
+          {
+            "book": "당송팔대가문초구양수5",
+            "target_n": 11,
+            "control_n": 49,
+            "target_o_pct": 9.1,
+            "control_o_pct": 2.0,
+            "diff_pp": 7.1
+          },
+          {
+            "book": "당송팔대가문초왕안석1",
+            "target_n": 40,
+            "control_n": 20,
+            "target_o_pct": 15.0,
+            "control_o_pct": 10.0,
+            "diff_pp": 5.0
+          },
+          {
+            "book": "춘추좌씨전5",
+            "target_n": 39,
+            "control_n": 20,
+            "target_o_pct": 5.1,
+            "control_o_pct": 5.0,
+            "diff_pp": 0.1
+          },
+          {
+            "book": "당송팔대가문초유종원1",
+            "target_n": 18,
+            "control_n": 39,
+            "target_o_pct": 27.8,
+            "control_o_pct": 5.1,
+            "diff_pp": 22.6
+          },
+          {
+            "book": "당송팔대가문초한유3",
+            "target_n": 23,
+            "control_n": 32,
+            "target_o_pct": 30.4,
+            "control_o_pct": 6.2,
+            "diff_pp": 24.2
+          },
+          {
+            "book": "춘추좌씨전6",
+            "target_n": 29,
+            "control_n": 25,
+            "target_o_pct": 13.8,
+            "control_o_pct": 0.0,
+            "diff_pp": 13.8
+          },
+          {
+            "book": "자치통감강목3",
+            "target_n": 25,
+            "control_n": 24,
+            "target_o_pct": 16.0,
+            "control_o_pct": 8.3,
+            "diff_pp": 7.7
+          },
+          {
+            "book": "춘추좌씨전3",
+            "target_n": 25,
+            "control_n": 22,
+            "target_o_pct": 8.0,
+            "control_o_pct": 4.5,
+            "diff_pp": 3.5
+          },
+          {
+            "book": "자치통감강목1",
+            "target_n": 20,
+            "control_n": 26,
+            "target_o_pct": 5.0,
+            "control_o_pct": 3.8,
+            "diff_pp": 1.2
+          },
+          {
+            "book": "춘추좌씨전2",
+            "target_n": 26,
+            "control_n": 16,
+            "target_o_pct": 11.5,
+            "control_o_pct": 0.0,
+            "diff_pp": 11.5
+          },
+          {
+            "book": "춘추좌씨전4",
+            "target_n": 23,
+            "control_n": 16,
+            "target_o_pct": 4.3,
+            "control_o_pct": 0.0,
+            "diff_pp": 4.3
+          },
+          {
+            "book": "자치통감강목7",
+            "target_n": 14,
+            "control_n": 23,
+            "target_o_pct": 21.4,
+            "control_o_pct": 0.0,
+            "diff_pp": 21.4
+          },
+          {
+            "book": "춘추좌씨전1",
+            "target_n": 22,
+            "control_n": 13,
+            "target_o_pct": 18.2,
+            "control_o_pct": 0.0,
+            "diff_pp": 18.2
+          },
+          {
+            "book": "중용장구",
+            "target_n": 5,
+            "control_n": 27,
+            "target_o_pct": 40.0,
+            "control_o_pct": 0.0,
+            "diff_pp": 40.0
+          },
+          {
+            "book": "자치통감강목4",
+            "target_n": 9,
+            "control_n": 22,
+            "target_o_pct": 0.0,
+            "control_o_pct": 4.5,
+            "diff_pp": -4.5
+          },
+          {
+            "book": "자치통감강목5",
+            "target_n": 11,
+            "control_n": 19,
+            "target_o_pct": 9.1,
+            "control_o_pct": 0.0,
+            "diff_pp": 9.1
+          },
+          {
+            "book": "춘추좌씨전7",
+            "target_n": 15,
+            "control_n": 14,
+            "target_o_pct": 13.3,
+            "control_o_pct": 14.3,
+            "diff_pp": -1.0
+          },
+          {
+            "book": "당송팔대가문초한유1",
+            "target_n": 14,
+            "control_n": 13,
+            "target_o_pct": 21.4,
+            "control_o_pct": 0.0,
+            "diff_pp": 21.4
+          },
+          {
+            "book": "자치통감강목2",
+            "target_n": 17,
+            "control_n": 7,
+            "target_o_pct": 11.8,
+            "control_o_pct": 0.0,
+            "diff_pp": 11.8
+          },
+          {
+            "book": "자치통감강목6",
+            "target_n": 9,
+            "control_n": 15,
+            "target_o_pct": 11.1,
+            "control_o_pct": 0.0,
+            "diff_pp": 11.1
+          },
+          {
+            "book": "대학장구",
+            "target_n": 8,
+            "control_n": 11,
+            "target_o_pct": 50.0,
+            "control_o_pct": 0.0,
+            "diff_pp": 50.0
+          }
+        ],
+        "per_bu": {
+          "경부(사서)": {
+            "target_n": 155,
+            "control_n": 321,
+            "target_o_pct": 24.5,
+            "control_o_pct": 0.6,
+            "odds_ratio": {
+              "or": 51.803,
+              "ci95": [
+                12.303,
+                218.122
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "집부": {
+            "target_n": 509,
+            "control_n": 865,
+            "target_o_pct": 22.0,
+            "control_o_pct": 7.4,
+            "odds_ratio": {
+              "or": 3.531,
+              "ci95": [
+                2.539,
+                4.911
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "경부(오경)": {
+            "target_n": 1837,
+            "control_n": 1284,
+            "target_o_pct": 31.0,
+            "control_o_pct": 1.1,
+            "odds_ratio": {
+              "or": 40.811,
+              "ci95": [
+                23.88,
+                69.745
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "사부": {
+            "target_n": 105,
+            "control_n": 136,
+            "target_o_pct": 11.4,
+            "control_o_pct": 2.9,
+            "odds_ratio": {
+              "or": 4.258,
+              "ci95": [
+                1.332,
+                13.614
+              ],
+              "haldane_corrected": false
+            }
+          }
+        },
+        "mh_bu": {
+          "or": 12.563,
+          "ci95": [
+            9.806,
+            16.095
+          ],
+          "strata_used": 4
+        },
+        "per_model_mh_book": {
+          "gpt5mini": {
+            "or": 9.165,
+            "ci95": [
+              7.62,
+              11.023
+            ],
+            "strata_used": 49
+          },
+          "gemini": {
+            "or": 4.363,
+            "ci95": [
+              3.802,
+              5.007
+            ],
+            "strata_used": 49
+          },
+          "claude_sonnet": {
+            "or": 7.439,
+            "ci95": [
+              6.374,
+              8.683
+            ],
+            "strata_used": 49
+          },
+          "jev": {
+            "or": 8.868,
+            "ci95": [
+              7.14,
+              11.014
+            ],
+            "strata_used": 49
+          }
+        }
+      }
+    },
+    "section2": {
+      "label": "夬絶之斷 vs 微絶之斷",
+      "target_marker": "니라",
+      "control_marker": "라",
+      "n_target": 11135,
+      "n_control": 11135,
+      "agreement": {
+        "n_items": 22270,
+        "unanimous_pct": 32.6,
+        "fleiss_kappa": 0.237,
+        "fleiss_kappa_by_arm": {
+          "target": 0.308,
+          "control": 0.156
+        },
+        "pairwise": {
+          "gpt5mini__gemini": {
+            "percent_agreement": 74.9,
+            "cohen_kappa": 0.37
+          },
+          "gpt5mini__claude_sonnet": {
+            "percent_agreement": 61.7,
+            "cohen_kappa": 0.285
+          },
+          "gpt5mini__jev": {
+            "percent_agreement": 50.2,
+            "cohen_kappa": 0.176
+          },
+          "gemini__claude_sonnet": {
+            "percent_agreement": 65.0,
+            "cohen_kappa": 0.34
+          },
+          "gemini__jev": {
+            "percent_agreement": 50.7,
+            "cohen_kappa": 0.163
+          },
+          "claude_sonnet__jev": {
+            "percent_agreement": 70.1,
+            "cohen_kappa": 0.363
+          }
+        }
+      },
+      "interval_estimates": {
+        "o_vs_rest": {
+          "target_positive": 2754,
+          "target_n": 11135,
+          "control_positive": 1484,
+          "control_n": 11135,
+          "target_rate": 24.73,
+          "control_rate": 13.33,
+          "diff_pp": 11.41,
+          "diff_ci95_pp": [
+            10.38,
+            12.42
+          ],
+          "odds_ratio": {
+            "or": 2.137,
+            "ci95": [
+              1.993,
+              2.291
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 470.03,
+          "p": 3.161497869334128e-104
+        },
+        "o_vs_x_strict": {
+          "target_positive": 2754,
+          "target_n": 4389,
+          "control_positive": 1484,
+          "control_n": 2862,
+          "target_rate": 62.75,
+          "control_rate": 51.85,
+          "diff_pp": 10.9,
+          "diff_ci95_pp": [
+            8.57,
+            13.21
+          ],
+          "odds_ratio": {
+            "or": 1.564,
+            "ci95": [
+              1.422,
+              1.721
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 84.68,
+          "p": 3.500714763840044e-20
+        },
+        "cramers_v_bootstrap": {
+          "boot": 2000,
+          "v_ci95": [
+            0.146,
+            0.171
+          ]
+        }
+      },
+      "sensitivity": {
+        "unanimous": {
+          "label": "만장일치(4표) O — 현행 기준",
+          "target_positive": 2754,
+          "target_n": 11135,
+          "control_positive": 1484,
+          "control_n": 11135,
+          "target_rate": 24.73,
+          "control_rate": 13.33,
+          "diff_pp": 11.41,
+          "diff_ci95_pp": [
+            10.38,
+            12.42
+          ],
+          "odds_ratio": {
+            "or": 2.137,
+            "ci95": [
+              1.993,
+              2.291
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 470.03,
+          "p": 3.161497869334128e-104
+        },
+        "majority": {
+          "label": "과반(3표 이상) O",
+          "target_positive": 5823,
+          "target_n": 11135,
+          "control_positive": 3811,
+          "control_n": 11135,
+          "target_rate": 52.29,
+          "control_rate": 34.23,
+          "diff_pp": 18.07,
+          "diff_ci95_pp": [
+            16.79,
+            19.34
+          ],
+          "odds_ratio": {
+            "or": 2.107,
+            "ci95": [
+              1.996,
+              2.224
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 740.56,
+          "p": 4.5304445185498286e-163
+        },
+        "any": {
+          "label": "1표 이상 O",
+          "target_positive": 9500,
+          "target_n": 11135,
+          "control_positive": 9757,
+          "control_n": 11135,
+          "target_rate": 85.32,
+          "control_rate": 87.62,
+          "diff_pp": -2.31,
+          "diff_ci95_pp": [
+            -3.21,
+            -1.41
+          ],
+          "odds_ratio": {
+            "or": 0.821,
+            "ci95": [
+              0.76,
+              0.886
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 25.35,
+          "p": 4.778524217955175e-07
+        }
+      },
+      "stratified": {
+        "books_total": 50,
+        "books_with_both_arms": 50,
+        "books_min_arm": {
+          "threshold": 5,
+          "count": 46
+        },
+        "crude": {
+          "target_positive": 2754,
+          "target_n": 11135,
+          "control_positive": 1484,
+          "control_n": 11135,
+          "target_rate": 24.73,
+          "control_rate": 13.33,
+          "diff_pp": 11.41,
+          "diff_ci95_pp": [
+            10.38,
+            12.42
+          ],
+          "odds_ratio": {
+            "or": 2.137,
+            "ci95": [
+              1.993,
+              2.291
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 470.03,
+          "p": 3.161497869334128e-104
+        },
+        "mh_book": {
+          "or": 2.169,
+          "ci95": [
+            2.004,
+            2.348
+          ],
+          "strata_used": 50
+        },
+        "woolf_homogeneity_book": {
+          "chi2": 223.28,
+          "df": 45,
+          "p": 1.814986223379492e-25,
+          "strata": 46
+        },
+        "sign_test_book": {
+          "positive": 41,
+          "negative": 5,
+          "ties": 0,
+          "p_two_sided": 4.405936238072172e-08
+        },
+        "per_book": [
+          {
+            "book": "맹자집주",
+            "target_n": 1133,
+            "control_n": 571,
+            "target_o_pct": 31.5,
+            "control_o_pct": 10.2,
+            "diff_pp": 21.4
+          },
+          {
+            "book": "논어집주",
+            "target_n": 919,
+            "control_n": 544,
+            "target_o_pct": 41.3,
+            "control_o_pct": 12.1,
+            "diff_pp": 29.2
+          },
+          {
+            "book": "당송팔대가문초소철2",
+            "target_n": 1310,
+            "control_n": 31,
+            "target_o_pct": 22.1,
+            "control_o_pct": 3.2,
+            "diff_pp": 18.9
+          },
+          {
+            "book": "주역전의(하)",
+            "target_n": 388,
+            "control_n": 859,
+            "target_o_pct": 28.9,
+            "control_o_pct": 19.2,
+            "diff_pp": 9.7
+          },
+          {
+            "book": "주역전의(상)",
+            "target_n": 423,
+            "control_n": 802,
+            "target_o_pct": 27.0,
+            "control_o_pct": 22.3,
+            "diff_pp": 4.6
+          },
+          {
+            "book": "시경집전(상)",
+            "target_n": 354,
+            "control_n": 858,
+            "target_o_pct": 18.1,
+            "control_o_pct": 6.2,
+            "diff_pp": 11.9
+          },
+          {
+            "book": "시경집전(하)",
+            "target_n": 239,
+            "control_n": 899,
+            "target_o_pct": 18.4,
+            "control_o_pct": 4.9,
+            "diff_pp": 13.5
+          },
+          {
+            "book": "서경집전(하)",
+            "target_n": 381,
+            "control_n": 494,
+            "target_o_pct": 23.6,
+            "control_o_pct": 14.6,
+            "diff_pp": 9.0
+          },
+          {
+            "book": "예기집설대전1",
+            "target_n": 607,
+            "control_n": 267,
+            "target_o_pct": 34.3,
+            "control_o_pct": 22.8,
+            "diff_pp": 11.4
+          },
+          {
+            "book": "서경집전(상)",
+            "target_n": 226,
+            "control_n": 480,
+            "target_o_pct": 16.8,
+            "control_o_pct": 10.2,
+            "diff_pp": 6.6
+          },
+          {
+            "book": "당송팔대가문초한유3",
+            "target_n": 578,
+            "control_n": 117,
+            "target_o_pct": 3.1,
+            "control_o_pct": 6.8,
+            "diff_pp": -3.7
+          },
+          {
+            "book": "예기집설대전2",
+            "target_n": 302,
+            "control_n": 369,
+            "target_o_pct": 24.8,
+            "control_o_pct": 19.0,
+            "diff_pp": 5.9
+          },
+          {
+            "book": "당송팔대가문초한유2",
+            "target_n": 501,
+            "control_n": 142,
+            "target_o_pct": 8.4,
+            "control_o_pct": 22.5,
+            "diff_pp": -14.2
+          },
+          {
+            "book": "당송팔대가문초소순1",
+            "target_n": 179,
+            "control_n": 304,
+            "target_o_pct": 21.2,
+            "control_o_pct": 19.1,
+            "diff_pp": 2.2
+          },
+          {
+            "book": "당송팔대가문초증공1",
+            "target_n": 217,
+            "control_n": 265,
+            "target_o_pct": 21.2,
+            "control_o_pct": 17.0,
+            "diff_pp": 4.2
+          },
+          {
+            "book": "당송팔대가문초왕안석2",
+            "target_n": 237,
+            "control_n": 200,
+            "target_o_pct": 22.4,
+            "control_o_pct": 10.0,
+            "diff_pp": 12.4
+          },
+          {
+            "book": "당송팔대가문초유종원2",
+            "target_n": 140,
+            "control_n": 253,
+            "target_o_pct": 26.4,
+            "control_o_pct": 11.9,
+            "diff_pp": 14.6
+          },
+          {
+            "book": "당송팔대가문초유종원1",
+            "target_n": 215,
+            "control_n": 170,
+            "target_o_pct": 30.2,
+            "control_o_pct": 23.5,
+            "diff_pp": 6.7
+          },
+          {
+            "book": "당송팔대가문초소철3",
+            "target_n": 367,
+            "control_n": 9,
+            "target_o_pct": 14.7,
+            "control_o_pct": 11.1,
+            "diff_pp": 3.6
+          },
+          {
+            "book": "당송팔대가문초한유1",
+            "target_n": 263,
+            "control_n": 74,
+            "target_o_pct": 25.5,
+            "control_o_pct": 21.6,
+            "diff_pp": 3.9
+          },
+          {
+            "book": "당송팔대가문초구양수3",
+            "target_n": 21,
+            "control_n": 299,
+            "target_o_pct": 33.3,
+            "control_o_pct": 5.7,
+            "diff_pp": 27.6
+          },
+          {
+            "book": "당송팔대가문초소철1",
+            "target_n": 297,
+            "control_n": 13,
+            "target_o_pct": 20.5,
+            "control_o_pct": 0.0,
+            "diff_pp": 20.5
+          },
+          {
+            "book": "당송팔대가문초소식3",
+            "target_n": 202,
+            "control_n": 107,
+            "target_o_pct": 32.7,
+            "control_o_pct": 14.0,
+            "diff_pp": 18.7
+          },
+          {
+            "book": "당송팔대가문초구양수4",
+            "target_n": 7,
+            "control_n": 297,
+            "target_o_pct": 14.3,
+            "control_o_pct": 4.4,
+            "diff_pp": 9.9
+          },
+          {
+            "book": "당송팔대가문초소식5",
+            "target_n": 163,
+            "control_n": 131,
+            "target_o_pct": 22.7,
+            "control_o_pct": 10.7,
+            "diff_pp": 12.0
+          },
+          {
+            "book": "당송팔대가문초구양수5",
+            "target_n": 35,
+            "control_n": 238,
+            "target_o_pct": 14.3,
+            "control_o_pct": 8.4,
+            "diff_pp": 5.9
+          },
+          {
+            "book": "중용장구",
+            "target_n": 139,
+            "control_n": 101,
+            "target_o_pct": 25.9,
+            "control_o_pct": 5.9,
+            "diff_pp": 20.0
+          },
+          {
+            "book": "당송팔대가문초소식2",
+            "target_n": 110,
+            "control_n": 117,
+            "target_o_pct": 35.5,
+            "control_o_pct": 19.7,
+            "diff_pp": 15.8
+          },
+          {
+            "book": "당송팔대가문초왕안석1",
+            "target_n": 113,
+            "control_n": 89,
+            "target_o_pct": 23.0,
+            "control_o_pct": 10.1,
+            "diff_pp": 12.9
+          },
+          {
+            "book": "당송팔대가문초소식4",
+            "target_n": 104,
+            "control_n": 87,
+            "target_o_pct": 25.0,
+            "control_o_pct": 5.7,
+            "diff_pp": 19.3
+          },
+          {
+            "book": "자치통감강목5",
+            "target_n": 86,
+            "control_n": 91,
+            "target_o_pct": 24.4,
+            "control_o_pct": 16.5,
+            "diff_pp": 7.9
+          },
+          {
+            "book": "자치통감강목4",
+            "target_n": 90,
+            "control_n": 81,
+            "target_o_pct": 12.2,
+            "control_o_pct": 6.2,
+            "diff_pp": 6.0
+          },
+          {
+            "book": "자치통감강목7",
+            "target_n": 75,
+            "control_n": 96,
+            "target_o_pct": 22.7,
+            "control_o_pct": 3.1,
+            "diff_pp": 19.5
+          },
+          {
+            "book": "자치통감강목3",
+            "target_n": 72,
+            "control_n": 97,
+            "target_o_pct": 23.6,
+            "control_o_pct": 12.4,
+            "diff_pp": 11.2
+          },
+          {
+            "book": "자치통감강목1",
+            "target_n": 51,
+            "control_n": 103,
+            "target_o_pct": 33.3,
+            "control_o_pct": 18.4,
+            "diff_pp": 14.9
+          },
+          {
+            "book": "춘추좌씨전7",
+            "target_n": 80,
+            "control_n": 66,
+            "target_o_pct": 30.0,
+            "control_o_pct": 9.1,
+            "diff_pp": 20.9
+          },
+          {
+            "book": "대학장구",
+            "target_n": 99,
+            "control_n": 46,
+            "target_o_pct": 30.3,
+            "control_o_pct": 4.3,
+            "diff_pp": 26.0
+          },
+          {
+            "book": "춘추좌씨전6",
+            "target_n": 60,
+            "control_n": 80,
+            "target_o_pct": 31.7,
+            "control_o_pct": 16.2,
+            "diff_pp": 15.4
+          },
+          {
+            "book": "춘추좌씨전5",
+            "target_n": 55,
+            "control_n": 79,
+            "target_o_pct": 18.2,
+            "control_o_pct": 21.5,
+            "diff_pp": -3.3
+          },
+          {
+            "book": "자치통감강목6",
+            "target_n": 66,
+            "control_n": 52,
+            "target_o_pct": 16.7,
+            "control_o_pct": 7.7,
+            "diff_pp": 9.0
+          },
+          {
+            "book": "춘추좌씨전1",
+            "target_n": 56,
+            "control_n": 59,
+            "target_o_pct": 41.1,
+            "control_o_pct": 18.6,
+            "diff_pp": 22.4
+          },
+          {
+            "book": "춘추좌씨전2",
+            "target_n": 24,
+            "control_n": 80,
+            "target_o_pct": 25.0,
+            "control_o_pct": 26.2,
+            "diff_pp": -1.2
+          },
+          {
+            "book": "춘추좌씨전4",
+            "target_n": 41,
+            "control_n": 58,
+            "target_o_pct": 24.4,
+            "control_o_pct": 19.0,
+            "diff_pp": 5.4
+          },
+          {
+            "book": "춘추좌씨전3",
+            "target_n": 21,
+            "control_n": 77,
+            "target_o_pct": 23.8,
+            "control_o_pct": 26.0,
+            "diff_pp": -2.2
+          },
+          {
+            "book": "자치통감강목2",
+            "target_n": 44,
+            "control_n": 37,
+            "target_o_pct": 47.7,
+            "control_o_pct": 21.6,
+            "diff_pp": 26.1
+          },
+          {
+            "book": "당송팔대가문초소식1",
+            "target_n": 21,
+            "control_n": 54,
+            "target_o_pct": 33.3,
+            "control_o_pct": 7.4,
+            "diff_pp": 25.9
+          }
+        ],
+        "per_bu": {
+          "경부(사서)": {
+            "target_n": 2290,
+            "control_n": 1262,
+            "target_o_pct": 35.1,
+            "control_o_pct": 10.5,
+            "odds_ratio": {
+              "or": 4.623,
+              "ci95": [
+                3.786,
+                5.644
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "집부": {
+            "target_n": 5085,
+            "control_n": 3785,
+            "target_o_pct": 19.4,
+            "control_o_pct": 13.0,
+            "odds_ratio": {
+              "or": 1.61,
+              "ci95": [
+                1.432,
+                1.811
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "경부(오경)": {
+            "target_n": 3276,
+            "control_n": 5531,
+            "target_o_pct": 25.9,
+            "control_o_pct": 14.3,
+            "odds_ratio": {
+              "or": 2.087,
+              "ci95": [
+                1.872,
+                2.326
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "사부": {
+            "target_n": 484,
+            "control_n": 557,
+            "target_o_pct": 23.8,
+            "control_o_pct": 11.8,
+            "odds_ratio": {
+              "or": 2.319,
+              "ci95": [
+                1.664,
+                3.23
+              ],
+              "haldane_corrected": false
+            }
+          }
+        },
+        "mh_bu": {
+          "or": 2.157,
+          "ci95": [
+            2.008,
+            2.317
+          ],
+          "strata_used": 4
+        },
+        "per_model_mh_book": {
+          "gpt5mini": {
+            "or": 1.236,
+            "ci95": [
+              1.15,
+              1.329
+            ],
+            "strata_used": 50
+          },
+          "gemini": {
+            "or": 1.053,
+            "ci95": [
+              0.982,
+              1.128
+            ],
+            "strata_used": 50
+          },
+          "claude_sonnet": {
+            "or": 2.24,
+            "ci95": [
+              2.104,
+              2.385
+            ],
+            "strata_used": 50
+          },
+          "jev": {
+            "or": 1.817,
+            "ci95": [
+              1.698,
+              1.945
+            ],
+            "strata_used": 50
+          }
+        }
+      }
+    },
+    "section3": {
+      "label": "汎論以斷",
+      "target_marker": "하나니라",
+      "control_marker": "라(대조군)",
+      "n_target": 296,
+      "n_control": 296,
+      "agreement": {
+        "n_items": 592,
+        "unanimous_pct": 71.1,
+        "fleiss_kappa": 0.608,
+        "fleiss_kappa_by_arm": {
+          "target": 0.379,
+          "control": 0.621
+        },
+        "pairwise": {
+          "gpt5mini__gemini": {
+            "percent_agreement": 86.1,
+            "cohen_kappa": 0.626
+          },
+          "gpt5mini__claude_sonnet": {
+            "percent_agreement": 87.7,
+            "cohen_kappa": 0.679
+          },
+          "gpt5mini__jev": {
+            "percent_agreement": 85.8,
+            "cohen_kappa": 0.645
+          },
+          "gemini__claude_sonnet": {
+            "percent_agreement": 85.3,
+            "cohen_kappa": 0.631
+          },
+          "gemini__jev": {
+            "percent_agreement": 80.4,
+            "cohen_kappa": 0.525
+          },
+          "claude_sonnet__jev": {
+            "percent_agreement": 81.2,
+            "cohen_kappa": 0.555
+          }
+        }
+      },
+      "interval_estimates": {
+        "o_vs_rest": {
+          "target_positive": 219,
+          "target_n": 296,
+          "control_positive": 114,
+          "control_n": 296,
+          "target_rate": 73.99,
+          "control_rate": 38.51,
+          "diff_pp": 35.47,
+          "diff_ci95_pp": [
+            27.73,
+            42.58
+          ],
+          "odds_ratio": {
+            "or": 4.541,
+            "ci95": [
+              3.201,
+              6.441
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 75.68,
+          "p": 3.3430056403113368e-18
+        },
+        "o_vs_x_strict": {
+          "target_positive": 219,
+          "target_n": 227,
+          "control_positive": 114,
+          "control_n": 194,
+          "target_rate": 96.48,
+          "control_rate": 58.76,
+          "diff_pp": 37.71,
+          "diff_ci95_pp": [
+            30.26,
+            44.95
+          ],
+          "odds_ratio": {
+            "or": 19.211,
+            "ci95": [
+              8.973,
+              41.127
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 89.98,
+          "p": 2.4016975858528506e-21
+        },
+        "cramers_v_bootstrap": {
+          "boot": 2000,
+          "v_ci95": [
+            0.347,
+            0.472
+          ]
+        }
+      },
+      "sensitivity": {
+        "unanimous": {
+          "label": "만장일치(4표) O — 현행 기준",
+          "target_positive": 219,
+          "target_n": 296,
+          "control_positive": 114,
+          "control_n": 296,
+          "target_rate": 73.99,
+          "control_rate": 38.51,
+          "diff_pp": 35.47,
+          "diff_ci95_pp": [
+            27.73,
+            42.58
+          ],
+          "odds_ratio": {
+            "or": 4.541,
+            "ci95": [
+              3.201,
+              6.441
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 75.68,
+          "p": 3.3430056403113368e-18
+        },
+        "majority": {
+          "label": "과반(3표 이상) O",
+          "target_positive": 263,
+          "target_n": 296,
+          "control_positive": 159,
+          "control_n": 296,
+          "target_rate": 88.85,
+          "control_rate": 53.72,
+          "diff_pp": 35.14,
+          "diff_ci95_pp": [
+            28.2,
+            41.62
+          ],
+          "odds_ratio": {
+            "or": 6.867,
+            "ci95": [
+              4.476,
+              10.536
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 89.25,
+          "p": 3.472644542605754e-21
+        },
+        "any": {
+          "label": "1표 이상 O",
+          "target_positive": 288,
+          "target_n": 296,
+          "control_positive": 216,
+          "control_n": 296,
+          "target_rate": 97.3,
+          "control_rate": 72.97,
+          "diff_pp": 24.32,
+          "diff_ci95_pp": [
+            18.95,
+            29.82
+          ],
+          "odds_ratio": {
+            "or": 13.333,
+            "ci95": [
+              6.312,
+              28.167
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 69.19,
+          "p": 8.920269057523064e-17
+        }
+      },
+      "stratified": {
+        "books_total": 46,
+        "books_with_both_arms": 25,
+        "books_min_arm": {
+          "threshold": 5,
+          "count": 10
+        },
+        "crude": {
+          "target_positive": 219,
+          "target_n": 296,
+          "control_positive": 114,
+          "control_n": 296,
+          "target_rate": 73.99,
+          "control_rate": 38.51,
+          "diff_pp": 35.47,
+          "diff_ci95_pp": [
+            27.73,
+            42.58
+          ],
+          "odds_ratio": {
+            "or": 4.541,
+            "ci95": [
+              3.201,
+              6.441
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 75.68,
+          "p": 3.3430056403113368e-18
+        },
+        "mh_book": {
+          "or": 1.778,
+          "ci95": [
+            1.135,
+            2.786
+          ],
+          "strata_used": 25
+        },
+        "woolf_homogeneity_book": {
+          "chi2": 14.68,
+          "df": 9,
+          "p": 0.10002605528118037,
+          "strata": 10
+        },
+        "sign_test_book": {
+          "positive": 5,
+          "negative": 3,
+          "ties": 2,
+          "p_two_sided": 0.7265625
+        },
+        "per_book": [
+          {
+            "book": "주역전의(하)",
+            "target_n": 52,
+            "control_n": 13,
+            "target_o_pct": 92.3,
+            "control_o_pct": 92.3,
+            "diff_pp": 0.0
+          },
+          {
+            "book": "주역전의(상)",
+            "target_n": 40,
+            "control_n": 16,
+            "target_o_pct": 85.0,
+            "control_o_pct": 62.5,
+            "diff_pp": 22.5
+          },
+          {
+            "book": "시경집전(상)",
+            "target_n": 16,
+            "control_n": 24,
+            "target_o_pct": 31.2,
+            "control_o_pct": 50.0,
+            "diff_pp": -18.8
+          },
+          {
+            "book": "시경집전(하)",
+            "target_n": 6,
+            "control_n": 30,
+            "target_o_pct": 16.7,
+            "control_o_pct": 36.7,
+            "diff_pp": -20.0
+          },
+          {
+            "book": "서경집전(상)",
+            "target_n": 13,
+            "control_n": 11,
+            "target_o_pct": 15.4,
+            "control_o_pct": 45.5,
+            "diff_pp": -30.1
+          },
+          {
+            "book": "서경집전(하)",
+            "target_n": 11,
+            "control_n": 13,
+            "target_o_pct": 90.9,
+            "control_o_pct": 38.5,
+            "diff_pp": 52.4
+          },
+          {
+            "book": "예기집설대전2",
+            "target_n": 14,
+            "control_n": 10,
+            "target_o_pct": 64.3,
+            "control_o_pct": 50.0,
+            "diff_pp": 14.3
+          },
+          {
+            "book": "논어집주",
+            "target_n": 6,
+            "control_n": 15,
+            "target_o_pct": 66.7,
+            "control_o_pct": 66.7,
+            "diff_pp": 0.0
+          },
+          {
+            "book": "당송팔대가문초소식5",
+            "target_n": 10,
+            "control_n": 6,
+            "target_o_pct": 60.0,
+            "control_o_pct": 16.7,
+            "diff_pp": 43.3
+          },
+          {
+            "book": "맹자집주",
+            "target_n": 9,
+            "control_n": 7,
+            "target_o_pct": 77.8,
+            "control_o_pct": 71.4,
+            "diff_pp": 6.3
+          }
+        ],
+        "per_bu": {
+          "경부(사서)": {
+            "target_n": 15,
+            "control_n": 27,
+            "target_o_pct": 73.3,
+            "control_o_pct": 74.1,
+            "odds_ratio": {
+              "or": 0.963,
+              "ci95": [
+                0.23,
+                4.03
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "집부": {
+            "target_n": 62,
+            "control_n": 110,
+            "target_o_pct": 72.6,
+            "control_o_pct": 25.5,
+            "odds_ratio": {
+              "or": 7.752,
+              "ci95": [
+                3.835,
+                15.671
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "경부(오경)": {
+            "target_n": 217,
+            "control_n": 137,
+            "target_o_pct": 74.2,
+            "control_o_pct": 46.0,
+            "odds_ratio": {
+              "or": 3.377,
+              "ci95": [
+                2.146,
+                5.313
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "사부": {
+            "target_n": 2,
+            "control_n": 22,
+            "target_o_pct": 100.0,
+            "control_o_pct": 13.6,
+            "odds_ratio": {
+              "or": 27.857,
+              "ci95": [
+                1.088,
+                713.105
+              ],
+              "haldane_corrected": true
+            }
+          }
+        },
+        "mh_bu": {
+          "or": 3.998,
+          "ci95": [
+            2.784,
+            5.741
+          ],
+          "strata_used": 4
+        },
+        "per_model_mh_book": {
+          "gpt5mini": {
+            "or": 8.541,
+            "ci95": [
+              4.027,
+              18.116
+            ],
+            "strata_used": 25
+          },
+          "gemini": {
+            "or": 1.552,
+            "ci95": [
+              0.918,
+              2.624
+            ],
+            "strata_used": 25
+          },
+          "claude_sonnet": {
+            "or": 2.303,
+            "ci95": [
+              1.362,
+              3.897
+            ],
+            "strata_used": 25
+          },
+          "jev": {
+            "or": 2.767,
+            "ci95": [
+              1.672,
+              4.579
+            ],
+            "strata_used": 25
+          }
+        }
+      }
+    }
+  }
+}

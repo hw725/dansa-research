@@ -1,0 +1,452 @@
+{
+  "generated_at": "2026-09-23",
+  "panel": "3models_jev_solar",
+  "judges": [
+    "gpt5mini",
+    "gemini",
+    "claude_sonnet",
+    "jev",
+    "solar"
+  ],
+  "coverage": {
+    "section3": {
+      "n_base": 592,
+      "n_common": 592,
+      "complete": true
+    }
+  },
+  "source": "panel",
+  "boot": 2000,
+  "seed": 20260611,
+  "basis": "판정자 gpt5mini, gemini, claude_sonnet, jev, solar",
+  "sections": {
+    "section3": {
+      "label": "汎論以斷",
+      "target_marker": "하나니라",
+      "control_marker": "라(대조군)",
+      "n_target": 296,
+      "n_control": 296,
+      "agreement": {
+        "n_items": 592,
+        "unanimous_pct": 57.8,
+        "fleiss_kappa": 0.436,
+        "fleiss_kappa_by_arm": {
+          "target": 0.284,
+          "control": 0.407
+        },
+        "pairwise": {
+          "gpt5mini__gemini": {
+            "percent_agreement": 86.1,
+            "cohen_kappa": 0.626
+          },
+          "gpt5mini__claude_sonnet": {
+            "percent_agreement": 87.7,
+            "cohen_kappa": 0.679
+          },
+          "gpt5mini__jev": {
+            "percent_agreement": 85.8,
+            "cohen_kappa": 0.645
+          },
+          "gpt5mini__solar": {
+            "percent_agreement": 78.9,
+            "cohen_kappa": 0.13
+          },
+          "gemini__claude_sonnet": {
+            "percent_agreement": 85.3,
+            "cohen_kappa": 0.631
+          },
+          "gemini__jev": {
+            "percent_agreement": 80.4,
+            "cohen_kappa": 0.525
+          },
+          "gemini__solar": {
+            "percent_agreement": 74.5,
+            "cohen_kappa": 0.071
+          },
+          "claude_sonnet__jev": {
+            "percent_agreement": 81.2,
+            "cohen_kappa": 0.555
+          },
+          "claude_sonnet__solar": {
+            "percent_agreement": 73.3,
+            "cohen_kappa": 0.106
+          },
+          "jev__solar": {
+            "percent_agreement": 70.8,
+            "cohen_kappa": 0.103
+          }
+        }
+      },
+      "interval_estimates": {
+        "o_vs_rest": {
+          "target_positive": 219,
+          "target_n": 296,
+          "control_positive": 114,
+          "control_n": 296,
+          "target_rate": 73.99,
+          "control_rate": 38.51,
+          "diff_pp": 35.47,
+          "diff_ci95_pp": [
+            27.73,
+            42.58
+          ],
+          "odds_ratio": {
+            "or": 4.541,
+            "ci95": [
+              3.201,
+              6.441
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 75.68,
+          "p": 3.3430056403113368e-18
+        },
+        "o_vs_x_strict": {
+          "target_positive": 219,
+          "target_n": 220,
+          "control_positive": 114,
+          "control_n": 122,
+          "target_rate": 99.55,
+          "control_rate": 93.44,
+          "diff_pp": 6.1,
+          "diff_ci95_pp": [
+            2.29,
+            11.96
+          ],
+          "odds_ratio": {
+            "or": 15.368,
+            "ci95": [
+              1.899,
+              124.394
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 11.41,
+          "p": 0.0007315422992331173
+        },
+        "cramers_v_bootstrap": {
+          "boot": 2000,
+          "v_ci95": [
+            0.288,
+            0.433
+          ]
+        }
+      },
+      "sensitivity": {
+        "unanimous": {
+          "label": "만장일치(5표) O — 현행 기준",
+          "target_positive": 219,
+          "target_n": 296,
+          "control_positive": 114,
+          "control_n": 296,
+          "target_rate": 73.99,
+          "control_rate": 38.51,
+          "diff_pp": 35.47,
+          "diff_ci95_pp": [
+            27.73,
+            42.58
+          ],
+          "odds_ratio": {
+            "or": 4.541,
+            "ci95": [
+              3.201,
+              6.441
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 75.68,
+          "p": 3.3430056403113368e-18
+        },
+        "majority": {
+          "label": "과반(3표 이상) O",
+          "target_positive": 279,
+          "target_n": 296,
+          "control_positive": 180,
+          "control_n": 296,
+          "target_rate": 94.26,
+          "control_rate": 60.81,
+          "diff_pp": 33.45,
+          "diff_ci95_pp": [
+            27.15,
+            39.5
+          ],
+          "odds_ratio": {
+            "or": 10.576,
+            "ci95": [
+              6.149,
+              18.193
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 95.04,
+          "p": 1.8613721799207374e-22
+        },
+        "any": {
+          "label": "1표 이상 O",
+          "target_positive": 295,
+          "target_n": 296,
+          "control_positive": 288,
+          "control_n": 296,
+          "target_rate": 99.66,
+          "control_rate": 97.3,
+          "diff_pp": 2.36,
+          "diff_ci95_pp": [
+            0.32,
+            4.92
+          ],
+          "odds_ratio": {
+            "or": 8.194,
+            "ci95": [
+              1.018,
+              65.933
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 5.53,
+          "p": 0.018709218553058255
+        }
+      },
+      "stratified": {
+        "books_total": 46,
+        "books_with_both_arms": 25,
+        "books_min_arm": {
+          "threshold": 5,
+          "count": 10
+        },
+        "crude": {
+          "target_positive": 219,
+          "target_n": 296,
+          "control_positive": 114,
+          "control_n": 296,
+          "target_rate": 73.99,
+          "control_rate": 38.51,
+          "diff_pp": 35.47,
+          "diff_ci95_pp": [
+            27.73,
+            42.58
+          ],
+          "odds_ratio": {
+            "or": 4.541,
+            "ci95": [
+              3.201,
+              6.441
+            ],
+            "haldane_corrected": false
+          },
+          "chi2": 75.68,
+          "p": 3.3430056403113368e-18
+        },
+        "mh_book": {
+          "or": 1.778,
+          "ci95": [
+            1.135,
+            2.786
+          ],
+          "strata_used": 25
+        },
+        "woolf_homogeneity_book": {
+          "chi2": 14.68,
+          "df": 9,
+          "p": 0.10002605528118037,
+          "strata": 10
+        },
+        "sign_test_book": {
+          "positive": 5,
+          "negative": 3,
+          "ties": 2,
+          "p_two_sided": 0.7265625
+        },
+        "per_book": [
+          {
+            "book": "주역전의(하)",
+            "target_n": 52,
+            "control_n": 13,
+            "target_o_pct": 92.3,
+            "control_o_pct": 92.3,
+            "diff_pp": 0.0
+          },
+          {
+            "book": "주역전의(상)",
+            "target_n": 40,
+            "control_n": 16,
+            "target_o_pct": 85.0,
+            "control_o_pct": 62.5,
+            "diff_pp": 22.5
+          },
+          {
+            "book": "시경집전(상)",
+            "target_n": 16,
+            "control_n": 24,
+            "target_o_pct": 31.2,
+            "control_o_pct": 50.0,
+            "diff_pp": -18.8
+          },
+          {
+            "book": "시경집전(하)",
+            "target_n": 6,
+            "control_n": 30,
+            "target_o_pct": 16.7,
+            "control_o_pct": 36.7,
+            "diff_pp": -20.0
+          },
+          {
+            "book": "서경집전(상)",
+            "target_n": 13,
+            "control_n": 11,
+            "target_o_pct": 15.4,
+            "control_o_pct": 45.5,
+            "diff_pp": -30.1
+          },
+          {
+            "book": "서경집전(하)",
+            "target_n": 11,
+            "control_n": 13,
+            "target_o_pct": 90.9,
+            "control_o_pct": 38.5,
+            "diff_pp": 52.4
+          },
+          {
+            "book": "예기집설대전2",
+            "target_n": 14,
+            "control_n": 10,
+            "target_o_pct": 64.3,
+            "control_o_pct": 50.0,
+            "diff_pp": 14.3
+          },
+          {
+            "book": "논어집주",
+            "target_n": 6,
+            "control_n": 15,
+            "target_o_pct": 66.7,
+            "control_o_pct": 66.7,
+            "diff_pp": 0.0
+          },
+          {
+            "book": "당송팔대가문초소식5",
+            "target_n": 10,
+            "control_n": 6,
+            "target_o_pct": 60.0,
+            "control_o_pct": 16.7,
+            "diff_pp": 43.3
+          },
+          {
+            "book": "맹자집주",
+            "target_n": 9,
+            "control_n": 7,
+            "target_o_pct": 77.8,
+            "control_o_pct": 71.4,
+            "diff_pp": 6.3
+          }
+        ],
+        "per_bu": {
+          "경부(사서)": {
+            "target_n": 15,
+            "control_n": 27,
+            "target_o_pct": 73.3,
+            "control_o_pct": 74.1,
+            "odds_ratio": {
+              "or": 0.963,
+              "ci95": [
+                0.23,
+                4.03
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "집부": {
+            "target_n": 62,
+            "control_n": 110,
+            "target_o_pct": 72.6,
+            "control_o_pct": 25.5,
+            "odds_ratio": {
+              "or": 7.752,
+              "ci95": [
+                3.835,
+                15.671
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "경부(오경)": {
+            "target_n": 217,
+            "control_n": 137,
+            "target_o_pct": 74.2,
+            "control_o_pct": 46.0,
+            "odds_ratio": {
+              "or": 3.377,
+              "ci95": [
+                2.146,
+                5.313
+              ],
+              "haldane_corrected": false
+            }
+          },
+          "사부": {
+            "target_n": 2,
+            "control_n": 22,
+            "target_o_pct": 100.0,
+            "control_o_pct": 13.6,
+            "odds_ratio": {
+              "or": 27.857,
+              "ci95": [
+                1.088,
+                713.105
+              ],
+              "haldane_corrected": true
+            }
+          }
+        },
+        "mh_bu": {
+          "or": 3.998,
+          "ci95": [
+            2.784,
+            5.741
+          ],
+          "strata_used": 4
+        },
+        "per_model_mh_book": {
+          "gpt5mini": {
+            "or": 8.541,
+            "ci95": [
+              4.027,
+              18.116
+            ],
+            "strata_used": 25
+          },
+          "gemini": {
+            "or": 1.552,
+            "ci95": [
+              0.918,
+              2.624
+            ],
+            "strata_used": 25
+          },
+          "claude_sonnet": {
+            "or": 2.303,
+            "ci95": [
+              1.362,
+              3.897
+            ],
+            "strata_used": 25
+          },
+          "jev": {
+            "or": 2.767,
+            "ci95": [
+              1.672,
+              4.579
+            ],
+            "strata_used": 25
+          },
+          "solar": {
+            "or": 7.88,
+            "ci95": [
+              1.092,
+              56.884
+            ],
+            "strata_used": 25
+          }
+        }
+      }
+    }
+  }
+}

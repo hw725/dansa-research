@@ -1,0 +1,47 @@
+{
+  "generated_at": "2026-09-23",
+  "panel": "3models_jev_solar",
+  "judges": [
+    "gpt5mini",
+    "gemini",
+    "claude_sonnet",
+    "jev",
+    "solar"
+  ],
+  "coverage": {
+    "section3": {
+      "n_base": 592,
+      "n_common": 592,
+      "complete": true
+    }
+  },
+  "sections": {
+    "section3": {
+      "section": "section3",
+      "target_mt": "하나니라",
+      "control_mt": "라(대조군)",
+      "target": {
+        "n": 296,
+        "O": 219,
+        "O_pct": 74.0,
+        "S": 76,
+        "S_pct": 25.7,
+        "X": 1,
+        "X_pct": 0.3
+      },
+      "control": {
+        "n": 296,
+        "O": 114,
+        "O_pct": 38.5,
+        "S": 174,
+        "S_pct": 58.8,
+        "X": 8,
+        "X_pct": 2.7
+      },
+      "diff_pp": 35.5,
+      "chi2": 75.68,
+      "p": 3.3430056403113368e-18,
+      "test": "chi2_no_correction"
+    }
+  }
+}

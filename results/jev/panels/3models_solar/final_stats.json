@@ -1,0 +1,97 @@
+{
+  "generated_at": "2026-09-23",
+  "panel": "3models_solar",
+  "judges": [
+    "gpt5mini",
+    "gemini",
+    "claude_sonnet",
+    "solar"
+  ],
+  "coverage": {
+    "section3": {
+      "n_base": 592,
+      "n_common": 592,
+      "complete": true
+    }
+  },
+  "sections": {
+    "section3": {
+      "label": "汎論以斷",
+      "target_marker": "하나니라",
+      "control_marker": "라(대조군)",
+      "consensus": {
+        "target_n": 296,
+        "control_n": 296,
+        "target": {
+          "O": 238,
+          "O_pct": 80.4,
+          "S": 57,
+          "S_pct": 19.3,
+          "X": 1,
+          "X_pct": 0.3
+        },
+        "control": {
+          "O": 137,
+          "O_pct": 46.3,
+          "S": 151,
+          "S_pct": 51.0,
+          "X": 8,
+          "X_pct": 2.7
+        },
+        "chi2": 75.13,
+        "V": 0.356,
+        "N": 592
+      },
+      "perModel": {
+        "gpt5mini": {
+          "display": "GPT-5-mini",
+          "target_n": 296,
+          "control_n": 296,
+          "target_rate": 95.61,
+          "control_rate": 58.78,
+          "diff": 36.83,
+          "target_positive": 283,
+          "control_positive": 174,
+          "chi2": 114.01,
+          "p_approx": 1.2996595164145456e-26
+        },
+        "gemini": {
+          "display": "Gemini 2.5 Flash",
+          "target_n": 296,
+          "control_n": 296,
+          "target_rate": 84.8,
+          "control_rate": 62.84,
+          "diff": 21.96,
+          "target_positive": 251,
+          "control_positive": 186,
+          "chi2": 36.93,
+          "p_approx": 1.2268261400437202e-09
+        },
+        "claude_sonnet": {
+          "display": "Claude Sonnet 4.6",
+          "target_n": 296,
+          "control_n": 296,
+          "target_rate": 87.16,
+          "control_rate": 55.41,
+          "diff": 31.75,
+          "target_positive": 258,
+          "control_positive": 164,
+          "chi2": 72.91,
+          "p_approx": 1.353651779005519e-17
+        },
+        "solar": {
+          "display": "Solar Mini4 (solar-mini4-jev)",
+          "target_n": 296,
+          "control_n": 296,
+          "target_rate": 99.32,
+          "control_rate": 95.27,
+          "diff": 4.05,
+          "target_positive": 294,
+          "control_positive": 282,
+          "chi2": 9.25,
+          "p_approx": 0.002354954251694485
+        }
+      }
+    }
+  }
+}

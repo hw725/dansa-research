@@ -19,6 +19,7 @@
 | `classify_` | 분류 작업 |
 | `normalize_` | 정규화 유틸리티 |
 | `freeze_` | 기준 실행 산출물·코퍼스 동결(매니페스트·백업) |
+| `probe_` | 외부 서비스 상태 확인(판정 없음) |
 
 ## 주요 재현 스크립트
 
@@ -44,6 +45,19 @@ python scripts/verify_section2_results.py
 `compute_robustness_stats.py`는 같은 판정 CSV에서 final 통계를 보완하는 강건성 지표를 산출한다 — 모델 간 일치도(Fleiss·Cohen κ), 효과크기 95% CI(비율차 Newcombe·OR Woolf·Cramér’s V 부트스트랩), 합의 정의 민감도(만장일치/과반/1표 이상), 서종(book·部) 층화 Mantel-Haenszel OR과 Woolf 동질성·sign test. LLM 호출이 없고 표준 라이브러리만 쓰며 `--source anon`으로 동일 수치가 재현된다. 출력은 `results/robustness_stats.json`·`results/ROBUSTNESS_REPORT.md`, 실행 기록은 `logs/robustness_stats.jsonl`.
 
 `freeze_run.py`는 기준 산출물과 로컬 입력 파일의 SHA-256 매니페스트(`RUN_MANIFEST.json`)·물리 백업을 만들어 동결 기준을 남긴다. 재현 샌드박스(`sandbox/`)는 이 기준과 재실행 결과를 비교하며, 라이브 재현 환경 구성은 `sandbox/README.md`를 따른다.
+
+## 판정 모델(Jev) 점검
+
+```bash
+python scripts/run_jev_judgments.py size --sections section3,section1,section2
+python scripts/run_jev_judgments.py run --sections section3,section1,section2 --workers 2 --max-calls 60000
+python scripts/compute_judge_panels.py            # 호출 0건, --source anon 가능
+python scripts/probe_jev_block.py --every 1200    # 차단(403·1010)이 풀렸는지만 본다
+```
+
+`run_jev_judgments.py`는 3모델과 같은 문항·같은 정의를 판정 모델에 한 문장씩 묻는다. Jev가 기본이고, `--model solar-mini4-jev`로 Solar 래퍼도 부를 수 있다. 계획 호출이 `--max-calls`를 넘으면 한 건도 보내지 않고, 끊기면 이어서 돈다. 번역문은 저장하지 않는다. `compute_judge_panels.py`는 `compute_final_stats`·`compute_robustness_stats`의 함수를 판정자 목록만 바꿔 불러 `results/jev/panels/`에 구성별 산출물을 쓰고, 3모델 구성을 정본과 대조한다. `jev_client.py`는 classical-text-browser `src/llm/jev.py`에서 가져온 전송 모듈이다(직접 실행하지 않는다). `compute_jev_agreement.py`는 첫 시험(섞어 묶기)의 채점기라 현행 산출에는 쓰지 않는다. 테스트는 `tests/test_jev_judgments.py`이고, raw 판정 CSV가 있어야 돈다.
+
+`compute_robustness_stats.py`는 판정자 수를 `len(MODELS)`로 일반화했다. 만장일치는 전원, 과반은 절반 초과다. 3모델일 때 산출은 이전과 같다(2026-09-23 대조).
 
 ## 데이터 준비
 

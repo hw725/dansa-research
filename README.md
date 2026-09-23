@@ -48,6 +48,8 @@
 
 세 섹션 효과는 서종(book) 층화 Mantel-Haenszel OR 7.67·2.27·2.04로 층화 후에도 유지된다. 모델 간 일치도(Fleiss κ), 효과크기 95% CI, 합의 정의 민감도는 [results/ROBUSTNESS_REPORT.md](results/ROBUSTNESS_REPORT.md)를 본다.
 
+**네 번째 판정자 점검(2026-09-23).** 계열이 다른 판정 모델 Jev(TypeSafe, 질문마다 확률 하나만 돌려준다)로 세 섹션 28,074문항을 다시 판정했다. Jev 단독으로도 세 섹션 모두 target > control이다(+38.3·+11.3·+36.8%p). 3모델+Jev 합의에서 MH OR은 8.64·2.17·1.78로, 95% 구간이 모두 1 위에 있다. 섹션2에서는 3모델 중 두 모델이 니라와 라를 거의 가르지 못했는데, Jev가 독립적으로 차이를 낸다. 구성별 산출물과 해석은 [results/jev/README.md](results/jev/README.md)에 있고, 위 정본 수치는 바꾸지 않았다.
+
 ## 재현
 
 전체 재현 절차(preflight → 판정 → 보충 → 통계 → 익명화)는 [REPRODUCE.md](REPRODUCE.md)를 단일 기준으로 한다. 스크립트 목록과 명명 규칙은 [scripts/README.md](scripts/README.md), 표본 추출과 seed robustness는 REPRODUCE.md §8에 있다.

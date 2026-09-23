@@ -1,0 +1,263 @@
+{
+  "generated_at": "2026-09-23",
+  "panel": "3models_jev",
+  "judges": [
+    "gpt5mini",
+    "gemini",
+    "claude_sonnet",
+    "jev"
+  ],
+  "coverage": {
+    "section1": {
+      "n_base": 5212,
+      "n_common": 5212,
+      "complete": true
+    },
+    "section2": {
+      "n_base": 22270,
+      "n_common": 22270,
+      "complete": true
+    },
+    "section3": {
+      "n_base": 592,
+      "n_common": 592,
+      "complete": true
+    }
+  },
+  "sections": {
+    "section1": {
+      "label": "游辭以斷",
+      "target_marker": "로다",
+      "control_marker": "라(대조군)",
+      "consensus": {
+        "target_n": 2606,
+        "control_n": 2606,
+        "target": {
+          "O": 732,
+          "O_pct": 28.1,
+          "S": 1473,
+          "S_pct": 56.5,
+          "X": 401,
+          "X_pct": 15.4
+        },
+        "control": {
+          "O": 84,
+          "O_pct": 3.2,
+          "S": 901,
+          "S_pct": 34.6,
+          "X": 1621,
+          "X_pct": 62.2
+        },
+        "chi2": 1388.51,
+        "V": 0.516,
+        "N": 5212
+      },
+      "perModel": {
+        "gpt5mini": {
+          "display": "GPT-5-mini",
+          "target_n": 2606,
+          "control_n": 2606,
+          "target_rate": 55.26,
+          "control_rate": 8.75,
+          "diff": 46.51,
+          "target_positive": 1440,
+          "control_positive": 228,
+          "chi2": 1295.15,
+          "p_approx": 1.280308510178901e-283
+        },
+        "gemini": {
+          "display": "Gemini 2.5 Flash",
+          "target_n": 2606,
+          "control_n": 2606,
+          "target_rate": 72.41,
+          "control_rate": 33.12,
+          "diff": 39.29,
+          "target_positive": 1887,
+          "control_positive": 863,
+          "chi2": 807.2,
+          "p_approx": 1.4644697721192942e-177
+        },
+        "claude_sonnet": {
+          "display": "Claude Sonnet 4.6",
+          "target_n": 2606,
+          "control_n": 2606,
+          "target_rate": 63.2,
+          "control_rate": 16.16,
+          "diff": 47.04,
+          "target_positive": 1647,
+          "control_positive": 421,
+          "chi2": 1204.9,
+          "p_approx": 5.243578197977263e-264
+        },
+        "jev": {
+          "display": "Jev (jev-latest)",
+          "target_n": 2606,
+          "control_n": 2606,
+          "target_rate": 43.59,
+          "control_rate": 5.33,
+          "diff": 38.26,
+          "target_positive": 1136,
+          "control_positive": 139,
+          "chi2": 1032.09,
+          "p_approx": 1.898291500779706e-226
+        }
+      }
+    },
+    "section2": {
+      "label": "夬絶之斷 vs 微絶之斷",
+      "target_marker": "니라",
+      "control_marker": "라",
+      "consensus": {
+        "target_n": 11135,
+        "control_n": 11135,
+        "target": {
+          "O": 2754,
+          "O_pct": 24.7,
+          "S": 6746,
+          "S_pct": 60.6,
+          "X": 1635,
+          "X_pct": 14.7
+        },
+        "control": {
+          "O": 1484,
+          "O_pct": 13.3,
+          "S": 8273,
+          "S_pct": 74.3,
+          "X": 1378,
+          "X_pct": 12.4
+        },
+        "chi2": 557.75,
+        "V": 0.158,
+        "N": 22270
+      },
+      "perModel": {
+        "gpt5mini": {
+          "display": "GPT-5-mini",
+          "target_n": 11135,
+          "control_n": 11135,
+          "target_rate": 76.51,
+          "control_rate": 72.72,
+          "diff": 3.79,
+          "target_positive": 8519,
+          "control_positive": 8097,
+          "chi2": 42.21,
+          "p_approx": 8.178652368692818e-11
+        },
+        "gemini": {
+          "display": "Gemini 2.5 Flash",
+          "target_n": 11135,
+          "control_n": 11135,
+          "target_rate": 71.32,
+          "control_rate": 70.35,
+          "diff": 0.97,
+          "target_positive": 7941,
+          "control_positive": 7833,
+          "chi2": 2.54,
+          "p_approx": 0.11134609940347474
+        },
+        "claude_sonnet": {
+          "display": "Claude Sonnet 4.6",
+          "target_n": 11135,
+          "control_n": 11135,
+          "target_rate": 52.06,
+          "control_rate": 33.56,
+          "diff": 18.5,
+          "target_positive": 5797,
+          "control_positive": 3737,
+          "chi2": 778.3,
+          "p_approx": 2.820558086313157e-171
+        },
+        "jev": {
+          "display": "Jev (jev-latest)",
+          "target_n": 11135,
+          "control_n": 11135,
+          "target_rate": 34.38,
+          "control_rate": 23.04,
+          "diff": 11.34,
+          "target_positive": 3828,
+          "control_positive": 2565,
+          "chi2": 349.99,
+          "p_approx": 4.2623083117627327e-78
+        }
+      }
+    },
+    "section3": {
+      "label": "汎論以斷",
+      "target_marker": "하나니라",
+      "control_marker": "라(대조군)",
+      "consensus": {
+        "target_n": 296,
+        "control_n": 296,
+        "target": {
+          "O": 219,
+          "O_pct": 74.0,
+          "S": 69,
+          "S_pct": 23.3,
+          "X": 8,
+          "X_pct": 2.7
+        },
+        "control": {
+          "O": 114,
+          "O_pct": 38.5,
+          "S": 102,
+          "S_pct": 34.5,
+          "X": 80,
+          "X_pct": 27.0
+        },
+        "chi2": 98.39,
+        "V": 0.408,
+        "N": 592
+      },
+      "perModel": {
+        "gpt5mini": {
+          "display": "GPT-5-mini",
+          "target_n": 296,
+          "control_n": 296,
+          "target_rate": 95.61,
+          "control_rate": 58.78,
+          "diff": 36.83,
+          "target_positive": 283,
+          "control_positive": 174,
+          "chi2": 114.01,
+          "p_approx": 1.2996595164145456e-26
+        },
+        "gemini": {
+          "display": "Gemini 2.5 Flash",
+          "target_n": 296,
+          "control_n": 296,
+          "target_rate": 84.8,
+          "control_rate": 62.84,
+          "diff": 21.96,
+          "target_positive": 251,
+          "control_positive": 186,
+          "chi2": 36.93,
+          "p_approx": 1.2268261400437202e-09
+        },
+        "claude_sonnet": {
+          "display": "Claude Sonnet 4.6",
+          "target_n": 296,
+          "control_n": 296,
+          "target_rate": 87.16,
+          "control_rate": 55.41,
+          "diff": 31.75,
+          "target_positive": 258,
+          "control_positive": 164,
+          "chi2": 72.91,
+          "p_approx": 1.353651779005519e-17
+        },
+        "jev": {
+          "display": "Jev (jev-latest)",
+          "target_n": 296,
+          "control_n": 296,
+          "target_rate": 86.82,
+          "control_rate": 50.0,
+          "diff": 36.82,
+          "target_positive": 257,
+          "control_positive": 148,
+          "chi2": 92.87,
+          "p_approx": 5.582877293847174e-22
+        }
+      }
+    }
+  }
+}
