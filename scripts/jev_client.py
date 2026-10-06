@@ -48,6 +48,10 @@ logger = logging.getLogger(__name__)
 
 TYPESAFE_URL = "https://api.typesafe.ai/v1/systemone"
 TYPESAFE_MODEL = "jev-latest"
+# 직결이 HTTP로 거절되면(2026-10-06 402 크레딧 소진) 같은 Jev를 OpenRouter 경유로 부른다.
+# 이름·주소는 llm_pipeline `llm_runtime/jev_decisions.py`의 PROVIDERS["openrouter"]와 같다.
+OPENROUTER_URL = "https://openrouter.ai/api/alpha/decisions"
+OPENROUTER_MODEL = "~typesafe/jev-latest"
 INPUT_USD_PER_M = 0.042  # 입력만 청구된다 — 출력분은 청구서에 없다(2026-09-21)
 
 KEY_ENV_FILE = pathlib.Path.home() / ".claude" / "data" / "triage" / ".env"
@@ -157,10 +161,20 @@ class JevClient:
         timeout: float = 120.0,
         retries: int = 3,
         opener: Callable[..., Any] = urllib.request.urlopen,
+        fallback: bool = True,
+        fallback_key: Optional[str] = None,
     ) -> None:
         self._key = (api_key if api_key is not None else resolve_key() or "").strip()
         self._url = url or os.environ.get("JEV_BASE_URL") or TYPESAFE_URL
         self.model = model or TYPESAFE_MODEL
+        self._wire_model = self.model
+        self._extra_headers: dict = {}
+        # 직결 Jev일 때만 넘긴다(실행기는 url=TYPESAFE_URL을 명시해 넘기므로 «주소를 줬는가»가 아니라
+        # «그 주소가 직결인가»로 본다). 결과 파일은 모델 이름으로 갈리는데 넘어가도 같은 모델이다 —
+        # 대신 usage()의 via로 어느 길이었는지 남긴다.
+        self._fallback = fallback and self._url == TYPESAFE_URL and self.model == TYPESAFE_MODEL
+        self._fallback_key = fallback_key
+        self.fell_back: Optional[str] = None
         self._max_calls = max_calls
         self._timeout = timeout
         self._retries = max(0, int(retries))
@@ -195,7 +209,30 @@ class JevClient:
             raise JevCallFailed("jev_no_key")
         if self.calls_made >= self._max_calls:
             raise JevGateExceeded(f"상한 {self._max_calls}회에 이미 도달했습니다.")
-        body = {"state": state, "model": self.model, "questions": dict(questions)}
+        try:
+            payload = self._send(state, questions)
+        except JevCallFailed as exc:
+            if not (self._fallback and exc.status is not None and self._switch_to_openrouter(exc.status)):
+                raise
+            payload = self._send(state, questions)
+        return self._read(payload)
+
+    def _switch_to_openrouter(self, status: int) -> bool:
+        key = (self._fallback_key or resolve_key(names=("OPENROUTER_API_KEY",)) or "").strip()
+        if not key:
+            return False
+        # self.model 은 그대로 둔다 — 실행기가 결과 파일 이름(out_path)을 거기서 고른다.
+        # 바꾸면 다음 섹션이 `~typesafe/…` 라는 이름(경로 구분자 포함)의 다른 파일로 갈라진다.
+        self._key, self._url, self._wire_model = key, OPENROUTER_URL, OPENROUTER_MODEL
+        self._extra_headers = {"HTTP-Referer": "https://github.com/hw725/dansa-research",
+                               "X-Title": "dansa-research jev"}
+        self._fallback = False
+        self.fell_back = f"openrouter(typesafe {status})"
+        logger.warning("Jev 직결 %s — 이 실행 동안 OpenRouter %s 로 부릅니다", status, OPENROUTER_MODEL)
+        return True
+
+    def _send(self, state: str, questions: Mapping[str, Any]) -> Any:
+        body = {"state": state, "model": self._wire_model, "questions": dict(questions)}
         data = json.dumps(body, ensure_ascii=False).encode("utf-8")
         delay = 1.0
         for attempt in range(self._retries + 1):
@@ -206,6 +243,7 @@ class JevClient:
                 headers={
                     "authorization": f"Bearer {self._key}",
                     "content-type": "application/json",
+                    **self._extra_headers,
                 },
             )
             self.calls_made += 1
@@ -231,7 +269,9 @@ class JevClient:
                     delay *= 2
                     continue
                 raise JevCallFailed("jev_transport_error") from exc
+        return payload
 
+    def _read(self, payload: Any) -> Mapping[str, Any]:
         usage = payload.get("usage") if isinstance(payload, Mapping) else None
         if isinstance(usage, Mapping):
             seen_in = _int(usage.get("input_tokens")) or _int(usage.get("prompt_tokens"))
@@ -261,4 +301,6 @@ class JevClient:
             "output_tokens": self.output_tokens_total,
             "cost_usd": round(self.cost_total, 6),
             "uncosted_calls": self.uncosted_calls,
+            # 직결이 거절돼 OpenRouter 로 넘어간 클라이언트 수(0·1). 실행기가 값을 더하므로 숫자로 둔다.
+            "via_openrouter": 1 if self.fell_back else 0,
         }
