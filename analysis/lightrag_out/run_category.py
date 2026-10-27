@@ -35,7 +35,7 @@ OUT = ROOT / "lightrag_out"
 RESULTS = OUT / "results"
 RESULTS.mkdir(parents=True, exist_ok=True)
 
-LLM_MODEL = "gpt-5-mini"
+LLM_MODEL = "gpt-5.6-terra"
 LLM_FALLBACK = "gpt-4o-mini"
 EMB_MODEL = "text-embedding-3-large"
 EMB_DIM = 3072
@@ -43,7 +43,7 @@ EMB_DIM = 3072
 # Phase-controlled reasoning effort. Set globally before insert vs query phases.
 # - "minimal": fast, used for entity/relation extraction (highly structured)
 # - "medium" : default reasoning, used for analytical query answers
-REASONING_EFFORT = "minimal"
+REASONING_EFFORT = "low"  # gpt-5.6: "minimal" removed
 
 setup_logger("lightrag", level="WARNING")  # quiet
 
@@ -51,7 +51,7 @@ setup_logger("lightrag", level="WARNING")  # quiet
 # ---- LLM / Embedding wrappers --------------------------------------------------
 async def llm_func(prompt, system_prompt=None, history_messages=None, **kwargs):
     history_messages = history_messages or []
-    # Strip params that gpt-5-mini reasoning model rejects
+    # Strip params that gpt-5.6-terra reasoning model rejects
     kwargs.pop("temperature", None)
     kwargs.pop("max_tokens", None)
     # Inject phase-controlled reasoning effort
@@ -194,7 +194,7 @@ async def run_category(cat: str, clusters: dict, only_query: bool = False):
 
     if not only_query:
         # Insert per-cluster documents — fast structured extraction
-        REASONING_EFFORT = "minimal"
+        REASONING_EFFORT = "low"  # gpt-5.6: "minimal" removed
         docs = build_documents(cat, clusters)
         print(f"  inserting {len(docs)} cluster documents (reasoning_effort=minimal) …", flush=True)
         ids = [d[0] for d in docs]
