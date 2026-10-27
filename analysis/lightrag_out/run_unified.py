@@ -26,12 +26,12 @@ OUT = ROOT / "lightrag_out"
 RESULTS = OUT / "results_unified"
 RESULTS.mkdir(parents=True, exist_ok=True)
 
-LLM_MODEL = "gpt-5-mini"
+LLM_MODEL = "gpt-5.6-terra"
 LLM_FALLBACK = "gpt-4o-mini"
 EMB_MODEL = "text-embedding-3-large"
 EMB_DIM = 3072
 
-REASONING_EFFORT = "minimal"
+REASONING_EFFORT = "low"  # gpt-5.6: "minimal" removed
 
 setup_logger("lightrag", level="WARNING")
 
@@ -194,7 +194,7 @@ async def main():
     global REASONING_EFFORT
 
     if not only_query:
-        REASONING_EFFORT = "minimal"
+        REASONING_EFFORT = "low"  # gpt-5.6: "minimal" removed
         docs = build_all_documents(samples)
         print(f"Inserting {len(docs)} cluster documents from all 4 categories …", flush=True)
         ids = [d[0] for d in docs]
