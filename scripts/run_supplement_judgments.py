@@ -101,7 +101,7 @@ def _build_models():
     return {
         "gpt5mini": {
             "display": "GPT-5-mini",
-            "model_id": "gpt-5-mini",
+            "model_id": "gpt-5.6-terra",
             "client_kwargs": {},
         },
         "gemini": {
