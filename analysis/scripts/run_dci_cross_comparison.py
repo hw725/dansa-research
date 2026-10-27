@@ -4,7 +4,7 @@ DCI 횡단 비교 (Cross-Category Comparison)
 LightRAG가 범주별 KG 격리로 폐기한 CQ1~CQ6를
 단일 TSV 동시 접근으로 실행.
 
-4범주 동시 grep → 비교 테이블 → gpt-5-mini 합성.
+4범주 동시 grep → 비교 테이블 → gpt-5.6-terra 합성.
 """
 import csv
 import json
@@ -447,7 +447,7 @@ def run():
         t1 = time.time()
         try:
             resp = client.chat.completions.create(
-                model="gpt-5-mini",
+                model="gpt-5.6-terra",
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": (
@@ -483,7 +483,7 @@ def run():
             f"- evidence_chars: {len(evidence)}\n"
             f"- truncated: {truncated}\n"
             f"- corpus_total: {corpus_total}\n"
-            f"- model: gpt-5-mini\n"
+            f"- model: gpt-5.6-terra\n"
             f"- timestamp: {datetime.now().isoformat()}\n"
         )
         out = OUT_DIR / f"{cqid}.md"
