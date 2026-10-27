@@ -18,7 +18,7 @@ SANDBOX_MODELS: dict[str, dict] = {
     "gpt5mini": {
         "display": "GPT-5-mini",
         "vendor": "openai",
-        "model_id": os.environ.get("OPENAI_MODEL", "gpt-5-mini"),
+        "model_id": os.environ.get("OPENAI_MODEL", "gpt-5.6-terra"),
         "base_url": os.environ.get("OPENAI_BASE_URL") or None,  # None = api.openai.com
         "key_env": "OPENAI_API_KEY",
     },
