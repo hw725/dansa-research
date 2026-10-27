@@ -2,7 +2,7 @@
 DCI 실험: Direct Corpus Interaction vs LightRAG
 ================================================
 순수 DCI: 임베딩 없음, 클러스터링 없음, 샘플링 없음.
-전수 grep/awk 등가 패턴 매칭 → gpt-5-mini 합성.
+전수 grep/awk 등가 패턴 매칭 → gpt-5.6-terra 합성.
 비교 대상: lightrag_out/results/*.md (24건)
 """
 import csv
@@ -390,7 +390,7 @@ def run():
             t1 = time.time()
             try:
                 resp = client.chat.completions.create(
-                    model="gpt-5-mini",
+                    model="gpt-5.6-terra",
                     messages=[
                         {"role": "system", "content": SYSTEM_PROMPT},
                         {"role": "user", "content": (
@@ -399,7 +399,7 @@ def run():
                             f"## DCI 추출 증거 (전수 검색)\n{evidence}"
                         )},
                     ],
-                    # gpt-5-mini: temperature not supported
+                    # gpt-5.6-terra: temperature not supported
                 )
                 answer = resp.choices[0].message.content
                 u = resp.usage
@@ -429,7 +429,7 @@ def run():
                 f"- evidence_chars: {len(evidence)}\n"
                 f"- truncated: {truncated}\n"
                 f"- corpus_rows: {len(rows)}\n"
-                f"- model: gpt-5-mini\n"
+                f"- model: gpt-5.6-terra\n"
                 f"- timestamp: {datetime.now().isoformat()}\n"
             )
             out = OUT_DIR / f"{cat}__{qid}.md"

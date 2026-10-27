@@ -44,7 +44,7 @@ def summarize_cluster(cat, cid, sentences, marker_type, ox):
         f"이 클러스터의 주제·내용적 특징을 3-5문장으로 요약하세요."
     )
     resp = client.chat.completions.create(
-        model="gpt-5-mini",
+        model="gpt-5.6-terra",
         messages=[{"role": "user", "content": prompt}],
     )
     return resp.choices[0].message.content.strip()
